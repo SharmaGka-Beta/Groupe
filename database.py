@@ -62,3 +62,18 @@ def add_user(user_id: int):
         )
         conn.commit()
         conn.close()
+
+def get_user(user_id: int):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.execute(
+        "SELECT * FROM users WHERE user_id = ?", (user_id,)
+    )
+    row = cursor.fetchone()
+    if row is None:
+        add_user(user_id)
+        return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian"}
+    
+    return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4]}
+    
+
+
