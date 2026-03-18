@@ -49,6 +49,7 @@ def create_tables():
     conn.commit()
     conn.close()
 
+
 def add_user(user_id: int):
     conn = sqlite3.connect(dbname)
     cursor = conn.execute(
@@ -74,6 +75,44 @@ def get_user(user_id: int):
         return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian"}
     
     return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4]}
+
+def get_inventory(uid):
+
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor
+
     
+    cursor.execute("""
+        SELECT gun_name, qty
+        FROM ammunitions
+        WHERE user_id = ?
+        """, (uid, )
+    )
+
+    guns = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT drug_name, qty
+        FROM drugs
+        WHERE user_id = ?
+        """, (uid, )
+    )
+
+    drugs = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT item_name, qty
+        FROM items
+        WHERE user_id = ?
+        """, (uid, )
+    )
+
+    items = cursor.fetchall()
+
+    return [guns, drugs, items]
+
+
+
+
 
 
