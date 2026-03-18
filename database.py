@@ -49,6 +49,16 @@ def create_tables():
     conn.commit()
     conn.close()
 
+def add_user(user_id: int):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.execute(
+        "SELECT * FROM users WHERE user_id = ?", (user_id,)
+    )
+    row = cursor.fetchone()
 
-    
-
+    if row is None:
+        conn.execute(
+            "INSERT INTO users (user_id) VALUES (?)", (user_id,)
+        )
+        conn.commit()
+        conn.close()
