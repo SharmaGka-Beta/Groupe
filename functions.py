@@ -28,8 +28,21 @@ async def init(ctx):
     await ctx.send("Initialized")
 
 @bot.command()
-async def inventory(ctx):
-    
-    uid = ctx.authour.id
-    inventory = database.get_inventory(uid)
+async def profile(ctx):
+    info = db.get_user(ctx.author.id)
+    embed = discord.Embed(title="Welcome to Sin City!", color= discord.Color.brand_red())
+
+    embed.set_thumbnail(url=ctx.author.avatar.url)
+    embed.add_field(name="\u200b", value="PLAYER INFO", inline=True)
+    embed.add_field(name="\u200b", value=f"👤 Player Name: {ctx.author.name}", inline=False)
+    embed.add_field(name="\u200b", value=f"🪙 Balance: {info["coins"]}", inline=False)
+    embed.add_field(name="\u200b", value=f"🆙 Level: {info["level"]}", inline=False)
+
+
+    embed.add_field(name="\ub200", value=f"🔥 WANTED METER: {info["wanted"]}", inline=False)
+    embed.add_field(name="\ub200", value=f"📈 RESPECT METER: {info["respect"]}", inline=True)
+    embed.add_field(name="\ub200", value=f"🪪 ROLE: {info["user_role"]}", inline=True)
+
+    await ctx.send(embed=embed)
+
     
