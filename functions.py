@@ -29,7 +29,7 @@ async def init(ctx):
 
 @bot.command()
 async def profile(ctx):
-    info = db.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id)
     embed = discord.Embed(title="Welcome to Sin City!", color= discord.Color.brand_red())
 
     embed.set_thumbnail(url=ctx.author.avatar.url)
