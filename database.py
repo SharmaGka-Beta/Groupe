@@ -75,3 +75,4 @@ def get_user(user_id: int):
     
     return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4]}
     
+
