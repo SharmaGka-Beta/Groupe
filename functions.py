@@ -30,7 +30,6 @@ async def init(ctx):
 @bot.command()
 async def inventory(ctx):
     
-
     uid = ctx.authour.id
     inventory = database.get_inventory(uid)
     

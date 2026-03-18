@@ -49,21 +49,6 @@ def create_tables():
     conn.commit()
     conn.close()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def get_inventory(uid):
 
     conn = sqlite3.connect(dbname)
