@@ -50,5 +50,41 @@ def create_tables():
     conn.close()
 
 
+def get_inventory(uid):
+
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor
     
+    cursor.execute("""
+        SELECT gun_name, qty
+        FROM ammunitions
+        WHERE user_id = ?
+        """, (uid, )
+    )
+
+    guns = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT drug_name, qty
+        FROM drugs
+        WHERE user_id = ?
+        """, (uid, )
+    )
+
+    drugs = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT item_name, qty
+        FROM items
+        WHERE user_id = ?
+        """, (uid, )
+    )
+
+    items = cursor.fetchall()
+
+    return [guns, drugs, items]
+
+
+
+
 
