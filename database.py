@@ -72,7 +72,9 @@ def get_user(user_id: int):
     row = cursor.fetchone()
     if row is None:
         add_user(user_id)
+        conn.close()
         return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian"}
+        
     
     conn.close()
     return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4]}
