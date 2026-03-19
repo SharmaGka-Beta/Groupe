@@ -87,9 +87,7 @@ async def roulette(ctx, amount: int , bet_type:str):
 
     if bet_type not in valid_colours and bet_type not in valid_numbers:
         await ctx.send("Invalid bet!: Enter a colour (red/black) or number (1 to 36)")
-        return 
-    
-    
+        return   
     
     if bet_type in valid_numbers:
         result=random.randint(1,36)
@@ -111,9 +109,6 @@ async def roulette(ctx, amount: int , bet_type:str):
         else:
             await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
             database.remove_money(user_id,amount)
-<<<<<<< HEAD
-
-
 
 @bot.command()
 async def transfer(ctx, amount:int , member:discord.Member):
@@ -123,13 +118,6 @@ async def transfer(ctx, amount:int , member:discord.Member):
     database.remove_money(payer,amount)
 
     await ctx.send(f'{amount} has been sent to {member.display_name}')
-
-
-
-
-    
-=======
->>>>>>> master
     
 @bot.command()
 async def work(ctx):
