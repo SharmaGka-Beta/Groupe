@@ -118,5 +118,20 @@ def get_inventory(uid):
 
 
 
+def add_money(user_id:int,amount:int ):
+    conn = sqlite3.connect(dbname)
+    conn.execute(
+        "UPDATE user_info SET money= money+ ? WHERE user_id = ? ", (amount,user_id)
+    )
+    conn.commit()
+    conn.close()
+
+def remove_money(user_id:int,amount:int):
+    conn=sqlite3.connect(dbname)
+    conn.execute(
+        "UPDATE user_info SET money =money - ? WHERE user_id = ?",(amount,user_id)
+    )
+    conn.commit()
+    conn.close()
 
 
