@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import database
 import random
+import messages
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -140,5 +141,16 @@ async def roulette(ctx, amount: int , bet_type:str):
             await ctx.send("You lost")
             # profit=-amount
     
-    
+@bot.command()
+async def work(ctx):
+    a = random.randint(1, 100)
+    money = random.randint(50, 150)
+    if 1 <= a <= 89:
+        mes = random.choice(messages.workp)
+        await ctx.send(f"{mes} You gained {money} coins.")
+        database.add_money(ctx.author.id, money)
 
+    elif 90 <= a <= 100:
+        mes = random.choice(messages.workn)
+        await ctx.send(f"{mes} You lost {money} coins.")
+        database.remove_money(ctx.author.id, money)
