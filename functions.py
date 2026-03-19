@@ -143,6 +143,7 @@ async def roulette(ctx, amount: int , bet_type:str):
     
 @bot.command()
 async def work(ctx):
+    info = database.add_user(ctx.author.id)
     a = random.randint(1, 100)
     money = random.randint(50, 150)
     if 1 <= a <= 89:
@@ -154,3 +155,49 @@ async def work(ctx):
         mes = random.choice(messages.workn)
         await ctx.send(f"{mes} You lost {money} coins.")
         database.remove_money(ctx.author.id, money)
+
+
+
+
+class view(discord.ui.View):
+    
+    @discord.ui.button(label="Hit", style = discord.ButtonStyle.primary)
+    async def button_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        await interaction.response.send_message("Hit")
+
+    @discord.ui.button(label="Stand", style = discord.ButtonStyle.primary)
+    async def button_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        await interaction.response.send_message("Stand")
+
+    
+        
+        
+@bot.command()
+async def blackjack(ctx, arg: int):
+
+    info = database.get_user(ctx.author.id)
+    if (arg <= 0):
+        await ctx.send("Bet must be greater than zero")
+        return
+
+    if (arg > info["money"]):
+        await ctx.send("Insufficient Balance")
+
+    round_deck = messages.deck[:]
+    random.shuffle(round_deck)
+    database.remove_money(ctx.author.id, arg)
+
+    print(round_deck.pop())
+    
+    embed = discord.Embed()
+    a = round_deck.pop()
+    embed.add_field(name = "Dealer Cards", value = f'{a[0]}{a[1]}  ??')
+    b, c = round_deck.pop(), round_deck.pop()
+    embed.add_field(name="Your Cards", value=f'{b[0]}{b[1]}  {c[0]}{c[1]}')
+
+    await ctx.send(embed=embed, view=view())
+
+
+
+    
+

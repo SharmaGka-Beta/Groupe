@@ -14,3 +14,10 @@ workn = ["Your car broke down on the way to work. Manager yelled at you for bein
          "You were stopped by the mob on your way to work.",
          "The police searched your car for drugs while you were returning. Corrupt pieces of shits",
          "You forgot your wallet in the car and a rogue stole it."]
+
+spades = [(m, ':spades:') for m in range (1, 14)]
+hearts = [(m, ":hearts:") for m in range (1, 14)]
+clubs = [(m, ':clubs:') for m in range (1, 14)]
+diamonds = [(m, ':diamonds:') for m in range(1, 14)]
+
+deck = spades + hearts + clubs + diamonds
