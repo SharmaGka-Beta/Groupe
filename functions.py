@@ -160,20 +160,45 @@ async def work(ctx):
 
 
 class view(discord.ui.View):
+
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
     
     @discord.ui.button(label="Hit", style = discord.ButtonStyle.primary)
     async def button_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
         await interaction.response.send_message("Hit")
+        round_deck = messages.deck[:]
+        random.shuffle(round_deck)
 
-    @discord.ui.button(label="Stand", style = discord.ButtonStyle.primary)
-    async def button_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
-        await interaction.response.send_message("Stand")
+        a = round_deck.pop()
+        while a in blackjack_cards[self.ctx.author.id]["player"] and a in blackjack_cards[self.ctx.author.id]["dealer"]:
+            a = round_deck.pop()
+
+        blackjack_cards[self.ctx.author.id]["player"].append(a)
+
+        embed = discord.Embed()
+
+        embed.add_field(name = "Dealer Cards", value = f'{blackjack_cards[self.ctx.author.id]["dealer"][0]}{blackjack_cards[self.ctx.author.id]["player"][1]}  ??')
+        embed.add_field(name="Your Cards", value=" ".join(f'{b[0]}{b[1]}  ' for b in blackjack_cards[self.ctx.author.id]["player"]))
+
+        await self.ctx.send(embed=embed, view=view(self.ctx))
+
+
+    # @discord.ui.button(label="Stand", style = discord.ButtonStyle.primary)
+    # async def button_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+    #     await interaction.response.send_message("Stand")
 
     
-        
+blackjack_cards = {}      
+# {userid: {player: [], dealer: []}}  
         
 @bot.command()
 async def blackjack(ctx, arg: int):
+
+    if ctx.author.id in blackjack_cards.keys():
+        await ctx.send("You have an ongoing game!")
+        return
 
     info = database.get_user(ctx.author.id)
     if (arg <= 0):
@@ -182,20 +207,22 @@ async def blackjack(ctx, arg: int):
 
     if (arg > info["money"]):
         await ctx.send("Insufficient Balance")
+        return
 
     round_deck = messages.deck[:]
     random.shuffle(round_deck)
     database.remove_money(ctx.author.id, arg)
 
-    print(round_deck.pop())
     
     embed = discord.Embed()
     a = round_deck.pop()
-    embed.add_field(name = "Dealer Cards", value = f'{a[0]}{a[1]}  ??')
     b, c = round_deck.pop(), round_deck.pop()
+    blackjack_cards[ctx.author.id] = {"player": [b, c], "dealer": [a]}
+
+    embed.add_field(name = "Dealer Cards", value = f'{a[0]}{a[1]}  ??')
     embed.add_field(name="Your Cards", value=f'{b[0]}{b[1]}  {c[0]}{c[1]}')
 
-    await ctx.send(embed=embed, view=view())
+    await ctx.send(embed=embed, view=view(ctx))
 
 
 
