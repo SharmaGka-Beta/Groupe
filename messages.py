@@ -8,7 +8,7 @@ workp = ["Normal day at work.",
          "There are rumours of downsizing. You hope it's not you. Actually you hope it is you.",
          "It was Funday-Friday. The HR made you play team- building 'games'.",
          "The SQL query to update 2 lines ran for 20 minutes.",
-         "Your thanked you for solving his merge conflict. Scumbag."]
+         "Your coworker thanked you for solving his merge conflict. Scumbag."]
 
 workn = ["Your car broke down on the way to work. Manager yelled at you for being late.",
          "You were stopped by the mob on your way to work.",
