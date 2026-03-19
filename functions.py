@@ -12,21 +12,8 @@ bot = commands.Bot(command_prefix = "sin ", intents = intents)
 @bot.event
 async def on_ready():
     print("Bot is ready")
-
-@bot.command()
-async def init(ctx):
-    
-    channel_exists = discord.utils.get(ctx.guild.channels, name = 'sin-city')
-
-    if channel_exists:
-        await ctx.send("Already Initialized")
-        return
-    
-    await ctx.guild.create_text_channel("Sin City")
-
     database.create_tables()
 
-    await ctx.send("Initialized")
 
 @bot.command()
 async def profile(ctx):
@@ -105,12 +92,18 @@ async def shop(ctx):
 
 @bot.command()
 async def roulette(ctx, amount: int , bet_type:str):
+    user_id=ctx.author.id
+    d=database.get_user(user_id)
     bet_type=bet_type.lower()
-    # user_id=ctx.author.id
     
     if amount<=0:
         await ctx.send("Bet must be greater than zero")
         return
+    
+    if(d["money"]<amount):
+        await ctx.send("Insufficient balance")
+        return
+    
 
     valid_colours=["red","black"]
     valid_numbers=[str(i) for i in range(1,37)]
@@ -123,22 +116,24 @@ async def roulette(ctx, amount: int , bet_type:str):
     
     if bet_type in valid_numbers:
         result=random.randint(1,36)
-        if result==bet_type:
-            await ctx.send("Congratulation! You won ")
-            # profit=amount*35
+        if result==int(bet_type):
+            await ctx.send(f'Congratulation! It is {result} You won {35*amount} on your current balance')
+            database.remove_money(user_id,amount)
+            database.add_money(user_id,35*amount)
         else:
-            await ctx.send("You lost")
-            # profit=-amount
+            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
+            database.remove_money(user_id,amount)
         
 
     else:
         result=random.choice(valid_colours)
         if result==bet_type:
-            await ctx.send("Congratulation! You won")
-            # profit=amount*2
+            await ctx.send(f'Congratulation! It is {result} You won {2*amount} on your current balance')
+            database.remove_money(user_id,amount)
+            database.add_money(user_id,2*amount)
         else:
-            await ctx.send("You lost")
-            # profit=-amount
+            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
+            database.remove_money(user_id,amount)
     
     
 
