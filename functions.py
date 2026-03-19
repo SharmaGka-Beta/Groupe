@@ -34,7 +34,7 @@ async def init(ctx):
 @bot.command()
 async def roulette(ctx, amount: int , bet_type:str):
     bet_type=bet_type.lower()
-    user_id=ctx.author.id
+    # user_id=ctx.author.id
     
     if amount<=0:
         await ctx.send("Bet must be greater than zero")
@@ -53,18 +53,20 @@ async def roulette(ctx, amount: int , bet_type:str):
         result=random.randint(1,36)
         if result==bet_type:
             await ctx.send("Congratulation! You won ")
-            profit=amount*35
+            # profit=amount*35
         else:
-            profit=-amount
+            await ctx.send("You lost")
+            # profit=-amount
         
 
     else:
         result=random.choice(valid_colours)
         if result==bet_type:
-            await ctx.send("")
-            profit=amount*2
+            await ctx.send("Congratulation! You won")
+            # profit=amount*2
         else:
-            profit=-amount
+            await ctx.send("You lost")
+            # profit=-amount
     
     
 
