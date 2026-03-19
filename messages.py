@@ -24,7 +24,7 @@ items = [
                 ("🌿 Weed", "50", "Mild and cheap", "drugs"),
                 ("💊 Meth", "300", "High risk high reward", "drugs"),
                 ("💉 Heroin", "400", "Dangerous stuff", "drugs"),
-                ("❄️ Cocaine", "600", "The classic", "drugs"),
+                ("⚪ Cocaine", "600", "The classic", "drugs"),
                 ("🔵 LSD", "250", "Trippy", "drugs"),
                 ("🥶 Blue Meth", "1000", "Say my name", "drugs"),
             ]
