@@ -62,7 +62,7 @@ def add_user(user_id: int):
             "INSERT INTO user_info (user_id) VALUES (?)", (user_id,)
         )
         conn.commit()
-        conn.close()
+    conn.close()
 
 def get_user(user_id: int):
     conn = sqlite3.connect(dbname)
@@ -74,6 +74,7 @@ def get_user(user_id: int):
         add_user(user_id)
         return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian"}
     
+    conn.close()
     return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4]}
 
 def get_inventory(uid):
@@ -109,6 +110,7 @@ def get_inventory(uid):
 
     items = cursor.fetchall()
 
+    conn.close()
     return [guns, drugs, items]
 
 
