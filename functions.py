@@ -32,17 +32,34 @@ async def profile(ctx):
     info = database.get_user(ctx.author.id)
     embed = discord.Embed(title="Welcome to Sin City!", color= discord.Color.brand_red())
 
-    embed.set_thumbnail(url=ctx.author.avatar.url)
+    embed.set_thumbnail(url=ctx.author.display_avatar.url)
     embed.add_field(name="\u200b", value="PLAYER INFO", inline=True)
     embed.add_field(name="\u200b", value=f"👤 Player Name: {ctx.author.name}", inline=False)
-    embed.add_field(name="\u200b", value=f"🪙 Balance: {info["coins"]}", inline=False)
-    embed.add_field(name="\u200b", value=f"🆙 Level: {info["level"]}", inline=False)
+    embed.add_field(name="\u200b", value=f"🪙 Balance: {info["money"]}", inline=False)
+    # embed.add_field(name="\u200b", value=f"🆙 Level: {info["level"]}", inline=False)
 
 
     embed.add_field(name="\ub200", value=f"🔥 WANTED METER: {info["wanted"]}", inline=False)
-    embed.add_field(name="\ub200", value=f"📈 RESPECT METER: {info["respect"]}", inline=True)
-    embed.add_field(name="\ub200", value=f"🪪 ROLE: {info["user_role"]}", inline=True)
+    embed.add_field(name="\ub200", value=f"📈 RESPECT METER: {info["integrity"]}", inline=False)
+    embed.add_field(name="\ub200", value=f"🪪 ROLE: {info["user_role"]}", inline=False)
 
     await ctx.send(embed=embed)
 
     
+@bot.command()
+async def inventory(ctx):
+
+    database.add_user(ctx.author.id)
+    inven = database.get_inventory(ctx.author.id)
+    embed = discord.Embed(title = "Inventory", color = discord.Color.brand_red())
+
+    embed.set_thumbnail(url = ctx.author.display_avatar.url)
+    value_g = '\n'.join(f"{m[0]}: {m[1]}" for m in inven[0])
+    value_d = '\n'.join(f"{m[0]}: {m[1]}" for m in inven[1])
+    value_i = '\n'.join(f"{m[0]}: {m[1]}" for m in inven[2])
+
+    embed.add_field(name = "Guns", value = value_g or "You currently own no guns", inline = False)
+    embed.add_field(name = "Drugs", value = value_d or "You currently own no drugs", inline = False)
+    embed.add_field(name = "Items", value = value_i or "You currently own no items", inline = False)
+
+    await ctx.send(embed = embed)

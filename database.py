@@ -22,7 +22,7 @@ def create_tables():
             user_id INTEGER,
             gun_name TEXT,
             qty INTEGER,
-            FOREIGN_KEY (user_id) REFERENCES user_info(user_id)         
+            FOREIGN KEY (user_id) REFERENCES user_info(user_id)         
         )
     """)
 
@@ -32,7 +32,7 @@ def create_tables():
             user_id INTEGER,
             drug_name TEXT,
             qty INTEGER,
-            FOREIGN_KEY (user_id) REFERENCES user_info(user_id)         
+            FOREIGN KEY (user_id) REFERENCES user_info(user_id)         
         )
     """)
 
@@ -42,7 +42,7 @@ def create_tables():
             user_id INTEGER,
             item_name TEXT,
             qty INTEGER,
-            FOREIGN_KEY (user_id) REFERENCES user_info(user_id)         
+            FOREIGN KEY (user_id) REFERENCES user_info(user_id)         
         )
     """)
 
@@ -53,13 +53,13 @@ def create_tables():
 def add_user(user_id: int):
     conn = sqlite3.connect(dbname)
     cursor = conn.execute(
-        "SELECT * FROM users WHERE user_id = ?", (user_id,)
+        "SELECT * FROM user_info WHERE user_id = ?", (user_id,)
     )
     row = cursor.fetchone()
 
     if row is None:
         conn.execute(
-            "INSERT INTO users (user_id) VALUES (?)", (user_id,)
+            "INSERT INTO user_info (user_id) VALUES (?)", (user_id,)
         )
         conn.commit()
         conn.close()
@@ -67,7 +67,7 @@ def add_user(user_id: int):
 def get_user(user_id: int):
     conn = sqlite3.connect(dbname)
     cursor = conn.execute(
-        "SELECT * FROM users WHERE user_id = ?", (user_id,)
+        "SELECT * FROM user_info WHERE user_id = ?", (user_id,)
     )
     row = cursor.fetchone()
     if row is None:
@@ -79,7 +79,7 @@ def get_user(user_id: int):
 def get_inventory(uid):
 
     conn = sqlite3.connect(dbname)
-    cursor = conn.cursor
+    cursor = conn.cursor()
 
     
     cursor.execute("""
@@ -102,7 +102,7 @@ def get_inventory(uid):
 
     cursor.execute("""
         SELECT item_name, qty
-        FROM items
+        FROM others
         WHERE user_id = ?
         """, (uid, )
     )
