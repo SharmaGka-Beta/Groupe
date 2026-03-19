@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import database
 import random
+import messages
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -55,36 +56,13 @@ async def inventory(ctx):
 @bot.command()
 async def shop(ctx):
     info = database.get_user(ctx.author.id)
-    pages = [
-        {
-            "title": "GUNS",
-            "items": [
-                ("🔫 Pistol", "100", "A basic handgun"),
-                ("⚔️ Assault Rifle", "500", "Fully automatic rifle"),
-                ("🔱 Machine Gun", "1200", "Sprays bullets fast"),
-                ("🎯 Sniper", "2000", "One shot, one kill"),
-            ]
-        },
-        {
-            "title": "DRUGS",
-            "items": [
-                ("🌿 Weed", "50", "Mild and cheap"),
-                ("💊 Meth", "300", "High risk high reward"),
-                ("💉 Heroin", "400", "Dangerous stuff"),
-                ("❄️ Cocaine", "600", "The classic"),
-                ("🔵 LSD", "250", "Trippy"),
-                ("🥶 Blue Meth", "1000", "Say my name"),
-            ]
-        }
-    ]
-
+    
     embed = discord.Embed(title = "SHOP", color = discord.Color.brand_red())
     
     embed.add_field(name="Welcome to Sin City Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
 
-    for dic in pages:
-        for name, price, desc in dic["items"]:
-            embed.add_field(name = f"__{name}__ | 🪙 {price}" , value=desc, inline=False)
+    for item in messages.items:
+        embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
 
     await ctx.send(embed = embed)
 
@@ -133,6 +111,7 @@ async def roulette(ctx, amount: int , bet_type:str):
         else:
             await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
             database.remove_money(user_id,amount)
+<<<<<<< HEAD
 
 
 
@@ -149,5 +128,38 @@ async def transfer(ctx, amount:int , member:discord.Member):
 
 
     
+=======
+>>>>>>> master
     
+@bot.command()
+async def work(ctx):
+    a = random.randint(1, 100)
+    money = random.randint(50, 150)
+    if 1 <= a <= 89:
+        mes = random.choice(messages.workp)
+        await ctx.send(f"{mes} You gained {money} coins.")
+        database.add_money(ctx.author.id, money)
 
+    elif 90 <= a <= 100:
+        mes = random.choice(messages.workn)
+        await ctx.send(f"{mes} You lost {money} coins.")
+        database.remove_money(ctx.author.id, money)
+
+@bot.command()
+async def buy(ctx, item, qty:int):
+    info = database.get_user(ctx.author.id)
+
+    if(qty <= 0):
+        await ctx.send("Enter a valid quantity of items!")
+        return
+    for it in messages.items:
+        if(item == it[0][2:]):
+            if(qty*int(it[1]) > info["money"]):
+                await ctx.send("Balance Insufficient!")
+                return
+            database.update_inventory(ctx.author.id, item, it[3], qty)
+            database.remove_money(ctx.author.id, qty*int(it[1]))
+            await ctx.send("Item bough successfully!")
+            return
+
+    await ctx.send("Enter a valid item name!")

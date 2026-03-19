@@ -115,7 +115,30 @@ def get_inventory(uid):
     conn.close()
     return [guns, drugs, items]
 
+def update_inventory(user_id:int, item_name, item_category,  qt:int):
+    column_name = ""
 
+    conn = sqlite3.connect(dbname)
+    if(item_category == "ammunitions"):
+        column_name = "gun_name"
+    elif(item_category == "drugs"):
+        column_name = "drug_name"
+    else:
+        column_name = "item_name"
+
+
+    existing = conn.execute(
+        f"SELECT id FROM {item_category} WHERE user_id = ? AND {column_name} = ?",(user_id, item_name)).fetchone()
+
+
+    if(existing):
+        conn.execute(f"UPDATE {item_category} SET qty = qty + ? WHERE user_id = ? AND {column_name} = ?", (qt, user_id, item_name)) 
+    else:
+        conn.execute(f"INSERT INTO {item_category} (user_id, {column_name}, qty) VALUES (?, ?, ?)", (user_id, item_name, qt))
+    
+    conn.commit()
+    conn.close()
+    
 
 
 def add_money(user_id:int,amount:int ):
