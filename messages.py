@@ -14,3 +14,17 @@ workn = ["Your car broke down on the way to work. Manager yelled at you for bein
          "You were stopped by the mob on your way to work.",
          "The police searched your car for drugs while you were returning. Corrupt pieces of shits",
          "You forgot your wallet in the car and a rogue stole it."]
+
+items = [
+
+                ("🔫 Pistol", "100", "A basic handgun", "ammunitions"),
+                ("⚔️ Assault Rifle", "500", "Fully automatic rifle", "ammunitions"),
+                ("🔱 Machine Gun", "1200", "Sprays bullets fast", "ammunitions"),
+                ("🎯 Sniper", "2000", "One shot, one kill", "ammunitions"),
+                ("🌿 Weed", "50", "Mild and cheap", "drugs"),
+                ("💊 Meth", "300", "High risk high reward", "drugs"),
+                ("💉 Heroin", "400", "Dangerous stuff", "drugs"),
+                ("❄️ Cocaine", "600", "The classic", "drugs"),
+                ("🔵 LSD", "250", "Trippy", "drugs"),
+                ("🥶 Blue Meth", "1000", "Say my name", "drugs"),
+            ]
