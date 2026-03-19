@@ -12,21 +12,8 @@ bot = commands.Bot(command_prefix = "sin ", intents = intents)
 @bot.event
 async def on_ready():
     print("Bot is ready")
-
-@bot.command()
-async def init(ctx):
-    
-    channel_exists = discord.utils.get(ctx.guild.channels, name = 'sin-city')
-
-    if channel_exists:
-        await ctx.send("Already Initialized")
-        return
-    
-    await ctx.guild.create_text_channel("Sin City")
-
     database.create_tables()
 
-    await ctx.send("Initialized")
 
 @bot.command()
 async def profile(ctx):
@@ -100,17 +87,22 @@ async def shop(ctx):
             embed.add_field(name = f"__{name}__ | 🪙 {price}" , value=desc, inline=False)
 
     await ctx.send(embed = embed)
-# RED_NUMBERS = {1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36}
-# BLACK_NUMBERS = {2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35}
+
 
 @bot.command()
 async def roulette(ctx, amount: int , bet_type:str):
+    user_id=ctx.author.id
+    d=database.get_user(user_id)
     bet_type=bet_type.lower()
-    # user_id=ctx.author.id
     
     if amount<=0:
         await ctx.send("Bet must be greater than zero")
         return
+    
+    if(d["money"]<amount):
+        await ctx.send("Insufficient balance")
+        return
+    
 
     valid_colours=["red","black"]
     valid_numbers=[str(i) for i in range(1,37)]
@@ -123,22 +115,39 @@ async def roulette(ctx, amount: int , bet_type:str):
     
     if bet_type in valid_numbers:
         result=random.randint(1,36)
-        if result==bet_type:
-            await ctx.send("Congratulation! You won ")
-            # profit=amount*35
+        if result==int(bet_type):
+            await ctx.send(f'Congratulation! It is {result} You won {35*amount} on your current balance')
+            database.remove_money(user_id,amount)
+            database.add_money(user_id,35*amount)
         else:
-            await ctx.send("You lost")
-            # profit=-amount
+            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
+            database.remove_money(user_id,amount)
         
 
     else:
         result=random.choice(valid_colours)
         if result==bet_type:
-            await ctx.send("Congratulation! You won")
-            # profit=amount*2
+            await ctx.send(f'Congratulation! It is {result} You won {2*amount} on your current balance')
+            database.remove_money(user_id,amount)
+            database.add_money(user_id,2*amount)
         else:
-            await ctx.send("You lost")
-            # profit=-amount
+            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
+            database.remove_money(user_id,amount)
+
+
+
+@bot.command()
+async def transfer(ctx, amount:int , member:discord.Member):
+    payer=ctx.author.id
+    receiver=member.id
+    database.add_money(receiver,amount)
+    database.remove_money(payer,amount)
+
+    await ctx.send(f'{amount} has been sent to {member.display_name}')
+
+
+
+
     
     
 
