@@ -39,9 +39,9 @@ async def profile(ctx):
     # embed.add_field(name="\u200b", value=f"🆙 Level: {info["level"]}", inline=False)
 
 
-    embed.add_field(name="\ub200", value=f"🔥 WANTED METER: {info["wanted"]}", inline=False)
-    embed.add_field(name="\ub200", value=f"📈 RESPECT METER: {info["integrity"]}", inline=False)
-    embed.add_field(name="\ub200", value=f"🪪 ROLE: {info["user_role"]}", inline=False)
+    embed.add_field(name="\u200b", value=f"🔥 WANTED METER: {info["wanted"]}", inline=False)
+    embed.add_field(name="\u200b", value=f"📈 RESPECT METER: {info["integrity"]}", inline=False)
+    embed.add_field(name="\u200b", value=f"🪪 ROLE: {info["user_role"]}", inline=False)
 
     await ctx.send(embed=embed)
 
@@ -61,5 +61,41 @@ async def inventory(ctx):
     embed.add_field(name = "Guns", value = value_g or "You currently own no guns", inline = False)
     embed.add_field(name = "Drugs", value = value_d or "You currently own no drugs", inline = False)
     embed.add_field(name = "Items", value = value_i or "You currently own no items", inline = False)
+
+    await ctx.send(embed = embed)
+
+@bot.command()
+async def shop(ctx):
+    info = database.get_user(ctx.author.id)
+    pages = [
+        {
+            "title": "GUNS",
+            "items": [
+                ("🔫 Pistol", "100", "A basic handgun"),
+                ("⚔️ Assault Rifle", "500", "Fully automatic rifle"),
+                ("🔱 Machine Gun", "1200", "Sprays bullets fast"),
+                ("🎯 Sniper", "2000", "One shot, one kill"),
+            ]
+        },
+        {
+            "title": "DRUGS",
+            "items": [
+                ("🌿 Weed", "50", "Mild and cheap"),
+                ("💊 Meth", "300", "High risk high reward"),
+                ("💉 Heroin", "400", "Dangerous stuff"),
+                ("❄️ Cocaine", "600", "The classic"),
+                ("🔵 LSD", "250", "Trippy"),
+                ("🥶 Blue Meth", "1000", "Say my name"),
+            ]
+        }
+    ]
+
+    embed = discord.Embed(title = "SHOP", color = discord.Color.brand_red())
+    
+    embed.add_field(name="Welcome to Sin City Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
+
+    for dic in pages:
+        for name, price, desc in dic["items"]:
+            embed.add_field(name = f"__{name}__ | 🪙 {price}" , value=desc, inline=False)
 
     await ctx.send(embed = embed)
