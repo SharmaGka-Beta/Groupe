@@ -157,4 +157,69 @@ def remove_money(user_id:int,amount:int):
     conn.commit()
     conn.close()
 
+def add_wanted(user_id, amount):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+    try:
+        try:
+            cursor.execute(
+                "UPDATE user_info SET wanted = wanted + ? WHERE user_id = ? ", (amount,user_id)
+            )
+        except sqlite3.IntegrityError:
+            cursor.execute(
+                "UPDATE user_info SET wanted = 100 WHERE user_id = ? ", (user_id,)
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+def remove_wanted(user_id, amount):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+    try:
+        try:
+            cursor.execute(
+                "UPDATE user_info SET wanted = wanted - ? WHERE user_id = ? ", (amount,user_id)
+            )
+        except sqlite3.IntegrityError:
+            cursor.execute(
+                "UPDATE user_info SET wanted = 0 WHERE user_id = ? ", (user_id,)
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+def add_integrity(user_id, amount):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+    try:
+        try:
+            cursor.execute(
+                "UPDATE user_info SET integrity = integrity + ? WHERE user_id = ? ", (amount,user_id)
+            )
+        except sqlite3.IntegrityError:
+            cursor.execute(
+                "UPDATE user_info SET integrity = 100 WHERE user_id = ? ", (user_id,)
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+def remove_integrity(user_id, amount):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+    try:
+        try:
+            cursor.execute(
+                "UPDATE user_info SET integrity = integrity - ? WHERE user_id = ? ", (amount,user_id)
+            )
+        except sqlite3.IntegrityError:
+            cursor.execute(
+                "UPDATE user_info SET integrity = 0 WHERE user_id = ? ", (user_id,)
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+
 

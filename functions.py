@@ -112,6 +112,10 @@ async def roulette(ctx, amount: int , bet_type:str):
 
 @bot.command()
 async def transfer(ctx, amount:int , member:discord.Member):
+    info = database.get_user(ctx.author.id)
+    if info["money"] < amount:
+        await ctx.send("You don't have the required funds")
+
     payer=ctx.author.id
     receiver=member.id
     database.add_money(receiver,amount)
