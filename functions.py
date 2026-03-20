@@ -15,6 +15,11 @@ async def on_ready():
     print("Bot is ready")
     database.create_tables()
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("I don't recognize that command. Type 'sin help' to view all commands")
+
 
 @bot.command()
 async def profile(ctx):
