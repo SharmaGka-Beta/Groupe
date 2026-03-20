@@ -228,6 +228,10 @@ class view(discord.ui.View):
             blackjack_cards.pop(self.ctx.author.id)
             return
         
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+        
         await self.ctx.send(embed=embed, view=view(self.ctx, self.arg))
 
         
