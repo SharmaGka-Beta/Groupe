@@ -28,3 +28,12 @@ items = [
                 ("🔵 LSD", "250", "Trippy", "drugs"),
                 ("🥶 Blue Meth", "1000", "Say my name", "drugs"),
             ]
+spades = [[m, ':spades:'] for m in range (1, 14)]
+hearts = [[m, ":hearts:"] for m in range (1, 14)]
+clubs = [[m, ':clubs:'] for m in range (1, 14)]
+diamonds = [[m, ':diamonds:'] for m in range(1, 14)]
+
+deck = spades + hearts + clubs + diamonds
+
+
+special_cards = {1: 'A', 11: 'J', 12: 'Q', 13: 'K', 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}

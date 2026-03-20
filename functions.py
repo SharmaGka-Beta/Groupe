@@ -121,6 +121,7 @@ async def transfer(ctx, amount:int , member:discord.Member):
     
 @bot.command()
 async def work(ctx):
+    info = database.add_user(ctx.author.id)
     a = random.randint(1, 100)
     money = random.randint(50, 150)
     if 1 <= a <= 89:
@@ -151,3 +152,175 @@ async def buy(ctx, item, qty:int):
             return
 
     await ctx.send("Enter a valid item name!")
+def blackjack_value(cards):
+
+    value = 0
+    aces = 0
+    for i in cards:
+        if i[0] == 1:
+            aces += 1
+            continue
+        if i[0] >= 10:
+            value += 10
+            continue
+        value += i[0]
+    
+    for i in range(aces):
+        if (value+11) <= 21:
+            value += 11
+            continue
+        value+=1
+
+    return value
+
+
+
+class view(discord.ui.View):
+
+    def __init__(self, ctx, arg):
+        super().__init__()
+        self.ctx = ctx
+        self.arg = arg
+    
+    @discord.ui.button(label="Hit", style = discord.ButtonStyle.primary)
+    async def hit_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        
+        await interaction.response.defer()
+
+        if blackjack_value(blackjack_cards[self.ctx.author.id]["player"]) == 21:
+            await self.ctx.send("The total is already 21.")
+            return
+        
+        round_deck = messages.deck[:]
+        random.shuffle(round_deck)
+
+        a = round_deck.pop()
+        while a in blackjack_cards[self.ctx.author.id]["player"] and a in blackjack_cards[self.ctx.author.id]["dealer"]:
+            a = round_deck.pop()
+
+        blackjack_cards[self.ctx.author.id]["player"].append(a)
+
+        embed = discord.Embed()
+
+        embed.add_field(name = "Dealer Cards", value = f'{messages.special_cards[blackjack_cards[self.ctx.author.id]["dealer"][0][0]]}{blackjack_cards[self.ctx.author.id]["dealer"][0][1]}  ??')
+        embed.add_field(name="Your Cards", value=" ".join(f'{messages.special_cards[b[0]]}{b[1]}  ' for b in blackjack_cards[self.ctx.author.id]["player"]))
+        embed.add_field(name="\u200b", value="\u200b")
+        embed.add_field(name = "Dealer Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"]))
+        embed.add_field(name = "Your Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["player"]))
+        embed.add_field(name="\u200b", value="\u200b")
+        
+
+        if blackjack_value(blackjack_cards[self.ctx.author.id]["player"]) > 21:
+            await self.ctx.send(embed = embed)
+            await self.ctx.send("BUST!!")
+            blackjack_cards.pop(self.ctx.author.id)
+            return
+        
+        await self.ctx.send(embed=embed, view=view(self.ctx, self.arg))
+
+        
+
+
+    @discord.ui.button(label="Stand", style = discord.ButtonStyle.primary)
+    async def stand_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        await interaction.response.defer()
+
+        round_deck = messages.deck[:]
+        random.shuffle(round_deck)
+
+        while True:
+            d = round_deck.pop()
+            while d in blackjack_cards[self.ctx.author.id]["player"] and d in blackjack_cards[self.ctx.author.id]["dealer"]:
+                d = round_deck.pop()
+
+            blackjack_cards[self.ctx.author.id]["dealer"].append(d)
+            if blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"]) >= 17:
+                break
+
+        embed = discord.Embed()
+
+        embed.add_field(name = "Dealer Cards", value = " ".join(f'{messages.special_cards[b[0]]}{b[1]}  ' for b in blackjack_cards[self.ctx.author.id]["dealer"]))
+        embed.add_field(name="Your Cards", value=" ".join(f'{messages.special_cards[b[0]]}{b[1]}  ' for b in blackjack_cards[self.ctx.author.id]["player"]))
+        embed.add_field(name="\u200b", value="\u200b")
+        embed.add_field(name = "Dealer Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"]))
+        embed.add_field(name = "Your Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["player"]))
+        embed.add_field(name="\u200b", value="\u200b")
+
+        await self.ctx.send(embed=embed)
+
+        dealer_total = blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"])
+        player_total = blackjack_value(blackjack_cards[self.ctx.author.id]["player"])
+
+        if dealer_total > 21:
+            await self.ctx.send(f"Dealer Busted!! You won {2*self.arg} coins")
+            database.add_money(self.ctx.author.id, 2*self.arg)
+            return
+        
+        elif player_total > dealer_total:
+            await self.ctx.send(f"WIN!! You won {2*self.arg} coins")
+            database.add_money(self.ctx.author.id, 2*self.arg)
+        
+        elif dealer_total == player_total:
+            await self.ctx.send(f"Tie. You evened out winning {self.arg} coins")
+            database.add_money(self.ctx.author.id, self.arg)
+            
+        
+        elif dealer_total > player_total:
+            await self.ctx.send("You Lost!!")
+            
+        
+        blackjack_cards.pop(self.ctx.author.id)
+
+    
+blackjack_cards = {}      
+# {userid: {player: [], dealer: []}}  
+
+        
+@bot.command()
+async def blackjack(ctx, arg: int):
+
+    if ctx.author.id in blackjack_cards.keys():
+        await ctx.send("You have an ongoing game!")
+        return
+
+    info = database.get_user(ctx.author.id)
+    if (arg <= 0):
+        await ctx.send("Bet must be greater than zero")
+        return
+
+    if (arg > info["money"]):
+        await ctx.send("Insufficient Balance")
+        return
+
+    round_deck = messages.deck[:]
+    random.shuffle(round_deck)
+    database.remove_money(ctx.author.id, arg)
+    await ctx.send(f"-{arg} coins")
+
+    
+    embed = discord.Embed()
+    a = round_deck.pop()
+    b, c = round_deck.pop(), round_deck.pop()
+    blackjack_cards[ctx.author.id] = {"player": [b, c], "dealer": [a]}
+
+    embed.add_field(name = "Dealer Cards", value = f'{messages.special_cards[a[0]]}{a[1]}  ??')
+    embed.add_field(name="Your Cards", value=f'{messages.special_cards[b[0]]}{b[1]}  {messages.special_cards[c[0]]}{c[1]}')
+    embed.add_field(name="\u200b", value="\u200b")
+    embed.add_field(name = "Dealer Total", value = blackjack_value(blackjack_cards[ctx.author.id]["dealer"]))
+    embed.add_field(name = "Your Total", value = blackjack_value(blackjack_cards[ctx.author.id]["player"]))
+    embed.add_field(name="\u200b", value="\u200b")
+
+    if blackjack_value(blackjack_cards[ctx.author.id]["player"]) == 21:
+        await ctx.send(embed = embed)
+        await ctx.send(f"BLACKJACK!!! You won {int(2.5*arg)} coins")
+        database.add_money(ctx.author.id, int(2.5*arg))
+        blackjack_cards.pop(ctx.author.id)
+        return
+
+
+    await ctx.send(embed=embed, view=view(ctx, arg))
+
+
+
+    
+
