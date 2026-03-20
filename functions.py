@@ -143,17 +143,25 @@ async def roulette(ctx, amount: int , bet_type:str):
     
 @bot.command()
 async def work(ctx):
-    info = database.add_user(ctx.author.id)
+    info = database.get_user(ctx.author.id)
+
+    if info["user_role"] != 'civilian':
+        await ctx.send("Why would you still want to go to your puny day job")
+        return
+
+    
     a = random.randint(1, 100)
-    money = random.randint(50, 150)
+    money = random.randint(20, 50)
     if 1 <= a <= 89:
         mes = random.choice(messages.workp)
-        await ctx.send(f"{mes} You gained {money} coins.")
+        await ctx.send(mes)
+        await ctx.send(f" You gained {money} coins.")
         database.add_money(ctx.author.id, money)
 
     elif 90 <= a <= 100:
         mes = random.choice(messages.workn)
-        await ctx.send(f"{mes} You lost {money} coins.")
+        await ctx.send(mes)
+        await ctx.send(f"You lost {money} coins.")
         database.remove_money(ctx.author.id, money)
 
 def blackjack_value(cards):
