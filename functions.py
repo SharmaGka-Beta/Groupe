@@ -60,18 +60,61 @@ async def inventory(ctx):
 
     await ctx.send(embed = embed)
 
+
+class shop_view(discord.ui.View):
+    
+
+    @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
+    async def gun_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed(title = "GUN SHOP", color = discord.Color.brand_red())
+    
+        embed.add_field(name="Welcome to Sin City Gun Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
+
+        for item in messages.items_gun:
+            embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
+
+        await interaction.response.edit_message(embed = embed, view = shop_view())
+
+        
+
+    @discord.ui.button(label="Drugs", style = discord.ButtonStyle.primary)
+    async def drugs_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed(title = "DRUG SHOP", color = discord.Color.brand_red())
+    
+        embed.add_field(name="Welcome to Sin City Drug Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
+
+        for item in messages.items_drugs:
+            embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
+
+        await interaction.response.edit_message(embed = embed, view = shop_view())
+
+    @discord.ui.button(label="Items", style = discord.ButtonStyle.primary)
+    async def items_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed(title = "ITEM SHOP", color = discord.Color.brand_red())
+    
+        embed.add_field(name="Welcome to Sin City Item Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
+
+        for item in messages.items_items:
+            embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
+
+        await interaction.response.edit_message(embed = embed, view = shop_view())
+
+
 @bot.command()
 async def shop(ctx):
-    info = database.get_user(ctx.author.id)
+    database.add_user(ctx.author.id)
     
-    embed = discord.Embed(title = "SHOP", color = discord.Color.brand_red())
+    embed = discord.Embed(title = "GUN SHOP", color = discord.Color.brand_red())
     
-    embed.add_field(name="Welcome to Sin City Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
+    embed.add_field(name="Welcome to Sin City Gun Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
 
-    for item in messages.items:
+    for item in messages.items_gun:
         embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
 
-    await ctx.send(embed = embed)
+    await ctx.send(embed = embed, view = shop_view())
 
 
 @bot.command()
@@ -154,20 +197,25 @@ async def work(ctx):
         database.remove_money(ctx.author.id, money)
 
 @bot.command()
-async def buy(ctx, item, qty:int):
+async def buy(ctx, item, qty:int = 1):
     info = database.get_user(ctx.author.id)
+
+    item = item.lower()
 
     if(qty <= 0):
         await ctx.send("Enter a valid quantity of items!")
         return
     for it in messages.items:
-        if(item == it[0][2:]):
+        if(item == it[0][2:].lower()):
             if(qty*int(it[1]) > info["money"]):
                 await ctx.send("Balance Insufficient!")
                 return
-            database.update_inventory(ctx.author.id, item, it[3], qty)
+            database.update_inventory(ctx.author.id, it[0][2:], it[3], qty)
             database.remove_money(ctx.author.id, qty*int(it[1]))
-            await ctx.send("Item bough successfully!")
+            if qty == 1:
+                await ctx.send(f"{qty} {item} bough successfully!")
+            elif qty > 1:
+                await ctx.send(f"{qty} {item} bough successfully!")
             return
 
     await ctx.send("Enter a valid item name!")
