@@ -325,7 +325,6 @@ class view(discord.ui.View):
         if dealer_total > 21:
             await self.ctx.send(f"Dealer Busted!! You won {2*self.arg} coins")
             database.add_money(self.ctx.author.id, 2*self.arg)
-            return
         
         elif player_total > dealer_total:
             await self.ctx.send(f"WIN!! You won {2*self.arg} coins")
