@@ -57,10 +57,10 @@ class invenView(discord.ui.View):
         for item in self.inven[0]:
             a = None
             for i in messages.items_gun:
-                if i[0][2:] == item[0]:
+                if i[0][2:].lower() == item[0]:
                     a = str(int(int(i[1])/2))
                     break
-            embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
+            embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
 
         await interaction.response.edit_message(embed = embed, view = invenView(self.ctx, self.inven))
 
@@ -72,10 +72,10 @@ class invenView(discord.ui.View):
         for item in self.inven[1]:
             a = None
             for i in messages.items_drugs:
-                if i[0][2:] == item[0]:
+                if i[0][2:].lower() == item[0]:
                     a = str(int(int(i[1])/2))
                     break
-            embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
+            embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
 
         await interaction.response.edit_message(embed = embed, view = invenView(self.ctx, self.inven))
 
@@ -87,10 +87,10 @@ class invenView(discord.ui.View):
         for item in self.inven[2]:
             a = None
             for i in messages.items_items:
-                if i[0][2:] == item[0]:
+                if i[0][2:].lower() == item[0]:
                     a = str(int(int(i[1])/2))
                     break
-            embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
+            embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
 
         await interaction.response.edit_message(embed = embed, view = invenView(self.ctx, self.inven))
     
@@ -105,10 +105,10 @@ async def inventory(ctx):
     for item in inven[0]:
         a = None
         for i in messages.items_gun:
-            if i[0][2:] == item[0]:
+            if i[0][2:].lower() == item[0]:
                 a = str(int(int(i[1])/2))
                 break
-        embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
+        embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
 
     
     await ctx.send(embed = embed, view = invenView(ctx, inven))
@@ -122,7 +122,6 @@ async def sell(ctx, item, qty: int = 1):
     item = item.lower()
     qty_owned = None
     price = None
-    db_item = None
 
     for it in messages.items:
         if (item == it[0][2:].lower()):
@@ -163,7 +162,7 @@ async def sell(ctx, item, qty: int = 1):
             qty = qty_owned
 
     cat_map = {0: "ammunitions", 1: "drugs", 2: "others"}
-    database.update_inventory(ctx.author.id, db_item, cat_map[cat], -qty)
+    database.update_inventory(ctx.author.id, item, cat_map[cat], -qty)
     database.add_money(ctx.author.id, price*qty)
     
     await ctx.send("Sale Successful!")
@@ -318,7 +317,7 @@ async def buy(ctx, item, qty:int = 1):
             if(qty*int(it[1]) > info["money"]):
                 await ctx.send("Balance Insufficient!")
                 return
-            database.update_inventory(ctx.author.id, it[0][2:], it[3], qty)
+            database.update_inventory(ctx.author.id, it[0][2:].lower(), it[3], qty)
             database.remove_money(ctx.author.id, qty*int(it[1]))
             if qty == 1:
                 await ctx.send(f"{qty} {item} bough successfully!")
