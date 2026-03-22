@@ -41,24 +41,77 @@ async def profile(ctx):
 
     await ctx.send(embed=embed)
 
+
+
+class invenView(discord.ui.View):
+    def __init__(self, ctx, inven):
+        super().__init__()
+        self.ctx = ctx
+        self.inven = inven
+
+    @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
+    async def gun_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed(title = "GUNS", color = discord.Color.brand_red())
+
+        for item in self.inven[0]:
+            a = None
+            for i in messages.items_gun:
+                if i[0][2:] == item[0]:
+                    a = str(int(int(i[1])/2))
+                    break
+            embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
+
+        await interaction.response.edit_message(embed = embed, view = invenView(self.ctx, self.inven))
+
+    @discord.ui.button(label="Drugs", style = discord.ButtonStyle.primary)
+    async def drug_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed(title = "DRUGS", color = discord.Color.brand_red())
+
+        for item in self.inven[1]:
+            a = None
+            for i in messages.items_drugs:
+                if i[0][2:] == item[0]:
+                    a = str(int(int(i[1])/2))
+                    break
+            embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
+
+        await interaction.response.edit_message(embed = embed, view = invenView(self.ctx, self.inven))
+
+    @discord.ui.button(label="Items", style = discord.ButtonStyle.primary)
+    async def item_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed(title = "ITEMS", color = discord.Color.brand_red())
+
+        for item in self.inven[2]:
+            a = None
+            for i in messages.items_items:
+                if i[0][2:] == item[0]:
+                    a = str(int(int(i[1])/2))
+                    break
+            embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
+
+        await interaction.response.edit_message(embed = embed, view = invenView(self.ctx, self.inven))
+    
     
 @bot.command()
 async def inventory(ctx):
 
     database.add_user(ctx.author.id)
     inven = database.get_inventory(ctx.author.id)
-    embed = discord.Embed(title = "Inventory", color = discord.Color.brand_red())
+    embed = discord.Embed(title = "GUNS", color = discord.Color.brand_red())
 
-    embed.set_thumbnail(url = ctx.author.display_avatar.url)
-    value_g = '\n'.join(f"{m[0]}: {m[1]}" for m in inven[0])
-    value_d = '\n'.join(f"{m[0]}: {m[1]}" for m in inven[1])
-    value_i = '\n'.join(f"{m[0]}: {m[1]}" for m in inven[2])
+    for item in inven[0]:
+        a = None
+        for i in messages.items_gun:
+            if i[0][2:] == item[0]:
+                a = str(int(int(i[1])/2))
+                break
+        embed.add_field(name = f"\u200b" , value=f"{item[0]} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
 
-    embed.add_field(name = "Guns", value = value_g or "You currently own no guns", inline = False)
-    embed.add_field(name = "Drugs", value = value_d or "You currently own no drugs", inline = False)
-    embed.add_field(name = "Items", value = value_i or "You currently own no items", inline = False)
-
-    await ctx.send(embed = embed)
+    
+    await ctx.send(embed = embed, view = invenView(ctx, inven))
 
 
 class shop_view(discord.ui.View):
