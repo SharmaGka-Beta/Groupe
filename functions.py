@@ -113,6 +113,61 @@ async def inventory(ctx):
     
     await ctx.send(embed = embed, view = invenView(ctx, inven))
 
+@bot.command()
+async def sell(ctx, item, qty: int = 1):
+
+    info = database.get_user(ctx.author.id)
+    inven = database.get_inventory(ctx.author.id)
+
+    item = item.lower()
+    qty_owned = None
+    price = None
+    db_item = None
+
+    for it in messages.items:
+        if (item == it[0][2:].lower()):
+            price = int(int(it[1])/2)
+            db_item = it[0][2:]
+            break
+    else:
+        await ctx.send("Enter a valid item!!")
+        return
+
+    t = -1  
+    cat = None
+
+    for i in inven:
+        t = t + 1
+        for a in i:
+            if a[0].lower() == item:
+                qty_owned = a[1]
+                cat = t
+                break
+        else:
+            continue
+        break
+    else:
+        await ctx.send(f"You don't own {item}!!")
+        return
+
+    if(qty <= 0):
+        await ctx.send("Enter a valid quantity of items!")
+        return
+    
+    if (qty > qty_owned):
+        if (qty_owned == 1):
+            await ctx.send(f"You only own {qty_owned} {item}. Defaulting to 1.")
+            qty = 1
+        else:
+            await ctx.send(f"You only own {qty_owned} {item}s. Defaulting to {qty_owned}.")
+            qty = qty_owned
+
+    cat_map = {0: "ammunitions", 1: "drugs", 2: "others"}
+    database.update_inventory(ctx.author.id, db_item, cat_map[cat], -qty)
+    database.add_money(ctx.author.id, price*qty)
+    
+    await ctx.send("Sale Successful!")
+    await ctx.send(f"You gained {price*qty} coins")
 
 class shop_view(discord.ui.View):
     
