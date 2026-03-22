@@ -133,6 +133,7 @@ def update_inventory(user_id:int, item_name, item_category,  qt:int):
 
     if(existing):
         conn.execute(f"UPDATE {item_category} SET qty = qty + ? WHERE user_id = ? AND {column_name} = ?", (qt, user_id, item_name)) 
+        conn.execute(f"DELETE FROM {item_category} WHERE user_id = ? AND {column_name} = ? AND qty = 0", (user_id, item_name))
     else:
         conn.execute(f"INSERT INTO {item_category} (user_id, {column_name}, qty) VALUES (?, ?, ?)", (user_id, item_name, qt))
     
