@@ -41,3 +41,28 @@ deck = spades + hearts + clubs + diamonds
 
 
 special_cards = {1: 'A', 11: 'J', 12: 'Q', 13: 'K', 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}
+
+cop_messages_positive = [
+    "Alright, move along. Don't let me see you here again.",
+    "You didn't hear this from me, but get out of here. Now.",
+    "I'm going to pretend I didn't see that. You owe me one.",
+    "Get out of my sight before I change my mind.",
+    "Consider this your lucky day. Don't waste it.",
+    "I've got kids too. Go home.",
+    "Next time I won't be so understanding. Move.",
+    "You've got two minutes to be gone. I'm not looking.",
+    "Don't make me regret this.",
+]
+
+cop_messages_negative = [
+    "Hands where I can see them. You're coming with me.",
+    "Save it. I've heard every story in the book.",
+    "Turn around. Slowly.",
+    "Wrong place, wrong time, wrong answer.",
+    "You just made this a lot worse for yourself.",
+    "Keep talking. I dare you.",
+    "I've had a long night and you just made it longer.",
+    "That's enough. On the ground.",
+    "You have the right to remain silent. I suggest you use it.",
+    "Call it in — yeah, I've got one here.",
+]
