@@ -497,7 +497,22 @@ async def blackjack(ctx, arg: int):
 
     await ctx.send(embed=embed, view=view(ctx, arg))
 
+@bot.commad()
+async def run(ctx):
+    info = database.get_user(ctx.author.id)
 
-
+    if not info["in_jail"]:
+        await ctx.send("🤨 You're not even in jail, why are you running?")
+        return
     
-
+    run_yes=random.randint(1,100)
+    if(0<run_yes<=5):
+        await ctx.send( f"🏃 **{ctx.author.name} made a run for it!**\n"
+            f"The guards were distracted... you slipped through the fence and escaped! "
+            f"You're free! For now. 😈")
+    
+    else: 
+        await ctx.send(
+            f"🚨 **{ctx.author.name} tried to escape... and got caught!**\n"
+            f"The guards tackled you back to your cell. Better luck next time. 🔒"
+        )

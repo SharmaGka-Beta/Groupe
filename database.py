@@ -243,6 +243,7 @@ def update_role(uid, role):
     else:
         cursor.execute("UPDATE user_info SET user_role = ? WHERE user_id = ?", (role, uid))
 
+    conn.commit()
     conn.close()
 
 

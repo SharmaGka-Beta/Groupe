@@ -14,6 +14,8 @@ async def police_catch(ctx):
     database.update_role(ctx.author.id, 'convict')
 
     return 1
+
+
     
     
 
