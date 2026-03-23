@@ -536,15 +536,16 @@ async def talk(ctx):
             database.update_jail(ctx.author.id, 0)
         else:
             await ctx.send(random.choice(messages.cop_messages_negative))
-            database.update_jail(ctx.author.id, 1)
+            database.remove_integrity(ctx.author.id, 5)
+            await ctx.send("You lost 5 integrity!")
     else:
         await ctx.send("You are not even jail, do you just enjoy talking to cops?")
 
 @bot.command()
-<<<<<<< HEAD
 async def getcaught(ctx):
     database.update_jail(ctx.author.id, 1)
-=======
+
+@bot.command()
 async def bribe(ctx, arg: int):
     info = database.get_user(ctx.author.id)
 
@@ -566,14 +567,9 @@ async def bribe(ctx, arg: int):
     database.remove_money(ctx.author.id, arg)
     await ctx.send(f"-{arg} coins")
 
-    if arg <= 4000:
-        prob = 40
-    elif arg <= 8000:
-        prob = 70
-    else:
-        prob = 95
+    arg = arg/10000
 
-    if random.randint(1, 100) <= prob:
+    if (random.random() <= arg):
         database.update_jail(ctx.author.id, 0)
         await ctx.send("Alright we'll let you go this time")
         database.remove_integrity(ctx.author.id, 10)
@@ -624,13 +620,12 @@ async def run(ctx):
             f"The guards tackled you back to your cell. Better luck next time. 🔒"
         )
 
-# @bot.command()
-# async def catch(ctx):
-#     await events.police_catch(ctx)
+@bot.command()
+async def catch(ctx):
+    await events.police_catch(ctx)
 
-# @bot.command()
-# async def w(ctx):
-#     database.add_wanted(ctx.author.id, 100)
+@bot.command()
+async def w(ctx):
+    database.add_wanted(ctx.author.id, 100)
     
 
->>>>>>> af90992b796312279525d978e86b7b6f2facb5cd

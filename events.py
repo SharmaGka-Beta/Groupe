@@ -6,7 +6,6 @@ async def police_catch(ctx):
     info = database.get_user(ctx.author.id)
     catch_roll = info['wanted']
     if (catch_roll <= random.randint(1, 100)):
-        # print(1)
         return 0
     
     await ctx.send("You have been captured by the police!")
