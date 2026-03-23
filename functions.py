@@ -3,6 +3,7 @@ from discord.ext import commands
 import database
 import random
 import messages
+import events
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -540,5 +541,96 @@ async def talk(ctx):
         await ctx.send("You are not even jail, do you just enjoy talking to cops?")
 
 @bot.command()
+<<<<<<< HEAD
 async def getcaught(ctx):
     database.update_jail(ctx.author.id, 1)
+=======
+async def bribe(ctx, arg: int):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] != 1:
+        await ctx.send("You're not a convict!")
+        return
+    
+    if (arg <= 0):
+        await ctx.send("You think this is a joke!!")
+        await ctx.send("The cop roughed you up.")
+        await ctx.send("-500 coins")
+        database.remove_money(ctx.author.id, 500)
+        return
+
+    if (arg > info["money"]):
+        await ctx.send("Insufficient balance")
+        return
+    
+    database.remove_money(ctx.author.id, arg)
+    await ctx.send(f"-{arg} coins")
+
+    if arg <= 4000:
+        prob = 40
+    elif arg <= 8000:
+        prob = 70
+    else:
+        prob = 95
+
+    if random.randint(1, 100) <= prob:
+        database.update_jail(ctx.author.id, 0)
+        await ctx.send("Alright we'll let you go this time")
+        database.remove_integrity(ctx.author.id, 10)
+        database.remove_wanted(ctx.author.id, 10)
+        return
+    
+    await ctx.send("Not enough!!")
+
+@bot.command()
+async def bail(ctx):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] != 1:
+        await ctx.send("You're not a convict!")
+        return
+    
+    if (info["money"] < 10000):
+        await ctx.send("Insufficient Balance")
+        return
+
+    
+    database.remove_money(ctx.author.id, 10000)
+    await ctx.send("Released")
+    database.update_jail(ctx.author.id, 0)
+    database.remove_wanted(ctx.author.id, 10)
+
+    
+    
+@bot.command()
+async def run(ctx):
+    info = database.get_user(ctx.author.id)
+
+    if  info["jail"]==0:
+        await ctx.send("🤨 You're not even in jail, why are you running?")
+        return
+    
+    run_yes=random.randint(1,100)
+    if(0<run_yes<=5):
+        await ctx.send( f"🏃 **{ctx.author.name} made a run for it!**\n"
+            f"The guards were distracted... you slipped through the fence and escaped! "
+            f"You're free! For now. 😈")
+        database.update_jail(ctx.author.id,0)
+        database.remove_wanted(ctx.author.id,10)
+    
+    else: 
+        await ctx.send(
+            f"🚨 **{ctx.author.name} tried to escape... and got caught!**\n"
+            f"The guards tackled you back to your cell. Better luck next time. 🔒"
+        )
+
+# @bot.command()
+# async def catch(ctx):
+#     await events.police_catch(ctx)
+
+# @bot.command()
+# async def w(ctx):
+#     database.add_wanted(ctx.author.id, 100)
+    
+
+>>>>>>> af90992b796312279525d978e86b7b6f2facb5cd
