@@ -117,6 +117,11 @@ async def inventory(ctx):
 async def sell(ctx, item, qty: int = 1):
 
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
     inven = database.get_inventory(ctx.author.id)
 
     item = item.lower()
@@ -226,8 +231,13 @@ async def shop(ctx):
 
 @bot.command()
 async def roulette(ctx, amount: int , bet_type:str):
-    user_id=ctx.author.id
     d=database.get_user(user_id)
+
+    if d["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
+    user_id=ctx.author.id
     bet_type=bet_type.lower()
     
     if amount<=0:
@@ -270,6 +280,10 @@ async def roulette(ctx, amount: int , bet_type:str):
 @bot.command()
 async def transfer(ctx, amount:int , member:discord.Member):
     info = database.get_user(ctx.author.id)
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
     if info["money"] < amount:
         await ctx.send("You don't have the required funds")
 
@@ -283,6 +297,10 @@ async def transfer(ctx, amount:int , member:discord.Member):
 @bot.command()
 async def work(ctx):
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
 
     if info["user_role"] != 'civilian':
         await ctx.send("Why would you still want to go to your puny day job")
@@ -306,6 +324,10 @@ async def work(ctx):
 @bot.command()
 async def buy(ctx, item, qty:int = 1):
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
 
     item = item.lower()
 
@@ -456,11 +478,16 @@ blackjack_cards = {}
 @bot.command()
 async def blackjack(ctx, arg: int):
 
+    info = database.get_user(ctx.author.id)
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
+
     if ctx.author.id in blackjack_cards.keys():
         await ctx.send("You have an ongoing game!")
         return
 
-    info = database.get_user(ctx.author.id)
     if (arg <= 0):
         await ctx.send("Bet must be greater than zero")
         return
@@ -500,7 +527,6 @@ async def blackjack(ctx, arg: int):
 @bot.command
 async def talk(ctx):
     info = database.get_user(ctx.author.id)
-    
     if(info["jail"]):
         respect = info["integrity"]
         if(random.random() < (respect/100)^2):
@@ -511,6 +537,66 @@ async def talk(ctx):
             database.update_jail(ctx.author.id, 1)
     else:
         ctx.send("You are not even jail, do you just enjoy talking to cops?")
+
+
+@bot.command()
+async def bribe(ctx, arg: int):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] != 1:
+        await ctx.send("You're not a convict!")
+        return
+    
+    if (arg <= 0):
+        await ctx.send("You think this is a joke!!")
+        await ctx.send("The cop roughed you up.")
+        await ctx.send("-500 coins")
+        database.remove_money(ctx.author.id, 500)
+        return
+
+    if (arg > info["money"]):
+        await ctx.send("Insufficient balance")
+        return
+    
+    database.remove_money(ctx.author.id, arg)
+    await ctx.send(f"-{arg} coins")
+
+    if arg <= 4000:
+        prob = 40
+    elif arg <= 8000:
+        prob = 70
+    else:
+        prob = 95
+
+    if random.randint(1, 100) <= prob:
+        database.update_role(ctx.author.id, 0)
+        await ctx.send("Alright we'll let you go this time")
+        database.remove_integrity(ctx.author.id, 10)
+        database.remove_wanted(ctx.author.id, 10)
+        return
+    
+    await ctx.send("Not enough!!")
+
+@bot.command()
+async def bail(ctx):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] != 1:
+        await ctx.send("You're not a convict!")
+        return
+    
+    if (info["money"] < 10000):
+        await ctx.send("Insufficient Balance")
+        return
+
+    
+    database.remove_money(ctx.author.id, 10000)
+    await ctx.send("Released")
+    database.update_role(ctx.author.id, 0)
+    database.remove_wanted(ctx.author.id, 10)
+
+    
+    
 @bot.command()
 async def run(ctx):
     info = database.get_user(ctx.author.id)
@@ -532,3 +618,4 @@ async def run(ctx):
             f"🚨 **{ctx.author.name} tried to escape... and got caught!**\n"
             f"The guards tackled you back to your cell. Better luck next time. 🔒"
         )
+

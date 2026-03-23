@@ -237,6 +237,7 @@ def update_jail(uid, val):
     cursor = conn.cursor()
 
     cursor.execute("UPDATE user_info SET jail = ? WHERE user_id = ?", (val, uid))
+    conn.commit()
 
     conn.close()
 
