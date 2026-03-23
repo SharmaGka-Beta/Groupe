@@ -497,7 +497,6 @@ async def blackjack(ctx, arg: int):
 
     await ctx.send(embed=embed, view=view(ctx, arg))
 
-<<<<<<< HEAD
 @bot.command
 async def talk(ctx):
     info = database.get_user(ctx.author.id)
@@ -512,7 +511,6 @@ async def talk(ctx):
             database.update_jail(ctx.author.id, 1)
     else:
         ctx.send("You are not even jail, do you just enjoy talking to cops?")
-=======
 @bot.command()
 async def run(ctx):
     info = database.get_user(ctx.author.id)
@@ -520,7 +518,6 @@ async def run(ctx):
     if  info["jail"]==0:
         await ctx.send("🤨 You're not even in jail, why are you running?")
         return
->>>>>>> run
     
     run_yes=random.randint(1,100)
     if(0<run_yes<=5):
