@@ -3,6 +3,7 @@ from discord.ext import commands
 import database
 import random
 import messages
+import events
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -569,7 +570,7 @@ async def bribe(ctx, arg: int):
         prob = 95
 
     if random.randint(1, 100) <= prob:
-        database.update_role(ctx.author.id, 0)
+        database.update_jail(ctx.author.id, 0)
         await ctx.send("Alright we'll let you go this time")
         database.remove_integrity(ctx.author.id, 10)
         database.remove_wanted(ctx.author.id, 10)
@@ -592,7 +593,7 @@ async def bail(ctx):
     
     database.remove_money(ctx.author.id, 10000)
     await ctx.send("Released")
-    database.update_role(ctx.author.id, 0)
+    database.update_jail(ctx.author.id, 0)
     database.remove_wanted(ctx.author.id, 10)
 
     
@@ -618,4 +619,13 @@ async def run(ctx):
             f"🚨 **{ctx.author.name} tried to escape... and got caught!**\n"
             f"The guards tackled you back to your cell. Better luck next time. 🔒"
         )
+
+# @bot.command()
+# async def catch(ctx):
+#     await events.police_catch(ctx)
+
+# @bot.command()
+# async def w(ctx):
+#     database.add_wanted(ctx.author.id, 100)
+    
 
