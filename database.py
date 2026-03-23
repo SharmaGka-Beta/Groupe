@@ -237,7 +237,7 @@ def update_jail(uid, val):
     cursor = conn.cursor()
 
     cursor.execute("UPDATE user_info SET jail = ? WHERE user_id = ?", (val, uid))
-
+    conn.commit()
     conn.close()
 
 def update_role(uid, role):
@@ -246,7 +246,7 @@ def update_role(uid, role):
     cursor = conn.cursor()
 
     cursor.execute("UPDATE user_info SET user_role = ? WHERE user_id = ?", (role, uid))
-
+    conn.commit()
     conn.close()
 
 
