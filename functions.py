@@ -117,6 +117,11 @@ async def inventory(ctx):
 async def sell(ctx, item, qty: int = 1):
 
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
     inven = database.get_inventory(ctx.author.id)
 
     item = item.lower()
@@ -226,8 +231,13 @@ async def shop(ctx):
 
 @bot.command()
 async def roulette(ctx, amount: int , bet_type:str):
-    user_id=ctx.author.id
     d=database.get_user(user_id)
+
+    if d["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
+    user_id=ctx.author.id
     bet_type=bet_type.lower()
     
     if amount<=0:
@@ -270,6 +280,10 @@ async def roulette(ctx, amount: int , bet_type:str):
 @bot.command()
 async def transfer(ctx, amount:int , member:discord.Member):
     info = database.get_user(ctx.author.id)
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
     if info["money"] < amount:
         await ctx.send("You don't have the required funds")
 
@@ -283,6 +297,10 @@ async def transfer(ctx, amount:int , member:discord.Member):
 @bot.command()
 async def work(ctx):
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
 
     if info["user_role"] != 'civilian':
         await ctx.send("Why would you still want to go to your puny day job")
@@ -306,6 +324,10 @@ async def work(ctx):
 @bot.command()
 async def buy(ctx, item, qty:int = 1):
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
 
     item = item.lower()
 
@@ -456,11 +478,16 @@ blackjack_cards = {}
 @bot.command()
 async def blackjack(ctx, arg: int):
 
+    info = database.get_user(ctx.author.id)
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
+
     if ctx.author.id in blackjack_cards.keys():
         await ctx.send("You have an ongoing game!")
         return
 
-    info = database.get_user(ctx.author.id)
     if (arg <= 0):
         await ctx.send("Bet must be greater than zero")
         return
