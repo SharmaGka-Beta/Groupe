@@ -232,16 +232,20 @@ def remove_integrity(user_id, amount):
     finally:
         conn.close()
 
+def update_jail(uid, val):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE user_info SET jail = ? WHERE user_id = ?", (val, uid))
+
+    conn.close()
+
 def update_role(uid, role):
 
     conn = sqlite3.connect(dbname)
     cursor = conn.cursor()
 
-    if role == 'convict':
-        cursor.execute("UPDATE user_info SET jail = 1 WHERE user_id = ?", (uid,))
-    
-    else:
-        cursor.execute("UPDATE user_info SET user_role = ? WHERE user_id = ?", (role, uid))
+    cursor.execute("UPDATE user_info SET user_role = ? WHERE user_id = ?", (role, uid))
 
     conn.close()
 
