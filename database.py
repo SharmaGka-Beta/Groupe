@@ -239,6 +239,11 @@ def update_role(uid, role):
 
     if role == 'convict':
         cursor.execute("UPDATE user_info SET jail = 1 WHERE user_id = ?", (uid,))
+
+    elif role == 'notconvict':
+
+        cursor.execute("UPDATE user_info SET jail = 0 WHERE user_id = ?", (uid,))
+        remove_wanted(uid, 10)
     
     else:
         cursor.execute("UPDATE user_info SET user_role = ? WHERE user_id = ?", (role, uid))
