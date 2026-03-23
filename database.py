@@ -12,7 +12,8 @@ def create_tables():
             money INTEGER DEFAULT 1000,
             wanted INTEGER DEFAULT 0 CHECK(wanted >= 0 AND wanted <= 100), 
             integrity INTEGER DEFAULT 0 CHECK(integrity >= 0 AND integrity <= 100),
-            user_role TEXT DEFAULT "civilian"
+            user_role TEXT DEFAULT "civilian",
+            jail INTEGER DEFAULT 0
         )  
     """)
 
@@ -77,7 +78,7 @@ def get_user(user_id: int):
         
     
     conn.close()
-    return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4]}
+    return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4], "jail": row[5]}
 
 def get_inventory(uid):
 
@@ -151,12 +152,21 @@ def add_money(user_id:int,amount:int ):
     conn.close()
 
 def remove_money(user_id:int,amount:int):
-    conn=sqlite3.connect(dbname)
-    conn.execute(
-        "UPDATE user_info SET money =money - ? WHERE user_id = ?",(amount,user_id)
-    )
-    conn.commit()
-    conn.close()
+
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+    try:
+        try:
+            cursor.execute(
+                "UPDATE user_info SET money = money - ? WHERE user_id = ? ", (amount,user_id)
+            )
+        except sqlite3.IntegrityError:
+            cursor.execute(
+                "UPDATE user_info SET money = 0 WHERE user_id = ? ", (user_id,)
+            )
+        conn.commit()
+    finally:
+        conn.close()
 
 def add_wanted(user_id, amount):
     conn = sqlite3.connect(dbname)
@@ -222,5 +232,17 @@ def remove_integrity(user_id, amount):
     finally:
         conn.close()
 
+def update_role(uid, role):
+
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+
+    if role == 'convict':
+        cursor.execute("UPDATE user_info SET jail = 1 WHERE user_id = ?", (uid,))
+    
+    else:
+        cursor.execute("UPDATE user_info SET user_role = ? WHERE user_id = ?", (role, uid))
+
+    conn.close()
 
 
