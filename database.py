@@ -9,7 +9,7 @@ def create_tables():
     cursor.execute("""
         CREATE TABLE IF NOT exists user_info(
             user_id INTEGER PRIMARY KEY,
-            money INTEGER DEFAULT 1000 CHECK(money <= 0),
+            money INTEGER DEFAULT 1000 CHECK(money >= 0),
             wanted INTEGER DEFAULT 0 CHECK(wanted >= 0 AND wanted <= 100), 
             integrity INTEGER DEFAULT 0 CHECK(integrity >= 0 AND integrity <= 100),
             user_role TEXT DEFAULT "civilian",

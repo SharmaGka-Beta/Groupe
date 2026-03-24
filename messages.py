@@ -30,6 +30,9 @@ items_drugs =  [("🌿 Weed", "50", "Mild and cheap", "drugs"),
 
 items_items = []
 
+hit_targets = ["Joaquin Salamanca", "Ed Truck", "Charles McGill", "Negan Smith", "Becca Butcher", 
+       "Susan Duffy", "Imran Ansari", "Ann Perkins", "Veronica Duncan", "Meera Eston"]
+
 items = items_gun + items_drugs + items_items
 
 spades = [[m, ':spades:'] for m in range (1, 14)]
