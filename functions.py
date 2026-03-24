@@ -407,25 +407,27 @@ async def w(ctx):
     database.add_wanted(ctx.author.id, 100)
 
 class Charity_View(discord.ui.View):
-    def __init__(self, user_id, amount, message):
-        super().__init__
+    def __init__(self, user_id, amount, message, ctx):
+        super().__init__()
         self.user_id = user_id
         self.amount = amount
         self.message = message
+        self.ctx = ctx
 
-    async def interaction_check(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user.id != self.user_id:
-            await interaction.response.send_message("This isn't your charity!")
+            await interaction.response.send_message("This isn't your charity!", ephemeral = True)
             return False
         return True
 
     @discord.ui.button(label="Donate", style=discord.ButtonStyle.primary)
     async def accept(self, interaction: discord.Interaction, button: discord.ui.Button):
         
+        await interaction.response.defer()
         info = database.get_user(self.user_id)
 
         if(self.amount>info["money"]):
-            await interaction.response.send_message("You don't have enough funds")
+            await self.ctx.send("You don't have enough funds")
             return
         
         database.remove_money(self.user_id, self.amount)
@@ -435,12 +437,16 @@ class Charity_View(discord.ui.View):
         for item in self.children:
             item.disabled = True
 
-        await interaction.followup.send(f'Coins : -{self.amount} , Integrity : +{int(self.amount/1000)} , Wanted : -{int(self.amount/1000)}')
+        await self.ctx.send(f'Coins : -{self.amount} , Integrity : +{int(self.amount/1000)} , Wanted : -{int(self.amount/1000)}')
 
+    @discord.ui.button(label="Decline", style=discord.ButtonStyle.primary)
     async def decline(self, interaction: discord.Interaction, button: discord.ui.Button):
         
+        await interaction.response.defer()
         for item in self.children:
             item.disabled = True
+
+        await self.ctx.send("Ye jo gareeb hoye ye apni aadat se gareeb hoye!")
 
     
 
@@ -466,7 +472,7 @@ async def charity(ctx):
     )
     embed.add_field(name="💸 Requested Amount", value=f"{amount}", inline=True)
 
-    await ctx.send(embed=embed, view=Charity_View(ctx.author.id, amount, message))
+    await ctx.send(embed=embed, view=Charity_View(ctx.author.id, amount, message, ctx))
     
 
     

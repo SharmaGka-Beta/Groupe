@@ -71,14 +71,14 @@ cop_messages_negative = [
 ]
 
 charity_messages = [
-    "You donated to a homeless shelter downtown. The staff thanked you personally.",
-    "You dropped cash into a street musician's case. He played your favorite song.",
-    "You funded a kid's school supplies for the year. His mom cried.",
-    "You paid for a stranger's groceries at checkout. They couldn't believe it.",
-    "You donated to the local food bank. They were running low this week.",
-    "You sponsored a stray dog's adoption fee at the shelter.",
-    "You left a fat tip for the overworked diner waitress.",
-    "You bought meals for the guys sleeping under the bridge.",
-    "You anonymously covered someone's hospital bill.",
-    "You funded a small local church's roof repairs.",
+    "Donate to a homeless shelter downtown",
+    "Drop cash into a street musician's case",
+    "Fund a kid's school supplies for the year",
+    "Pay for a stranger's groceries at checkout",
+    "Donate to the local food bank",
+    "Sponsor a stray dog's adoption fee at the shelter.",
+    "Leave a fat tip for the overworked diner waitress.",
+    "Bring meals for the guys sleeping under the bridge.",
+    "Cover someone's hospital bill.",
+    "Cover the costs of a small local church's roof repairs.",
 ]
