@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 import functions
 import gambling
+import civilian
+import devcommands
 
 
 
