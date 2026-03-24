@@ -456,5 +456,109 @@ async def catch(ctx):
 @bot.command()
 async def w(ctx):
     database.add_wanted(ctx.author.id, 100)
-    
 
+@bot.command()
+async def u(ctx, arg: int = 0):
+    database.update_jail(ctx.author.id, arg)
+
+@bot.command()
+async def m(ctx, arg: int):
+    database.add_money(ctx.author.id, arg)
+
+@bot.command()
+async def wl(ctx):
+    database.remove_wanted(ctx.author.id, -20)
+
+
+class WeaponButton(discord.ui.Button):
+    def __init__(self, gun, ctx, target, money):
+        super().__init__(label=gun, style=discord.ButtonStyle.primary)
+        self.gun = gun
+        self.ctx = ctx
+        self.target = target
+        self.money = money
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f"You used a {self.gun}")
+        if(await events.police_catch(self.ctx, 10)):
+            await self.ctx.send("The police knew you were coming!")
+            await self.ctx.send("You have been captured by the police!")
+            await self.ctx.send("You can bribe, run, talk or give bail")
+            return
+        
+        await self.ctx.send(f"You have successfully eliminated {self.target}")
+        await self.ctx.send(f"+{self.money} coins")
+        database.add_money(self.ctx.author.id, self.money)
+        database.remove_integrity(self.ctx.author.id, int(self.money/1000))
+        database.add_wanted(self.ctx.author.id, int(self.money/1000))
+    
+class acceptView(discord.ui.View):
+
+    def __init__(self, ctx, weapons, target, money):
+        super().__init__()
+        self.ctx = ctx
+        self.weapons = weapons
+        for weapon in weapons:
+            self.add_item(WeaponButton(weapon[0].capitalize(), self.ctx, target, money))
+
+        
+
+class hitView(discord.ui.View):
+    
+    def __init__(self, ctx, target, money):
+        super().__init__()
+        self.ctx = ctx
+        self.target = target
+        self.money = money
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("Get your own contract!", ephemeral = True)
+            return False
+        return True
+    
+    @discord.ui.button(label="Accept", style = discord.ButtonStyle.primary,)
+    async def accept_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+    
+        await interaction.response.defer()
+        info = database.get_inventory(self.ctx.author.id)
+        if len(info[0]) == 0:
+            await interaction.response.send_message("You don't have a weapon!")
+            return
+
+        embed = discord.Embed()
+        embed.add_field(name = "Which weapon would you like to use?", value = "\u200b")
+        await self.ctx.send(embed = embed, view = acceptView(self.ctx, info[0], self.target, self.money))
+        
+
+        
+
+    @discord.ui.button(label="Reject", style = discord.ButtonStyle.primary)
+    async def reject_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        await interaction.response.send_message("Coward")
+        return
+        
+
+
+
+@bot.command()
+async def hit(ctx):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
+    if (await events.police_catch(ctx, 8)):
+        await ctx.send("Your contact turned out be an undercover cop!")
+        await ctx.send("You have been captured by the cops. You can bribe, run, negotiate or pay bail.")
+        return
+    
+    target = random.choice(messages.hit_targets)
+    money = random.randint(5000, 15000)
+
+    embed = discord.Embed()
+    embed.add_field(name = '\u200b', value = f'{target} - {money} coins')
+
+    await ctx.send(embed = embed, view = hitView(ctx, target, money))

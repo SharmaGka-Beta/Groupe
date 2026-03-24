@@ -6,13 +6,13 @@ import messages
 
 @bot.command()
 async def roulette(ctx, amount: int , bet_type:str):
+    user_id=ctx.author.id
     d=database.get_user(user_id)
 
     if d["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")
         return
     
-    user_id=ctx.author.id
     bet_type=bet_type.lower()
     
     if amount<=0:
@@ -82,6 +82,12 @@ class view(discord.ui.View):
         super().__init__()
         self.ctx = ctx
         self.arg = arg
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("Not your game!", ephemeral = True)
+            return False
+        return True
     
     @discord.ui.button(label="Hit", style = discord.ButtonStyle.primary)
     async def hit_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
