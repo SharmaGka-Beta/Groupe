@@ -66,3 +66,16 @@ cop_messages_negative = [
     "You have the right to remain silent. I suggest you use it.",
     "Call it in — yeah, I've got one here.",
 ]
+
+charity_messages = [
+    "You donated to a homeless shelter downtown. The staff thanked you personally.",
+    "You dropped cash into a street musician's case. He played your favorite song.",
+    "You funded a kid's school supplies for the year. His mom cried.",
+    "You paid for a stranger's groceries at checkout. They couldn't believe it.",
+    "You donated to the local food bank. They were running low this week.",
+    "You sponsored a stray dog's adoption fee at the shelter.",
+    "You left a fat tip for the overworked diner waitress.",
+    "You bought meals for the guys sleeping under the bridge.",
+    "You anonymously covered someone's hospital bill.",
+    "You funded a small local church's roof repairs.",
+]
