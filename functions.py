@@ -3,6 +3,7 @@ from discord.ext import commands
 import database
 import random
 import messages
+import events
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -117,6 +118,11 @@ async def inventory(ctx):
 async def sell(ctx, item, qty: int = 1):
 
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
     inven = database.get_inventory(ctx.author.id)
 
     item = item.lower()
@@ -224,52 +230,14 @@ async def shop(ctx):
     await ctx.send(embed = embed, view = shop_view())
 
 
-@bot.command()
-async def roulette(ctx, amount: int , bet_type:str):
-    user_id=ctx.author.id
-    d=database.get_user(user_id)
-    bet_type=bet_type.lower()
-    
-    if amount<=0:
-        await ctx.send("Bet must be greater than zero")
-        return
-    
-    if(d["money"]<amount):
-        await ctx.send("Insufficient balance")
-        return
-    
-
-    valid_colours=["red","black"]
-    valid_numbers=[str(i) for i in range(1,37)]
-
-    if bet_type not in valid_colours and bet_type not in valid_numbers:
-        await ctx.send("Invalid bet!: Enter a colour (red/black) or number (1 to 36)")
-        return   
-    
-    if bet_type in valid_numbers:
-        result=random.randint(1,36)
-        if result==int(bet_type):
-            await ctx.send(f'Congratulation! It is {result} You won {35*amount} on your current balance')
-            database.remove_money(user_id,amount)
-            database.add_money(user_id,35*amount)
-        else:
-            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
-            database.remove_money(user_id,amount)
-        
-
-    else:
-        result=random.choice(valid_colours)
-        if result==bet_type:
-            await ctx.send(f'Congratulation! It is {result} You won {2*amount} on your current balance')
-            database.remove_money(user_id,amount)
-            database.add_money(user_id,2*amount)
-        else:
-            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
-            database.remove_money(user_id,amount)
 
 @bot.command()
 async def transfer(ctx, amount:int , member:discord.Member):
     info = database.get_user(ctx.author.id)
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
     if info["money"] < amount:
         await ctx.send("You don't have the required funds")
 
@@ -283,6 +251,10 @@ async def transfer(ctx, amount:int , member:discord.Member):
 @bot.command()
 async def work(ctx):
     info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
 
     if info["user_role"] != 'civilian':
         await ctx.send("Why would you still want to go to your puny day job")
@@ -307,6 +279,10 @@ async def work(ctx):
 async def buy(ctx, item, qty:int = 1):
     info = database.get_user(ctx.author.id)
 
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+
     item = item.lower()
 
     if(qty <= 0):
@@ -326,134 +302,9 @@ async def buy(ctx, item, qty:int = 1):
             return
 
     await ctx.send("Enter a valid item name!")
-def blackjack_value(cards):
 
-    value = 0
-    aces = 0
-    for i in cards:
-        if i[0] == 1:
-            aces += 1
-            continue
-        if i[0] >= 10:
-            value += 10
-            continue
-        value += i[0]
-    
-    for i in range(aces):
-        if (value+11) <= 21:
-            value += 11
-            continue
-        value+=1
-
-    return value
-
-
-
-class view(discord.ui.View):
-
-    def __init__(self, ctx, arg):
-        super().__init__()
-        self.ctx = ctx
-        self.arg = arg
-    
-    @discord.ui.button(label="Hit", style = discord.ButtonStyle.primary)
-    async def hit_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
-        
-        await interaction.response.defer()
-
-        if blackjack_value(blackjack_cards[self.ctx.author.id]["player"]) == 21:
-            await self.ctx.send("The total is already 21.")
-            return
-        
-        round_deck = messages.deck[:]
-        random.shuffle(round_deck)
-
-        a = round_deck.pop()
-        while a in blackjack_cards[self.ctx.author.id]["player"] and a in blackjack_cards[self.ctx.author.id]["dealer"]:
-            a = round_deck.pop()
-
-        blackjack_cards[self.ctx.author.id]["player"].append(a)
-
-        embed = discord.Embed()
-
-        embed.add_field(name = "Dealer Cards", value = f'{messages.special_cards[blackjack_cards[self.ctx.author.id]["dealer"][0][0]]}{blackjack_cards[self.ctx.author.id]["dealer"][0][1]}  ??')
-        embed.add_field(name="Your Cards", value=" ".join(f'{messages.special_cards[b[0]]}{b[1]}  ' for b in blackjack_cards[self.ctx.author.id]["player"]))
-        embed.add_field(name="\u200b", value="\u200b")
-        embed.add_field(name = "Dealer Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"]))
-        embed.add_field(name = "Your Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["player"]))
-        embed.add_field(name="\u200b", value="\u200b")
-        
-
-        if blackjack_value(blackjack_cards[self.ctx.author.id]["player"]) > 21:
-            await self.ctx.send(embed = embed)
-            await self.ctx.send("BUST!!")
-            blackjack_cards.pop(self.ctx.author.id)
-            return
-        
-        for child in self.children:
-            child.disabled = True
-        await interaction.message.edit(view=self)
-        
-        await self.ctx.send(embed=embed, view=view(self.ctx, self.arg))
-
-        
-
-
-    @discord.ui.button(label="Stand", style = discord.ButtonStyle.primary)
-    async def stand_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
-        await interaction.response.defer()
-
-        round_deck = messages.deck[:]
-        random.shuffle(round_deck)
-
-        while True:
-            d = round_deck.pop()
-            while d in blackjack_cards[self.ctx.author.id]["player"] and d in blackjack_cards[self.ctx.author.id]["dealer"]:
-                d = round_deck.pop()
-
-            blackjack_cards[self.ctx.author.id]["dealer"].append(d)
-            if blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"]) >= 17:
-                break
-
-        embed = discord.Embed()
-
-        embed.add_field(name = "Dealer Cards", value = " ".join(f'{messages.special_cards[b[0]]}{b[1]}  ' for b in blackjack_cards[self.ctx.author.id]["dealer"]))
-        embed.add_field(name="Your Cards", value=" ".join(f'{messages.special_cards[b[0]]}{b[1]}  ' for b in blackjack_cards[self.ctx.author.id]["player"]))
-        embed.add_field(name="\u200b", value="\u200b")
-        embed.add_field(name = "Dealer Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"]))
-        embed.add_field(name = "Your Total", value = blackjack_value(blackjack_cards[self.ctx.author.id]["player"]))
-        embed.add_field(name="\u200b", value="\u200b")
-
-        await self.ctx.send(embed=embed)
-
-        dealer_total = blackjack_value(blackjack_cards[self.ctx.author.id]["dealer"])
-        player_total = blackjack_value(blackjack_cards[self.ctx.author.id]["player"])
-
-        if dealer_total > 21:
-            await self.ctx.send(f"Dealer Busted!! You won {2*self.arg} coins")
-            database.add_money(self.ctx.author.id, 2*self.arg)
-        
-        elif player_total > dealer_total:
-            await self.ctx.send(f"WIN!! You won {2*self.arg} coins")
-            database.add_money(self.ctx.author.id, 2*self.arg)
-        
-        elif dealer_total == player_total:
-            await self.ctx.send(f"Tie. You evened out winning {self.arg} coins")
-            database.add_money(self.ctx.author.id, self.arg)
-            
-        
-        elif dealer_total > player_total:
-            await self.ctx.send("You Lost!!")
-            
-        
-        blackjack_cards.pop(self.ctx.author.id)
-
-    
-blackjack_cards = {}      
-# {userid: {player: [], dealer: []}}  
-
-        
 @bot.command()
+<<<<<<< HEAD
 async def blackjack(ctx, arg: int):
 
     if ctx.author.id in blackjack_cards.keys():
@@ -498,19 +349,84 @@ async def blackjack(ctx, arg: int):
     await ctx.send(embed=embed, view=view(ctx, arg))
 
 @bot.command
+=======
+>>>>>>> bbb0e6bee81fd8340256d9cfc20afa8ba5892775
 async def talk(ctx):
     info = database.get_user(ctx.author.id)
     
-    if(info["jail"]):
+    if(info["jail"] == 1):
         respect = info["integrity"]
-        if(random.random() < (respect/100)^2):
+        if(random.random() < (respect/100)**2):
             await ctx.send(random.choice(messages.cop_messages_positive))
             database.update_jail(ctx.author.id, 0)
         else:
             await ctx.send(random.choice(messages.cop_messages_negative))
-            database.update_jail(ctx.author.id, 1)
+            database.remove_integrity(ctx.author.id, 5)
+            await ctx.send("You lost 5 integrity!")
     else:
+<<<<<<< HEAD
         ctx.send("You are not even jail, do you just enjoy talking to cops?")
+=======
+        await ctx.send("You are not even jail, do you just enjoy talking to cops?")
+
+@bot.command()
+async def getcaught(ctx):
+    database.update_jail(ctx.author.id, 1)
+
+@bot.command()
+async def bribe(ctx, arg: int):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] != 1:
+        await ctx.send("You're not a convict!")
+        return
+    
+    if (arg <= 0):
+        await ctx.send("You think this is a joke!!")
+        await ctx.send("The cop roughed you up.")
+        await ctx.send("-500 coins")
+        database.remove_money(ctx.author.id, 500)
+        return
+
+    if (arg > info["money"]):
+        await ctx.send("Insufficient balance")
+        return
+    
+    database.remove_money(ctx.author.id, arg)
+    await ctx.send(f"-{arg} coins")
+
+    arg = arg/10000
+
+    if (random.random() <= arg):
+        database.update_jail(ctx.author.id, 0)
+        await ctx.send("Alright we'll let you go this time")
+        database.remove_integrity(ctx.author.id, 10)
+        database.remove_wanted(ctx.author.id, 10)
+        return
+    
+    await ctx.send("Not enough!!")
+
+@bot.command()
+async def bail(ctx):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] != 1:
+        await ctx.send("You're not a convict!")
+        return
+    
+    if (info["money"] < 10000):
+        await ctx.send("Insufficient Balance")
+        return
+
+    
+    database.remove_money(ctx.author.id, 10000)
+    await ctx.send("Released")
+    database.update_jail(ctx.author.id, 0)
+    database.remove_wanted(ctx.author.id, 10)
+
+    
+    
+>>>>>>> bbb0e6bee81fd8340256d9cfc20afa8ba5892775
 @bot.command()
 async def run(ctx):
     info = database.get_user(ctx.author.id)
@@ -532,3 +448,13 @@ async def run(ctx):
             f"🚨 **{ctx.author.name} tried to escape... and got caught!**\n"
             f"The guards tackled you back to your cell. Better luck next time. 🔒"
         )
+
+@bot.command()
+async def catch(ctx):
+    await events.police_catch(ctx)
+
+@bot.command()
+async def w(ctx):
+    database.add_wanted(ctx.author.id, 100)
+    
+

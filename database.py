@@ -9,7 +9,7 @@ def create_tables():
     cursor.execute("""
         CREATE TABLE IF NOT exists user_info(
             user_id INTEGER PRIMARY KEY,
-            money INTEGER DEFAULT 1000,
+            money INTEGER DEFAULT 1000 CHECK(money <= 0),
             wanted INTEGER DEFAULT 0 CHECK(wanted >= 0 AND wanted <= 100), 
             integrity INTEGER DEFAULT 0 CHECK(integrity >= 0 AND integrity <= 100),
             user_role TEXT DEFAULT "civilian",
@@ -237,7 +237,7 @@ def update_jail(uid, val):
     cursor = conn.cursor()
 
     cursor.execute("UPDATE user_info SET jail = ? WHERE user_id = ?", (val, uid))
-
+    conn.commit()
     conn.close()
 
 def update_role(uid, role):
@@ -246,7 +246,6 @@ def update_role(uid, role):
     cursor = conn.cursor()
 
     cursor.execute("UPDATE user_info SET user_role = ? WHERE user_id = ?", (role, uid))
-
     conn.commit()
     conn.close()
 

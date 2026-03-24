@@ -9,9 +9,9 @@ async def police_catch(ctx):
         return 0
     
     await ctx.send("You have been captured by the police!")
-    await ctx.send("You can bribe, run or talk it out")
+    await ctx.send("You can bribe, run, talk or give bail")
 
-    database.update_role(ctx.author.id, 1)
+    database.update_jail(ctx.author.id, 1)
 
     return 1
 
