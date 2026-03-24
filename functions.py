@@ -302,58 +302,8 @@ async def buy(ctx, item, qty:int = 1):
             return
 
     await ctx.send("Enter a valid item name!")
-<<<<<<< HEAD
-=======
-
-@bot.command()
-<<<<<<< HEAD
-async def blackjack(ctx, arg: int):
-
-    if ctx.author.id in blackjack_cards.keys():
-        await ctx.send("You have an ongoing game!")
-        return
-
-    info = database.get_user(ctx.author.id)
-    if (arg <= 0):
-        await ctx.send("Bet must be greater than zero")
-        return
-
-    if (arg > info["money"]):
-        await ctx.send("Insufficient Balance")
-        return
-
-    round_deck = messages.deck[:]
-    random.shuffle(round_deck)
-    database.remove_money(ctx.author.id, arg)
-    await ctx.send(f"-{arg} coins")
-
-    
-    embed = discord.Embed()
-    a = round_deck.pop()
-    b, c = round_deck.pop(), round_deck.pop()
-    blackjack_cards[ctx.author.id] = {"player": [b, c], "dealer": [a]}
-
-    embed.add_field(name = "Dealer Cards", value = f'{messages.special_cards[a[0]]}{a[1]}  ??')
-    embed.add_field(name="Your Cards", value=f'{messages.special_cards[b[0]]}{b[1]}  {messages.special_cards[c[0]]}{c[1]}')
-    embed.add_field(name="\u200b", value="\u200b")
-    embed.add_field(name = "Dealer Total", value = blackjack_value(blackjack_cards[ctx.author.id]["dealer"]))
-    embed.add_field(name = "Your Total", value = blackjack_value(blackjack_cards[ctx.author.id]["player"]))
-    embed.add_field(name="\u200b", value="\u200b")
-
-    if blackjack_value(blackjack_cards[ctx.author.id]["player"]) == 21:
-        await ctx.send(embed = embed)
-        await ctx.send(f"BLACKJACK!!! You won {int(2.5*arg)} coins")
-        database.add_money(ctx.author.id, int(2.5*arg))
-        blackjack_cards.pop(ctx.author.id)
-        return
-
-
-    await ctx.send(embed=embed, view=view(ctx, arg))
->>>>>>> master
 
 @bot.command
-=======
->>>>>>> bbb0e6bee81fd8340256d9cfc20afa8ba5892775
 async def talk(ctx):
     info = database.get_user(ctx.author.id)
     
@@ -367,13 +317,6 @@ async def talk(ctx):
             database.remove_integrity(ctx.author.id, 5)
             await ctx.send("You lost 5 integrity!")
     else:
-<<<<<<< HEAD
-        ctx.send("You are not even jail, do you just enjoy talking to cops?")
-=======
-<<<<<<< HEAD
-        ctx.send("You are not even jail, do you just enjoy talking to cops?")
-=======
->>>>>>> master
         await ctx.send("You are not even jail, do you just enjoy talking to cops?")
 
 @bot.command()
@@ -432,8 +375,7 @@ async def bail(ctx):
     database.remove_wanted(ctx.author.id, 10)
 
     
-    
->>>>>>> bbb0e6bee81fd8340256d9cfc20afa8ba5892775
+
 @bot.command()
 async def run(ctx):
     info = database.get_user(ctx.author.id)
@@ -463,7 +405,6 @@ async def catch(ctx):
 @bot.command()
 async def w(ctx):
     database.add_wanted(ctx.author.id, 100)
-<<<<<<< HEAD
 
 class Charity_View(discord.ui.View):
     def __init__(self, user_id, amount, message):
@@ -529,8 +470,6 @@ async def charity(ctx):
     
 
     
-=======
->>>>>>> master
 
 @bot.command()
 async def u(ctx, arg: int = 0):
