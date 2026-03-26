@@ -63,8 +63,11 @@ class Charity_View(discord.ui.View):
 
         for item in self.children:
             item.disabled = True
+        await interaction.edit_original_response(view=self)
 
-        await self.ctx.send(f'Coins : -{self.amount} , Integrity : +{int(self.amount/1000)} , Wanted : -{int(self.amount/1000)}')
+        await self.ctx.send(f'-{self.amount} Coins')
+        await self.ctx.send(f'+{int(self.amount/1000)} Integrity')
+        await self.ctx.send(f'-{int(self.amount/1000)}  Wanted')
 
     @discord.ui.button(label="Decline", style=discord.ButtonStyle.primary)
     async def decline(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -72,6 +75,7 @@ class Charity_View(discord.ui.View):
         await interaction.response.defer()
         for item in self.children:
             item.disabled = True
+        await interaction.edit_original_response(view=self)
 
         await self.ctx.send("Ye jo gareeb hoye ye apni aadat se gareeb hoye!")
 
@@ -196,3 +200,65 @@ async def hit(ctx):
     embed.add_field(name = '\u200b', value = f'{target} - {money} coins')
 
     await ctx.send(embed = embed, view = hitView(ctx, target, money))
+
+
+class Volunteer_view(discord.ui.View):
+    def __init__(self, user_id, message, ctx):
+        super().__init__()
+        self.user_id = user_id
+        self.message = message
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("This isn't your volunteering!", ephemeral = True)
+            return False
+        return True
+    
+    @discord.ui.button(label="Volunteer", style=discord.ButtonStyle.primary)
+    async def accept(self, interaction: discord.Interaction, button: discord.ui.Button):
+        
+        await interaction.response.defer()
+        info = database.get_user(self.user_id)
+
+        amount=random.randint(5,15)
+
+        database.add_integrity(self.user_id, amount)
+
+        for item in self.children:
+            item.disabled=True
+        await interaction.edit_original_response(view=self)
+
+        await self.ctx.send(f'+{amount} Integrity')
+        await self.ctx.send(f'-{amount} Wanted')
+
+    @discord.ui.button(label="Decline", style=discord.ButtonStyle.primary)
+    async def decline(self, interaction: discord.Interaction, button: discord.ui.Button):
+        
+        await interaction.response.defer()
+        for item in self.children:
+            item.disabled = True
+        await interaction.edit_original_response(view=self)
+
+        await self.ctx.send("Ye gendu generation hai!")
+
+
+@bot.command()
+async def volunteer(ctx):
+    info = database.get_user(ctx.author.id)
+
+    if  info["jail"]==1:
+        await ctx.send("🚔 You're in jail! You can't volunteer from behind bars.")
+        return
+    
+    message=random.choice(messages.volunteer_messages)
+
+    embed = discord.Embed(
+        title="💝 Volunteer Request",
+        description=f"*{message}*",
+        color=discord.Color.gold()
+    )
+
+    await ctx.send(embed=embed, view=Volunteer_view(ctx.author.id, message, ctx))
+
+
