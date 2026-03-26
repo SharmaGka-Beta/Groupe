@@ -34,10 +34,10 @@ async def addmoney(ctx, arg: int):
 
 @bot.command()
 async def remwanted(ctx):
-    database.remove_wanted(ctx.author.id, -20)
+    database.remove_wanted(ctx.author.id, 20)
     await ctx.send("Done")
 
 @bot.command()
 async def remintegrity(ctx):
-    database.remove_integrity(ctx.author.id, -20)
+    database.remove_integrity(ctx.author.id, 20)
     await ctx.send("Done")

@@ -123,7 +123,6 @@ class WeaponButton(discord.ui.Button):
         await self.ctx.send(f"You have successfully eliminated {self.target}")
         await self.ctx.send(f"+{self.money} coins")
         database.add_money(self.ctx.author.id, self.money)
-        database.remove_integrity(self.ctx.author.id, int(self.money/1000))
         database.add_wanted(self.ctx.author.id, int(self.money/1000))
     
 class acceptView(discord.ui.View):
@@ -155,6 +154,7 @@ class hitView(discord.ui.View):
     async def accept_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
     
         await interaction.response.defer()
+        database.remove_integrity(self.ctx.author.id, int(self.money/1000))
         info = database.get_inventory(self.ctx.author.id)
         if len(info[0]) == 0:
             await interaction.response.send_message("You don't have a weapon!")
@@ -196,3 +196,68 @@ async def hit(ctx):
     embed.add_field(name = '\u200b', value = f'{target} - {money} coins')
 
     await ctx.send(embed = embed, view = hitView(ctx, target, money))
+
+class robView(discord.ui.View):
+    
+    def __init__(self, ctx, target, money):
+        super().__init__()
+        self.ctx = ctx
+        self.target = target
+        self.money = money
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("This is not your robbery!", ephemeral = True)
+            return False
+        return True
+    
+    @discord.ui.button(label="Go for it!", style = discord.ButtonStyle.primary,)
+    async def accept_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+    
+        await interaction.response.defer()
+
+        database.remove_integrity(self.ctx.author.id, int(self.money/1000))
+
+        if (events.police_catch(self.ctx, 7)):
+            await self.ctx.send(f"{self.target} caught you! They robbed you instead!")
+            await self.ctx.send(f"-{self.money} coins")
+            database.remove_money(self.ctx.author.id, self.money)
+            database.update_jail(self.ctx.author.id, 0)
+            return
+
+        if (events.police_catch(self.ctx, 5)):
+            await self.ctx.send("You have been captured by the police!")
+            await self.ctx.send("You can bribe, run, talk or give bail")
+            return
+        
+        await self.ctx.send(f"You have successfully robbed {self.target}!")
+        await self.ctx.send(f"+ {self.money} coins!")
+        database.add_money(self.ctx.author.id, self.money)
+        database.add_wanted(self.ctx.author.id, int(self.money/1000))
+                
+
+    @discord.ui.button(label="Not today", style = discord.ButtonStyle.primary)
+    async def reject_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        await interaction.response.defer()
+        await self.ctx.send("Coward")
+        return
+
+
+
+@bot.command()
+async def rob(ctx):
+    info = database.get_user(ctx.author.id)
+
+    if info["jail"] == 1:
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    
+    target = random.choice(messages.rob_targets)
+    money = random.randint(1000, 5000)
+
+    embed = discord.Embed()
+
+    embed.add_field(name = '\u200b', value = f'Target - {target}')
+
+    await ctx.send(embed = embed, view = robView(ctx, target, money))

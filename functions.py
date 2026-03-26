@@ -289,7 +289,7 @@ async def talk(ctx):
         else:
             await ctx.send(random.choice(messages.cop_messages_negative))
             database.remove_integrity(ctx.author.id, 5)
-            await ctx.send("You lost 5 integrity!")
+            await ctx.send("-5 Integrity")
     else:
         await ctx.send("You are not even jail, do you just enjoy talking to cops?")
 
