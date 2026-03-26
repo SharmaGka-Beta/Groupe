@@ -71,14 +71,27 @@ cop_messages_negative = [
 ]
 
 charity_messages = [
-    "Donate to a homeless shelter downtown",
-    "Drop cash into a street musician's case",
-    "Fund a kid's school supplies for the year",
-    "Pay for a stranger's groceries at checkout",
-    "Donate to the local food bank",
-    "Sponsor a stray dog's adoption fee at the shelter.",
-    "Leave a fat tip for the overworked diner waitress.",
-    "Bring meals for the guys sleeping under the bridge.",
-    "Cover someone's hospital bill.",
-    "Cover the costs of a small local church's roof repairs.",
+    "Donate to a homeless shelter downtown?",
+    "Drop cash into a street musician's case?",
+    "Fund a kid's school supplies for the year?",
+    "Pay for a stranger's groceries at checkout?",
+    "Donate to the local food bank?",
+    "Sponsor a stray dog's adoption fee at the shelter?",
+    "Leave a fat tip for the overworked diner waitress?",
+    "Bring meals for the guys sleeping under the bridge?",
+    "Cover someone's hospital bill?",
+    "Cover the costs of a small local church's roof repairs?",
+]
+
+volunteer_messages = [
+    "Volunteer Symphony?",
+    "Help an old lady carry her groceries home?",
+    "Spend a day serving food at a homeless shelter downtown?",
+    "Volunteer Synergy?",
+    "Assist at a local blood drive?",
+    "Volunteer Spandan?",
+    "Volunteer Confluence?",
+    "Help an elderly man fix his fence?",
+    "Spend a day mentoring at-risk youth?",
+    "Volunteer Infini8?",
 ]
