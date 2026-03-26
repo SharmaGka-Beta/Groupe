@@ -114,7 +114,7 @@ class WeaponButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_message(f"You used a {self.gun}")
-        if(await events.police_catch(self.ctx, 10)):
+        if(events.police_catch(self.ctx, 10)):
             await self.ctx.send("The police knew you were coming!")
             await self.ctx.send("You have been captured by the police!")
             await self.ctx.send("You can bribe, run, talk or give bail")
@@ -184,7 +184,7 @@ async def hit(ctx):
         await ctx.send("You are a convict! Get out of jail first!!")
         return
     
-    if (await events.police_catch(ctx, 8)):
+    if (events.police_catch(ctx, 8)):
         await ctx.send("Your contact turned out be an undercover cop!")
         await ctx.send("You have been captured by the cops. You can bribe, run, negotiate or pay bail.")
         return

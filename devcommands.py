@@ -4,24 +4,40 @@ import database
 
 @bot.command()
 async def catch(ctx):
-    await events.police_catch(ctx)
+    events.police_catch(ctx)
+    await ctx.send("Done")
 
 @bot.command()
-async def w(ctx):
+async def wanted(ctx):
     database.add_wanted(ctx.author.id, 100)
+    await ctx.send("Done")
+
+@bot.command()
+async def integrity(ctx):
+    database.add_integrity(ctx.author.id, 100)
+    await ctx.send("Done")
 
 @bot.command()
 async def getcaught(ctx):
     database.update_jail(ctx.author.id, 1)
+    await ctx.send("Done")
 
 @bot.command()
-async def u(ctx, arg: int = 0):
-    database.update_jail(ctx.author.id, arg)
+async def getout(ctx):
+    database.update_jail(ctx.author.id, 0)
+    await ctx.send("Done")
 
 @bot.command()
-async def m(ctx, arg: int):
+async def addmoney(ctx, arg: int):
     database.add_money(ctx.author.id, arg)
+    await ctx.send("Done")
 
 @bot.command()
-async def wl(ctx):
+async def remwanted(ctx):
     database.remove_wanted(ctx.author.id, -20)
+    await ctx.send("Done")
+
+@bot.command()
+async def remintegrity(ctx):
+    database.remove_integrity(ctx.author.id, -20)
+    await ctx.send("Done")

@@ -2,7 +2,7 @@ import random
 import database
 import messages
 
-async def police_catch(ctx, heat):
+def police_catch(ctx, heat):
     info = database.get_user(ctx.author.id)
     catch_roll = max(0, info['wanted'] - 10 + heat)
     if (random.random() >= (catch_roll/100)**2):
