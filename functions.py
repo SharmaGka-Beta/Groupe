@@ -38,7 +38,7 @@ async def profile(ctx):
 
     embed.add_field(name="\u200b", value=f"🔥 WANTED METER: {info["wanted"]}", inline=False)
     embed.add_field(name="\u200b", value=f"📈 RESPECT METER: {info["integrity"]}", inline=False)
-    embed.add_field(name="\u200b", value=f"🪪 ROLE: {info["user_role"]}", inline=False)
+    embed.add_field(name="\u200b", value=f"🪪 ROLE: {info["user_role"].capitalize()}", inline=False)
 
     await ctx.send(embed=embed)
 
@@ -246,6 +246,7 @@ async def transfer(ctx, amount:int , member:discord.Member):
     
     if info["money"] < amount:
         await ctx.send("You don't have the required funds")
+        return
 
     payer=ctx.author.id
     receiver=member.id
@@ -278,12 +279,12 @@ async def buy(ctx, item, qty:int = 1):
             if qty == 1:
                 await ctx.send(f"{qty} {item} bough successfully!")
             elif qty > 1:
-                await ctx.send(f"{qty} {item} bough successfully!")
+                await ctx.send(f"{qty} {item}s bough successfully!")
             return
 
     await ctx.send("Enter a valid item name!")
 
-@bot.command
+@bot.command()
 async def talk(ctx):
     info = database.get_user(ctx.author.id)
     

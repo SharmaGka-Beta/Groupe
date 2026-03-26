@@ -74,7 +74,7 @@ def get_user(user_id: int):
     if row is None:
         add_user(user_id)
         conn.close()
-        return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian"}
+        return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian", "jail": 0}
         
     
     conn.close()

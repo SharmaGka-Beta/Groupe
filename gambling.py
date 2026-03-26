@@ -31,26 +31,25 @@ async def roulette(ctx, amount: int , bet_type:str):
         await ctx.send("Invalid bet!: Enter a colour (red/black) or number (1 to 36)")
         return   
     
+    database.remove_money(user_id,amount)
     if bet_type in valid_numbers:
         result=random.randint(1,36)
         if result==int(bet_type):
-            await ctx.send(f'Congratulation! It is {result} You won {35*amount} on your current balance')
-            database.remove_money(user_id,amount)
-            database.add_money(user_id,35*amount)
+            await ctx.send(f'Congratulation! It is {result}! You won!!')
+            await ctx.send(f'+{36*amount} coins')
+            database.add_money(user_id,36*amount)
         else:
-            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
-            database.remove_money(user_id,amount)
+            await ctx.send(f'Alas! It is {result}. You lost.')
         
 
     else:
         result=random.choice(valid_colours)
         if result==bet_type:
-            await ctx.send(f'Congratulation! It is {result} You won {2*amount} on your current balance')
-            database.remove_money(user_id,amount)
+            await ctx.send(f'Congratulation! It is {result}! You won!!')
+            await ctx.send(f'+{2*amount} coins')
             database.add_money(user_id,2*amount)
         else:
-            await ctx.send(f'Alas! It is {result} You lost {amount} on your current balance')
-            database.remove_money(user_id,amount)
+            await ctx.send(f'Alas! It is {result}. You lost.')
 
 
 def blackjack_value(cards):
@@ -106,7 +105,7 @@ class view(discord.ui.View):
         random.shuffle(round_deck)
 
         a = round_deck.pop()
-        while a in blackjack_cards[self.ctx.author.id]["player"] and a in blackjack_cards[self.ctx.author.id]["dealer"]:
+        while a in blackjack_cards[self.ctx.author.id]["player"] or a in blackjack_cards[self.ctx.author.id]["dealer"]:
             a = round_deck.pop()
 
         blackjack_cards[self.ctx.author.id]["player"].append(a)
@@ -140,13 +139,13 @@ class view(discord.ui.View):
         for child in self.children:
             child.disabled = True
         await interaction.message.edit(view=self)
-        
+
         round_deck = messages.deck[:]
         random.shuffle(round_deck)
 
         while True:
             d = round_deck.pop()
-            while d in blackjack_cards[self.ctx.author.id]["player"] and d in blackjack_cards[self.ctx.author.id]["dealer"]:
+            while d in blackjack_cards[self.ctx.author.id]["player"] or d in blackjack_cards[self.ctx.author.id]["dealer"]:
                 d = round_deck.pop()
 
             blackjack_cards[self.ctx.author.id]["dealer"].append(d)

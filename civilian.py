@@ -178,7 +178,7 @@ class hitView(discord.ui.View):
         database.remove_integrity(self.ctx.author.id, int(self.money/1000))
         info = database.get_inventory(self.ctx.author.id)
         if len(info[0]) == 0:
-            await interaction.response.send_message("You don't have a weapon!")
+            await self.ctx.send("You don't have a weapon!")
             return
 
         embed = discord.Embed()
@@ -244,7 +244,6 @@ class Volunteer_view(discord.ui.View):
 
         amount=random.randint(1,5)
 
-        database.add_integrity(self.user_id, amount)
 
         for item in self.children:
             item.disabled=True
@@ -252,6 +251,9 @@ class Volunteer_view(discord.ui.View):
 
         await self.ctx.send(f'+{amount} Integrity')
         await self.ctx.send(f'-{amount} Wanted')
+        
+        database.add_integrity(self.user_id, amount)
+        database.remove_wanted(self.user_id, amount)
 
     @discord.ui.button(label="Decline", style=discord.ButtonStyle.primary)
     async def decline(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -302,6 +304,10 @@ class robView(discord.ui.View):
     
         await interaction.response.defer()
 
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
         database.remove_integrity(self.ctx.author.id, int(self.money/1000))
 
         if (events.police_catch(self.ctx, 7)):
@@ -321,20 +327,19 @@ class robView(discord.ui.View):
         database.add_money(self.ctx.author.id, self.money)
         database.add_wanted(self.ctx.author.id, int(self.money/1000))
 
-        for child in self.children:
-            child.disabled = True
-        await interaction.message.edit(view=self)
                 
 
     @discord.ui.button(label="Not today", style = discord.ButtonStyle.primary)
     async def reject_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
         await interaction.response.defer()
-        await self.ctx.send("Coward")
 
         for child in self.children:
             child.disabled = True
         await interaction.message.edit(view=self)
+
+        await self.ctx.send("Coward")
+
 
         return
 
