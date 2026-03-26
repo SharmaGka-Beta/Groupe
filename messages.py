@@ -31,7 +31,10 @@ items_drugs =  [("🌿 Weed", "50", "Mild and cheap", "drugs"),
 items_items = []
 
 hit_targets = ["Joaquin Salamanca", "Ed Truck", "Charles McGill", "Negan Smith", "Becca Butcher", 
-       "Susan Duffy", "Imran Ansari", "Ann Perkins", "Veronica Duncan", "Meera Eston"]
+            "Susan Duffy", "Imran Ansari", "Ann Perkins", "Veronica Duncan", "Meera Eston"]
+
+rob_targets = ["Chaudhary Baldev Singh", "Gil Thorpe", "Tammy Swanson", "Jack Dawson", "Stuart Bloom",
+               "Melvina Whitaker", "Dawn Lerner", "Luke Cooper", "Paige Novick", "Carmen Molina"]
 
 items = items_gun + items_drugs + items_items
 
