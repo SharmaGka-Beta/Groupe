@@ -33,7 +33,7 @@ async def profile(ctx, member:discord.Member = None):
     embed = discord.Embed(title="Welcome to Sin City!", color= discord.Color.brand_red())
 
     embed.set_thumbnail(url=member.display_avatar.url)
-    embed.add_field(name="\u200b", value="PLAYER INFO", inline=True)
+    # embed.add_field(name="\u200b", value="PLAYER INFO", inline=True)
     embed.add_field(name="\u200b", value=f"👤 Player Name: {member.name}", inline=False)
     embed.add_field(name="\u200b", value=f"🪙 Balance: {info["money"]}", inline=False)
     # embed.add_field(name="\u200b", value=f"🆙 Level: {info["level"]}", inline=False)
