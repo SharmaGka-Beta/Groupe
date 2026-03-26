@@ -50,6 +50,12 @@ class invenView(discord.ui.View):
         self.ctx = ctx
         self.inven = inven
 
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("Not your inventory!", ephemeral = True)
+            return False
+        return True
+
     @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
     async def gun_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 

@@ -51,6 +51,11 @@ class Charity_View(discord.ui.View):
     async def accept(self, interaction: discord.Interaction, button: discord.ui.Button):
         
         await interaction.response.defer()
+
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+        
         info = database.get_user(self.user_id)
 
         if(self.amount>info["money"]):
@@ -61,13 +66,12 @@ class Charity_View(discord.ui.View):
         database.add_integrity(self.user_id, int(self.amount/1000))
         database.remove_wanted(self.user_id, int(self.amount/1000))
 
-        for item in self.children:
-            item.disabled = True
-        await interaction.edit_original_response(view=self)
 
         await self.ctx.send(f'-{self.amount} Coins')
         await self.ctx.send(f'+{int(self.amount/1000)} Integrity')
         await self.ctx.send(f'-{int(self.amount/1000)}  Wanted')
+
+        
 
     @discord.ui.button(label="Decline", style=discord.ButtonStyle.primary)
     async def decline(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -75,9 +79,10 @@ class Charity_View(discord.ui.View):
         await interaction.response.defer()
         for item in self.children:
             item.disabled = True
-        await interaction.edit_original_response(view=self)
+        await interaction.message.edit(view=self)
 
         await self.ctx.send("Ye jo gareeb hoye ye apni aadat se gareeb hoye!")
+
 
     
 
@@ -117,7 +122,14 @@ class WeaponButton(discord.ui.Button):
         self.money = money
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f"You used a {self.gun}")
+
+        await interaction.response.defer()
+
+        for child in self.view.children:
+            child.disabled = True
+        await interaction.message.edit(view=self.view)
+
+        await self.ctx.send(f"You used a {self.gun}")
         if(events.police_catch(self.ctx, 10)):
             await self.ctx.send("The police knew you were coming!")
             await self.ctx.send("You have been captured by the police!")
@@ -158,6 +170,11 @@ class hitView(discord.ui.View):
     async def accept_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
     
         await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
         database.remove_integrity(self.ctx.author.id, int(self.money/1000))
         info = database.get_inventory(self.ctx.author.id)
         if len(info[0]) == 0:
@@ -167,6 +184,7 @@ class hitView(discord.ui.View):
         embed = discord.Embed()
         embed.add_field(name = "Which weapon would you like to use?", value = "\u200b")
         await self.ctx.send(embed = embed, view = acceptView(self.ctx, info[0], self.target, self.money))
+
         
 
         
@@ -174,7 +192,11 @@ class hitView(discord.ui.View):
     @discord.ui.button(label="Reject", style = discord.ButtonStyle.primary)
     async def reject_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
-        await interaction.response.send_message("Coward")
+        await interaction.response.defer()
+        await self.ctx.send("Coward")
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
         return
         
 
@@ -219,15 +241,14 @@ class Volunteer_view(discord.ui.View):
     async def accept(self, interaction: discord.Interaction, button: discord.ui.Button):
         
         await interaction.response.defer()
-        info = database.get_user(self.user_id)
 
-        amount=random.randint(5,15)
+        amount=random.randint(1,5)
 
         database.add_integrity(self.user_id, amount)
 
         for item in self.children:
             item.disabled=True
-        await interaction.edit_original_response(view=self)
+        await interaction.message.edit(view=self)
 
         await self.ctx.send(f'+{amount} Integrity')
         await self.ctx.send(f'-{amount} Wanted')
@@ -238,7 +259,7 @@ class Volunteer_view(discord.ui.View):
         await interaction.response.defer()
         for item in self.children:
             item.disabled = True
-        await interaction.edit_original_response(view=self)
+        await interaction.message.edit(view=self)
 
         await self.ctx.send("Ye gendu generation hai!")
 
@@ -299,6 +320,10 @@ class robView(discord.ui.View):
         await self.ctx.send(f"+ {self.money} coins!")
         database.add_money(self.ctx.author.id, self.money)
         database.add_wanted(self.ctx.author.id, int(self.money/1000))
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
                 
 
     @discord.ui.button(label="Not today", style = discord.ButtonStyle.primary)
@@ -306,6 +331,11 @@ class robView(discord.ui.View):
 
         await interaction.response.defer()
         await self.ctx.send("Coward")
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
         return
 
 

@@ -94,6 +94,10 @@ class view(discord.ui.View):
         
         await interaction.response.defer()
 
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
         if blackjack_value(blackjack_cards[self.ctx.author.id]["player"]) == 21:
             await self.ctx.send("The total is already 21.")
             return
@@ -123,9 +127,6 @@ class view(discord.ui.View):
             blackjack_cards.pop(self.ctx.author.id)
             return
         
-        for child in self.children:
-            child.disabled = True
-        await interaction.message.edit(view=self)
         
         await self.ctx.send(embed=embed, view=view(self.ctx, self.arg))
 
@@ -136,6 +137,10 @@ class view(discord.ui.View):
     async def stand_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
         await interaction.response.defer()
 
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+        
         round_deck = messages.deck[:]
         random.shuffle(round_deck)
 
@@ -177,6 +182,7 @@ class view(discord.ui.View):
         
         elif dealer_total > player_total:
             await self.ctx.send("You Lost!!")
+
             
         
         blackjack_cards.pop(self.ctx.author.id)
