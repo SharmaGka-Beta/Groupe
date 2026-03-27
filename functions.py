@@ -67,7 +67,7 @@ class invenView(discord.ui.View):
         for item in self.inven[0]:
             a = None
             for i in messages.items_gun:
-                if i[0][2:].lower() == item[0]:
+                if i[0].lower() == item[0]:
                     a = str(int(int(i[1])/2))
                     break
             embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
@@ -82,7 +82,7 @@ class invenView(discord.ui.View):
         for item in self.inven[1]:
             a = None
             for i in messages.items_drugs:
-                if i[0][2:].lower() == item[0]:
+                if i[0].lower() == item[0]:
                     a = str(int(int(i[1])/2))
                     break
             embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
@@ -97,7 +97,7 @@ class invenView(discord.ui.View):
         for item in self.inven[2]:
             a = None
             for i in messages.items_items:
-                if i[0][2:].lower() == item[0]:
+                if i[0].lower() == item[0]:
                     a = str(int(int(i[1])/2))
                     break
             embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
@@ -115,7 +115,7 @@ async def inventory(ctx):
     for item in inven[0]:
         a = None
         for i in messages.items_gun:
-            if i[0][2:].lower() == item[0]:
+            if i[0].lower() == item[0]:
                 a = str(int(int(i[1])/2))
                 break
         embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
@@ -139,9 +139,8 @@ async def sell(ctx, item, qty: int = 1):
     price = None
 
     for it in messages.items:
-        if (item == it[0][2:].lower()):
+        if (item == it[0].lower()):
             price = int(int(it[1])/2)
-            db_item = it[0][2:]
             break
     else:
         await ctx.send("Enter a valid item!!")
@@ -194,7 +193,7 @@ class shop_view(discord.ui.View):
         embed.add_field(name="Welcome to Sin City Gun Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
 
         for item in messages.items_gun:
-            embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
+            embed.add_field(name = f"{item[4]}__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
 
         await interaction.response.edit_message(embed = embed, view = shop_view())
 
@@ -208,7 +207,7 @@ class shop_view(discord.ui.View):
         embed.add_field(name="Welcome to Sin City Drug Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
 
         for item in messages.items_drugs:
-            embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
+            embed.add_field(name = f"{item[4]}__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
 
         await interaction.response.edit_message(embed = embed, view = shop_view())
 
@@ -220,7 +219,7 @@ class shop_view(discord.ui.View):
         embed.add_field(name="Welcome to Sin City Item Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
 
         for item in messages.items_items:
-            embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
+            embed.add_field(name = f"{item[4]}__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
 
         await interaction.response.edit_message(embed = embed, view = shop_view())
 
@@ -234,7 +233,7 @@ async def shop(ctx):
     embed.add_field(name="Welcome to Sin City Gun Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
 
     for item in messages.items_gun:
-        embed.add_field(name = f"__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
+        embed.add_field(name = f"{item[4]}__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
 
     await ctx.send(embed = embed, view = shop_view())
 
@@ -273,11 +272,11 @@ async def buy(ctx, item, qty:int = 1):
         await ctx.send("Enter a valid quantity of items!")
         return
     for it in messages.items:
-        if(item == it[0][2:].lower()):
+        if(item == it[0].lower()):
             if(qty*int(it[1]) > info["money"]):
                 await ctx.send("Balance Insufficient!")
                 return
-            database.update_inventory(ctx.author.id, it[0][2:].lower(), it[3], qty)
+            database.update_inventory(ctx.author.id, it[0].lower(), it[3], qty)
             database.remove_money(ctx.author.id, qty*int(it[1]))
             if qty == 1:
                 await ctx.send(f"{qty} {item} bough successfully!")

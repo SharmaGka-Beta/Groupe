@@ -14,7 +14,7 @@ async def work(ctx):
         return
 
     if info["user_role"] != 'civilian':
-        await ctx.send("Why would you still want to go to your puny day job")
+        await ctx.send("Why would you still want to go to your puny day job!")
         return
 
     
