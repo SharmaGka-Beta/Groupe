@@ -41,3 +41,8 @@ async def remwanted(ctx):
 async def remintegrity(ctx):
     database.remove_integrity(ctx.author.id, 20)
     await ctx.send("Done")
+
+@bot.command()
+async def change_role(ctx, arg: str = "civilian"):
+    database.update_role(ctx.author.id, arg)
+    await ctx.send("Done")

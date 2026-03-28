@@ -27,7 +27,7 @@ async def on_command_error(ctx, error):
 @bot.command()
 async def profile(ctx, member:discord.Member = None):
     if member == None:
-        member = ctx.author
+        member = ctx.author             #you can get profile of other users too. defaults to self
     uid = member.id
     info = database.get_user(uid)
     embed = discord.Embed(title="Welcome to Sin City!", color= discord.Color.brand_red())
@@ -58,6 +58,9 @@ class invenView(discord.ui.View):
             await interaction.response.send_message("Not your inventory!", ephemeral = True)
             return False
         return True
+    
+
+    #different buttons for all item types
 
     @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
     async def gun_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
@@ -67,7 +70,7 @@ class invenView(discord.ui.View):
         for item in self.inven[0]:
             a = None
             for i in messages.items_gun:
-                if i[0].lower() == item[0]:
+                if i[0].lower() == item[0]:             #selling cost of item will be half of buying cost
                     a = str(int(int(i[1])/2))
                     break
             embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
@@ -115,7 +118,7 @@ async def inventory(ctx):
     for item in inven[0]:
         a = None
         for i in messages.items_gun:
-            if i[0].lower() == item[0]:
+            if i[0].lower() == item[0]:             #start with gun inventory and provide buttons
                 a = str(int(int(i[1])/2))
                 break
         embed.add_field(name = f"\u200b" , value=f"{item[0].capitalize()} | 🪙 {a} | Qty - {str(item[1])}", inline=False)
@@ -124,22 +127,22 @@ async def inventory(ctx):
     await ctx.send(embed = embed, view = invenView(ctx, inven))
 
 @bot.command()
-async def sell(ctx, item, qty: int = 1):
+async def sell(ctx, item, qty: int = 1):            #qty defaults to 1
 
     info = database.get_user(ctx.author.id)
 
     if info["jail"] == 1:
-        await ctx.send("You are a convict! Get out of jail first!!")
+        await ctx.send("You are a convict! Get out of jail first!!")        #no selling in jail
         return
     
     inven = database.get_inventory(ctx.author.id)
 
-    item = item.lower()
+    item = item.lower()             #case insensitive
     qty_owned = None
     price = None
 
     for it in messages.items:
-        if (item == it[0].lower()):
+        if (item == it[0].lower()):                 #see price from messages.items if change in price it will reflect throught just by changing there
             price = int(int(it[1])/2)
             break
     else:
@@ -149,22 +152,22 @@ async def sell(ctx, item, qty: int = 1):
     t = -1  
     cat = None
 
-    for i in inven:
+    for i in inven:                 #inven = [guns, drugs, items]
         t = t + 1
         for a in i:
-            if a[0].lower() == item:
+            if a[0].lower() == item:    #check in each and get qty
                 qty_owned = a[1]
-                cat = t
-                break
+                cat = t                 #category of item for database manipulation
+                break                   #item found
         else:
-            continue
-        break
-    else:
+            continue                    #if for loop breaks naturally else executes and continues to next index
+        break                           #if found then break
+    else:                               #if outer loop breaks naturally item not found
         await ctx.send(f"You don't own {item}!!")
         return
 
-    if(qty <= 0):
-        await ctx.send("Enter a valid quantity of items!")
+    if(qty <= 0):                       
+        await ctx.send("Enter a valid quantity of items!")      #-ve check
         return
     
     if (qty > qty_owned):
@@ -175,8 +178,8 @@ async def sell(ctx, item, qty: int = 1):
             await ctx.send(f"You only own {qty_owned} {item}s. Defaulting to {qty_owned}.")
             qty = qty_owned
 
-    cat_map = {0: "ammunitions", 1: "drugs", 2: "others"}
-    database.update_inventory(ctx.author.id, item, cat_map[cat], -qty)
+    cat_map = {0: "ammunitions", 1: "drugs", 2: "others"}           #map cat to string
+    database.update_inventory(ctx.author.id, item, cat_map[cat], -qty)      #remove from inven
     database.add_money(ctx.author.id, price*qty)
     
     await ctx.send("Sale Successful!")
@@ -184,6 +187,8 @@ async def sell(ctx, item, qty: int = 1):
 
 class shop_view(discord.ui.View):
     
+
+    #different buttons for each item same as inven
 
     @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
     async def gun_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
@@ -228,7 +233,7 @@ class shop_view(discord.ui.View):
 async def shop(ctx):
     database.add_user(ctx.author.id)
     
-    embed = discord.Embed(title = "GUN SHOP", color = discord.Color.brand_red())
+    embed = discord.Embed(title = "GUN SHOP", color = discord.Color.brand_red())    #start at gun same as inven
     
     embed.add_field(name="Welcome to Sin City Gun Shop! Buy any item with 'sin buy'", value = "\u200b" ,inline=False)
 
@@ -240,10 +245,10 @@ async def shop(ctx):
 
 
 @bot.command()
-async def transfer(ctx, amount:int , member:discord.Member):
+async def transfer(ctx, amount:int , member:discord.Member):        #send to another player
     info = database.get_user(ctx.author.id)
     if info["jail"] == 1:
-        await ctx.send("You are a convict! Get out of jail first!!")
+        await ctx.send("You are a convict! Get out of jail first!!")        #jail check
         return
     
     if info["money"] < amount:
@@ -266,7 +271,7 @@ async def buy(ctx, item, qty:int = 1):
         await ctx.send("You are a convict! Get out of jail first!!")
         return
 
-    item = item.lower()
+    item = item.lower()     #case insensitive
 
     if(qty <= 0):
         await ctx.send("Enter a valid quantity of items!")
@@ -278,10 +283,10 @@ async def buy(ctx, item, qty:int = 1):
                 return
             database.update_inventory(ctx.author.id, it[0].lower(), it[3], qty)
             database.remove_money(ctx.author.id, qty*int(it[1]))
-            if qty == 1:
-                await ctx.send(f"{qty} {item} bough successfully!")
-            elif qty > 1:
-                await ctx.send(f"{qty} {item}s bough successfully!")
+            
+            await ctx.send(f"{qty} {item}(s) bough successfully!")     #bough
+            
+                
             return
 
     await ctx.send("Enter a valid item name!")
@@ -291,14 +296,14 @@ async def talk(ctx):
     info = database.get_user(ctx.author.id)
     
     if(info["jail"] == 1):
-        respect = info["integrity"]
-        if(random.random() < (respect/100)**2):
+        respect = info["integrity"]                     #try to negotiate with cops
+        if(random.random() < (respect/100)**2):         #prob proportional to square of respect
             await ctx.send(random.choice(messages.cop_messages_positive))
             database.update_jail(ctx.author.id, 0)
         else:
             await ctx.send(random.choice(messages.cop_messages_negative))
             database.remove_integrity(ctx.author.id, 5)
-            await ctx.send("-5 Integrity")
+            await ctx.send("-5 Integrity")              #prevent spam
     else:
         await ctx.send("You are not even jail, do you just enjoy talking to cops?")
 
@@ -312,7 +317,7 @@ async def bribe(ctx, arg: int):
         return
     
     if (arg <= 0):
-        await ctx.send("You think this is a joke!!")
+        await ctx.send("You think this is a joke!!")        #f around and find out
         await ctx.send("The cop roughed you up.")
         await ctx.send("-500 coins")
         database.remove_money(ctx.author.id, 500)
@@ -329,8 +334,8 @@ async def bribe(ctx, arg: int):
 
     if (random.random() <= arg):
         database.update_jail(ctx.author.id, 0)
-        await ctx.send("Alright we'll let you go this time")
-        database.remove_integrity(ctx.author.id, 10)
+        await ctx.send("Alright we'll let you go this time")        #bribe prob related to money
+        database.remove_integrity(ctx.author.id, 10)                #10k = 100%, 5k = 50%
         database.remove_wanted(ctx.author.id, 10)
         return
     
@@ -344,7 +349,7 @@ async def bail(ctx):
         await ctx.send("You're not a convict!")
         return
     
-    if (info["money"] < 10000):
+    if (info["money"] < 10000):                                     #bail set at 10k
         await ctx.send("Insufficient Balance")
         return
 
@@ -357,7 +362,7 @@ async def bail(ctx):
     
 
 @bot.command()
-async def run(ctx):
+async def run(ctx):                                 #run purely based on rng. 5% chance
     info = database.get_user(ctx.author.id)
 
     if  info["jail"]==0:
