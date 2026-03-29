@@ -15,17 +15,18 @@ workn = ["Your car broke down on the way to work. Manager yelled at you for bein
          "The police searched your car for drugs while you were returning. Corrupt pieces of shits",
          "You forgot your wallet in the car and a rogue stole it."]
 
-items_gun = [   ("Pistol", "100", "A basic handgun", "ammunitions", "🔫 "),
-                ("AssaultRifle", "500", "Fully automatic rifle", "ammunitions", " "),
-                ("MachineGun", "1200", "Sprays bullets fast", "ammunitions", "🔱 "),
-                ("Sniper", "2000", "One shot, one kill", "ammunitions", "🎯 ")
+items_gun = [   ("Pistol", "50000", "A basic handgun", "ammunitions", "🔫 ", "6"),
+                # ("SMG", "75000", "Machine gun but smol", "ammunitions", " ", "2"),
+                ("Shotgun", "100000", "Beast at close range", "ammunitions", " ", "2"),
+                ("AR", "150000", "Fully automatic rifle", "ammunitions", " ", "3"),
+                ("MachineGun", "175000", "Sprays bullets fast", "ammunitions", "🔱 ", "2"),
+                ("Sniper", "200000", "One shot, one kill", "ammunitions", "🎯 ", "1")
             ]
-items_drugs =  [("Weed", "50", "Mild and cheap", "drugs", "🌿 "),
-                ("Meth", "300", "High risk high reward", "drugs", "💊 "),
-                ("Heroin", "400", "Dangerous stuff", "drugs", "💉 "),
-                ("Cocaine", "600", "The classic", "drugs", "⚪ "),
-                ("LSD", "250", "Trippy", "drugs", "🔵 "),
-                ("BlueMeth", "1000", "Say my name", "drugs", "🥶 "),
+items_drugs =  [("Weed", "10000", "Mild and cheap", "drugs", "🌿 "),
+                ("LSD", "50000", "Trippy", "drugs", "🔵 "),
+                ("Cocaine", "75000", "The classic", "drugs", "⚪ "),
+                ("BlueMeth", "100000", "Say my name", "drugs", "🥶 "),
+                ("Heroin", "150000", "Dangerous stuff", "drugs", "💉 "),
                 ]
 
 items_items = []
