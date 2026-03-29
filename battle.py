@@ -9,7 +9,7 @@ battle_state = {}
 ## bot_inven: [guns, drugs, items]
 ##             [(damage%, name, uses)], [(heal%, name, qty)]
 
-map = {"pistol": [6, 2], "smg": [5, 7], "shotgun": [4, 10], "ar": [3, 20], "machinegun": [2, 30], "sniper": [1, 50],
+inven_map = {"pistol": [6, 2], "smg": [5, 7], "shotgun": [4, 10], "ar": [3, 20], "machinegun": [2, 30], "sniper": [1, 50],
         "weed": [0, 0.1], "lsd": [0, 0.2], "cocaine": [0, 0.3], "bluemeth": [0, 0.4], "heroin": [0, 0.5]}
 
 total_health = None
@@ -125,8 +125,162 @@ def bot_item(uid):
 def bot_turn(uid, item_info):
 
     pass
-    
+
+class battleButton(discord.ui.Button):
+
+    def __init__(self, name, ctx):
+        super().__init__(label=name, style=discord.ButtonStyle.primary)
+        self.name = name
+        self.ctx = ctx
+
+    async def callback(self, interaction: discord.Interaction):
+
+        await interaction.response.defer()
+        await self.ctx.send(self.name)
+
+class backButton(discord.ui.Button):
+
+    def __init__(self, ctx):
+        super().__init__(label="Back", style=discord.ButtonStyle.primary)
+        self.ctx = ctx
+
+    async def callback(self, interaction: discord.Interaction):
+
+        embed = discord.Embed()
+
+        embed.add_field(name = "\u200b", value = f"Your health = {battle_state[self.ctx.author.id][0]:.2f}", inline = False)
+        embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[self.ctx.author.id][1]:.2f}", inline = False)
+
+        await interaction.response.edit_message(embed = embed, view = battleView(self.ctx))
+
         
+
+
+class gunView(discord.ui.View):
+
+
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
+        for i in battle_state[ctx.author.id][3][0]:
+            self.add_item(battleButton(i[1].capitalize(), self.ctx))
+
+        self.add_item(backButton(self.ctx))
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("Not your battle!", ephemeral = True)
+            return False
+        return True 
+    
+class drugView(discord.ui.View):
+
+
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
+        for i in battle_state[ctx.author.id][3][1]:
+            self.add_item(battleButton(i[1].capitalize(), self.ctx))
+
+        self.add_item(backButton(self.ctx))
+        
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("Not your battle!", ephemeral = True)
+            return False
+        return True 
+
+class itemView(discord.ui.View):
+
+
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
+        for i in battle_state[ctx.author.id][3][2]:
+            self.add_item(battleButton(i[1].capitalize(), self.ctx))
+
+        self.add_item(backButton(self.ctx))
+ 
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("Not your battle!", ephemeral = True)
+            return False
+        return True 
+    
+
+class battleView(discord.ui.View):
+
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("Not your battle!", ephemeral = True)
+            return False
+        return True   
+    
+    @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
+    async def guns_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed()
+        embed.add_field(name = "Weapon", value = "\u200b")
+        embed.add_field(name = "Damage", value = "\u200b")
+        embed.add_field(name = "Bullets", value = "\u200b")
+
+        for i in battle_state[self.ctx.author.id][3][0]:
+            
+            embed.add_field(name = "\u200b", value = f"{i[1]}")
+            embed.add_field(name = "\u200b", value = f"{i[0]}")
+            embed.add_field(name = "\u200b", value = f"{i[2]}")
+
+        await interaction.response.edit_message(embed=embed, view = gunView(self.ctx))
+
+    @discord.ui.button(label="Drugs", style = discord.ButtonStyle.primary)
+    async def drugs_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed()
+        embed.add_field(name = "Drug", value = "\u200b")
+        embed.add_field(name = "Heal", value = "\u200b")
+        embed.add_field(name = "Qty", value = "\u200b")
+
+        for i in battle_state[self.ctx.author.id][3][1]:
+            
+            embed.add_field(name = "\u200b", value = f"{i[1]}")
+            embed.add_field(name = "\u200b", value = f"{i[0]:.2f}")
+            embed.add_field(name = "\u200b", value = f"{i[2]}")
+
+        await interaction.response.edit_message(embed=embed, view = drugView(self.ctx))
+
+    @discord.ui.button(label="Items", style = discord.ButtonStyle.primary)
+    async def items_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed()
+        embed.add_field(name = "Item", value = "\u200b")
+        embed.add_field(name = "Use", value = "\u200b")
+        embed.add_field(name = "Qty", value = "\u200b")
+
+        for i in battle_state[self.ctx.author.id][3][2]:
+            
+            embed.add_field(name = "\u200b", value = f"{i[1]}")
+            embed.add_field(name = "\u200b", value = f"{i[0]}")
+            embed.add_field(name = "\u200b", value = f"{i[2]}")
+        
+        await interaction.response.edit_message(embed=embed, view = itemView(self.ctx))
+
+    @discord.ui.button(label = "Back", style = discord.ButtonStyle.primary)
+    async def back_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        embed = discord.Embed()
+
+        embed.add_field(name = "\u200b", value = f"Your health = {battle_state[self.ctx.author.id][0]:.2f}", inline = False)
+        embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[self.ctx.author.id][1]:.2f}", inline = False)
+
+        await interaction.response.edit_message(embed = embed, view = battleView(self.ctx))
+        
+
+        
+
 
 
 @bot.command()
@@ -151,27 +305,35 @@ async def battle(ctx):
     dmg = 0
 
     for i in inven[0]:
-        temp = map[i[0]]
+        temp = inven_map[i[0]]
         dmg = dmg + temp[0]*temp[1]
     
     battle_inven = [inven[0], inven[1], inven[2]]
 
+    dmg = 3*dmg/4
     for i in battle_inven:
         if len(i) == 0:
             continue
         for j in range(len(i)):
-            uses = map[i[j][0]][0]
-            amount = map[i[j][0]][1]
+            uses = inven_map[i[j][0]][0]
+            amount = inven_map[i[j][0]][1]
             if (uses == 0):
                 uses = i[j][1]
-                amount = dmg*map[i[j][0]][1]
+                amount = dmg*inven_map[i[j][0]][1]
             i[j] = (amount, i[j][0], uses)
 
     battle_state[ctx.author.id] = [dmg, dmg, copy.deepcopy(battle_inven), battle_inven]
-    dmg = 3*dmg/4
 
     global total_health
     total_health = dmg
+
+    embed = discord.Embed()
+
+    embed.add_field(name = "\u200b", value = f"Your health = {battle_state[ctx.author.id][0]:.2f}", inline = False)
+    embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[ctx.author.id][1]:.2f}", inline = False)
+
+    await ctx.send(embed = embed, view = battleView(ctx))
+
 
     
 

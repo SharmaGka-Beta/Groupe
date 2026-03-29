@@ -4,6 +4,7 @@ import functions
 import gambling
 import civilian
 import devcommands
+import battle
 
 
 

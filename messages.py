@@ -16,8 +16,8 @@ workn = ["Your car broke down on the way to work. Manager yelled at you for bein
          "You forgot your wallet in the car and a rogue stole it."]
 
 items_gun = [   ("Pistol", "50000", "A basic handgun", "ammunitions", "🔫 ", "6"),
-                ("SMG", "75000", "Machine gun but smol", "ammunitions", " ", "2"),
-                ("Shotgun", "100000", "Beast at close range", "ammunitions", " ", "2")
+                # ("SMG", "75000", "Machine gun but smol", "ammunitions", " ", "2"),
+                ("Shotgun", "100000", "Beast at close range", "ammunitions", " ", "2"),
                 ("AR", "150000", "Fully automatic rifle", "ammunitions", " ", "4"),
                 ("MachineGun", "175000", "Sprays bullets fast", "ammunitions", "🔱 ", "3"),
                 ("Sniper", "200000", "One shot, one kill", "ammunitions", "🎯 ", "1")
