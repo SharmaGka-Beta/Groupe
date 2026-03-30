@@ -171,7 +171,7 @@ async def player_turn(ctx, uid, item, cat):
     for i in battle_state[uid][3][cat]:
         if i[1] == item:
             i[2] -= 1
-            if i[2] == 0:
+            if i[2] == 0 and cat == 1:
                 popped[uid].add(i[1])
                 battle_state[uid][3][cat].remove(i)
             
