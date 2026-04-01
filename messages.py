@@ -102,3 +102,7 @@ volunteer_messages = [
     "Spend a day mentoring at-risk youth?",
     "Volunteer Infini8?",
 ]
+
+slots_weights =  [3, 5, 8, 10, 11, 12, 20]
+slots_symbols = ['💎', '👑', '⭐', '🍒', '💵', '🔫', '💊']
+slots_payouts = {"💊": 2, "🔫": 3, "💵": 5,  "🍒": 10,  "⭐": 15, "👑": 20, "💎": 25}

@@ -214,9 +214,6 @@ async def blackjack(ctx, arg: int):
 
     round_deck = messages.deck[:]
     random.shuffle(round_deck)
-    database.remove_money(ctx.author.id, arg)
-    await ctx.send(f"-{arg} coins")
-
     
     embed = discord.Embed()
     a = round_deck.pop()
@@ -239,3 +236,51 @@ async def blackjack(ctx, arg: int):
 
 
     await ctx.send(embed=embed, view=view(ctx, arg))
+
+@bot.command()
+async def slots(ctx, arg: int):
+    info = database.get_user(ctx.author.id)
+    money = info["money"]
+    if(info["jail"]):
+        await ctx.send("You are a convict! Get out of jail first!!")
+        return
+    if(arg > money):
+        await ctx.send("Can't bet more than you have buddy.")
+        return
+    if(arg <= 0):
+        await ctx.send("Good try, how about you put this energy into a job")
+        return
+
+    symbols = messages.slots_symbols
+    weights = messages.slots_weights
+    payouts = messages.slots_payouts
+
+    reel = random.choices(symbols, weights, k=3)
+    
+    response = ""
+    if(reel[0] == reel[1] == reel[2]):
+        response = f"**JACKPOT!!! YOU WON {arg*payouts[reel[0]]} COINS!**"
+        database.add_money(ctx.author.id, arg*payouts[reel[0]])
+
+    elif(reel[0] == reel[1] or reel[1] == reel[2]):
+        response = f"Close.... You won {arg} coins"
+        database.add_money(ctx.author.id, arg)
+
+    else:
+        response = f"You lost {arg} coins"
+        database.remove_money(ctx.author.id, arg)
+    
+    embed = discord.Embed(
+    description=(
+        f"◖{reel[0]}{reel[1]}{reel[2]}◗\n"
+        f"{response}"
+    ),
+    color=ctx.author.color
+)
+
+    embed.set_author(name=f"{ctx.author.name}'s slots", icon_url=ctx.author.avatar.url)
+    #embed.add_field(name="\u200b", value=f"\n◖{reel[0]}{reel[1]}{reel[2]}◗\n{response}")
+    await ctx.send(embed=embed)
+    
+    
+
