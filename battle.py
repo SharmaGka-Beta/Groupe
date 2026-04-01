@@ -403,6 +403,9 @@ async def battle(ctx):
 
     inven = database.get_inventory(ctx.author.id)
 
+    if (ctx.author.id in battle_state.keys):
+        await ctx.send("You have an ongoing battle!")
+
     if (len(inven[0]) == 0):
         await ctx.send("You don't even own a gun!")
         return

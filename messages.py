@@ -34,8 +34,11 @@ items_items = []
 hit_targets = ["Joaquin Salamanca", "Ed Truck", "Charles McGill", "Negan Smith", "Becca Butcher", 
             "Susan Duffy", "Imran Ansari", "Ann Perkins", "Veronica Duncan", "Meera Eston"]
 
-rob_targets = ["Chaudhary Baldev Singh", "Gil Thorpe", "Tammy Swanson", "Jack Dawson", "Stuart Bloom",
+rob_targets = ["Chaudhary Baldev Singh", "Gil Thorpe", "Tammy Swanson", "Jack Dawson", "Bert Kibbler",
                "Melvina Whitaker", "Dawn Lerner", "Luke Cooper", "Paige Novick", "Carmen Molina"]
+
+extort_targets = ["Stuart Bloom - Comic Shop", "Kevin Malone - Bar", "Bogdan Wolynetz - Car Wash", "Ernesto - Street Vendor",
+                  "Manuel Varga - Furniture Repair Store", "Tom Haverford - Bistro", "George Weasley - Magic Shop"]
 
 items = items_gun + items_drugs + items_items
 

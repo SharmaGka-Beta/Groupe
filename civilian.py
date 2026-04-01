@@ -65,13 +65,13 @@ class Charity_View(discord.ui.View):
             return
         
         database.remove_money(self.user_id, self.amount)
-        database.add_integrity(self.user_id, int(self.amount/1000))
-        database.remove_wanted(self.user_id, int(self.amount/1000))
+        database.add_integrity(self.user_id, int(self.amount//1000))
+        database.remove_wanted(self.user_id, int(self.amount//1000))
 
 
         await self.ctx.send(f'-{self.amount} Coins')
-        await self.ctx.send(f'+{int(self.amount/1000)} Integrity')
-        await self.ctx.send(f'-{int(self.amount/1000)}  Wanted')
+        await self.ctx.send(f'+{int(self.amount//1000)} Integrity')
+        await self.ctx.send(f'-{int(self.amount//1000)}  Wanted')
 
         
 
@@ -141,7 +141,7 @@ class WeaponButton(discord.ui.Button):
         await self.ctx.send(f"You have successfully eliminated {self.target}")
         await self.ctx.send(f"+{self.money} coins")
         database.add_money(self.ctx.author.id, self.money)
-        database.add_wanted(self.ctx.author.id, int(self.money/1000))
+        database.add_wanted(self.ctx.author.id, int(self.money//1000))
     
 class acceptView(discord.ui.View):
 
@@ -177,7 +177,7 @@ class hitView(discord.ui.View):
             child.disabled = True
         await interaction.message.edit(view=self)
 
-        database.remove_integrity(self.ctx.author.id, int(self.money/1000))
+        database.remove_integrity(self.ctx.author.id, int(self.money//1000))
         info = database.get_inventory(self.ctx.author.id)
         if len(info[0]) == 0:
             await self.ctx.send("You don't have a weapon!")
@@ -310,7 +310,7 @@ class robView(discord.ui.View):
             child.disabled = True
         await interaction.message.edit(view=self)
 
-        database.remove_integrity(self.ctx.author.id, int(self.money/1000))
+        database.remove_integrity(self.ctx.author.id, int(self.money//1000))
 
         if (events.police_catch(self.ctx, 7)):
             await self.ctx.send(f"{self.target} caught you! They robbed you instead!")
@@ -327,7 +327,7 @@ class robView(discord.ui.View):
         await self.ctx.send(f"You have successfully robbed {self.target}!")
         await self.ctx.send(f"+ {self.money} coins!")
         database.add_money(self.ctx.author.id, self.money)
-        database.add_wanted(self.ctx.author.id, int(self.money/1000))
+        database.add_wanted(self.ctx.author.id, int(self.money//1000))
 
                 
 
