@@ -30,19 +30,14 @@ async def profile(ctx, member:discord.Member = None):
         member = ctx.author             #you can get profile of other users too. defaults to self
     uid = member.id
     info = database.get_user(uid)
-    embed = discord.Embed(title="Welcome to Sin City!", color= discord.Color.brand_red())
-
+    
+    embed = discord.Embed(title=f"{ctx.author.name} — {info['user_role'].upper()}", color=messages.role_colors[info["user_role"]])
+    
     embed.set_thumbnail(url=member.display_avatar.url)
-    # embed.add_field(name="\u200b", value="PLAYER INFO", inline=True)
-    embed.add_field(name="\u200b", value=f"👤 Player Name: {member.name}", inline=False)
-    embed.add_field(name="\u200b", value=f"🪙 Balance: {info["money"]}", inline=False)
-    # embed.add_field(name="\u200b", value=f"🆙 Level: {info["level"]}", inline=False)
 
+    embed.add_field(name="**MONEY**", value=f"🪙 **Coins**: {info["money"]:,}\n💸 **Black Money**: {info["b_money"]:,}", inline=False)
 
-    embed.add_field(name="\u200b", value=f"🔥 WANTED METER: {info["wanted"]}", inline=False)
-    embed.add_field(name="\u200b", value=f"📈 RESPECT METER: {info["integrity"]}", inline=False)
-    embed.add_field(name="\u200b", value=f"🪪 ROLE: {info["user_role"].capitalize()}", inline=False)
-    embed.add_field(name="\u200b", value=f"BLACK MONEY: {info["b_money"]}", inline=False)
+    embed.add_field(name="**STATS**", value=f"🔥 **Wanted**: {info["wanted"]}\n📈 **Integrity**: {info["integrity"]}", inline=False)
 
     await ctx.send(embed=embed)
 

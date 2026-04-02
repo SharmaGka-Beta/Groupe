@@ -275,7 +275,7 @@ async def slots(ctx, arg: int):
         f"◖{reel[0]}{reel[1]}{reel[2]}◗\n"
         f"{response}"
     ),
-    color=ctx.author.color
+    color=discord.Color.gold()
 )
 
     embed.set_author(name=f"{ctx.author.name}'s slots", icon_url=ctx.author.avatar.url)

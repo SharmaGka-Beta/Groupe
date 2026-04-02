@@ -106,3 +106,10 @@ volunteer_messages = [
 slots_weights =  [3, 5, 8, 10, 11, 12, 20]
 slots_symbols = ['💎', '👑', '⭐', '🍒', '💵', '🔫', '💊']
 slots_payouts = {"💊": 2, "🔫": 3, "💵": 5,  "🍒": 10,  "⭐": 15, "👑": 20, "💎": 25}
+
+role_colors = {
+    "civilian":  0x3498db,  # blue
+    "associate": 0xf1c40f,  # yellow
+    "underboss": 0xe67e22,  # orange
+    "godfather": 0xed4245   # brand red
+}
