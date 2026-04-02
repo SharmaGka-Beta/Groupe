@@ -285,7 +285,7 @@ async def buy(ctx, item, qty:int = 1):
             database.update_inventory(ctx.author.id, it[0].lower(), it[3], qty)
             database.remove_money(ctx.author.id, qty*int(it[1]))
             
-            await ctx.send(f"{qty} {item}(s) bough successfully!")     #bough
+            await ctx.send(f"{qty} {item}(s) bought successfully!")     #bough
             
                 
             return
@@ -336,6 +336,7 @@ async def bribe(ctx, arg: int):
     if (random.random() <= arg):
         database.update_jail(ctx.author.id, 0)
         await ctx.send("Alright we'll let you go this time")        #bribe prob related to money
+        await ctx.send("-10 Wanted\n-10 Integrity")
         database.remove_integrity(ctx.author.id, 10)                #10k = 100%, 5k = 50%
         database.remove_wanted(ctx.author.id, 10)
         return
@@ -350,12 +351,12 @@ async def bail(ctx):
         await ctx.send("You're not a convict!")
         return
     
-    if (info["money"] < 10000):                                     #bail set at 10k
+    if (info["money"] < 100000):                                     #bail set at 100k
         await ctx.send("Insufficient Balance")
         return
 
     
-    database.remove_money(ctx.author.id, 10000)
+    database.remove_money(ctx.author.id, 100000)
     await ctx.send("Released")
     database.update_jail(ctx.author.id, 0)
     database.remove_wanted(ctx.author.id, 10)
@@ -401,7 +402,7 @@ async def launder(ctx, arg: int):
         return
     if(events.it_raid(ctx)):
         await ctx.send("You got set up by the IRS! They sent you to jail...")
-        await ctx.send(f"-{(info["wanted"]/100)*info["b_money"]}")
+        await ctx.send(f"-{int((info["wanted"]/100)*info["b_money"])}")
         database.update_jail(ctx.author.id, 1)
         database.remove_b_money(ctx.author.id, int((info["wanted"]/100)*info["b_money"]))
         return
