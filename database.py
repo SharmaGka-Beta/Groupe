@@ -13,7 +13,8 @@ def create_tables():
             wanted INTEGER DEFAULT 0 CHECK(wanted >= 0 AND wanted <= 100), 
             integrity INTEGER DEFAULT 0 CHECK(integrity >= 0 AND integrity <= 100),
             user_role TEXT DEFAULT "civilian",
-            jail INTEGER DEFAULT 0
+            jail INTEGER DEFAULT 0,
+            b_money INTEGER DEFAULT 0 CHECK(b_money >= 0)
         )  
     """)
 
@@ -74,11 +75,11 @@ def get_user(user_id: int):
     if row is None:
         add_user(user_id)
         conn.close()
-        return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian", "jail": 0}
+        return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian", "jail": 0, "b_money": 0}
         
     
     conn.close()
-    return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4], "jail": row[5]}
+    return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4], "jail": row[5], "b_money": row[6]}
 
 def get_inventory(uid):
 
@@ -163,6 +164,31 @@ def remove_money(user_id:int,amount:int):
         except sqlite3.IntegrityError:
             cursor.execute(
                 "UPDATE user_info SET money = 0 WHERE user_id = ? ", (user_id,)
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+def add_b_money(user_id:int,amount:int ):
+    conn = sqlite3.connect(dbname)
+    conn.execute(
+        "UPDATE user_info SET b_money= b_money+ ? WHERE user_id = ? ", (amount,user_id)
+    )
+    conn.commit()
+    conn.close()
+
+def remove_b_money(user_id:int,amount:int):
+
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+    try:
+        try:
+            cursor.execute(
+                "UPDATE user_info SET b_money = b_money - ? WHERE user_id = ? ", (amount,user_id)
+            )
+        except sqlite3.IntegrityError:
+            cursor.execute(
+                "UPDATE user_info SET b_money = 0 WHERE user_id = ? ", (user_id,)
             )
         conn.commit()
     finally:

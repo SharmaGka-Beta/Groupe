@@ -42,6 +42,7 @@ async def profile(ctx, member:discord.Member = None):
     embed.add_field(name="\u200b", value=f"🔥 WANTED METER: {info["wanted"]}", inline=False)
     embed.add_field(name="\u200b", value=f"📈 RESPECT METER: {info["integrity"]}", inline=False)
     embed.add_field(name="\u200b", value=f"🪪 ROLE: {info["user_role"].capitalize()}", inline=False)
+    embed.add_field(name="\u200b", value=f"BLACK MONEY: {info["b_money"]}", inline=False)
 
     await ctx.send(embed=embed)
 
@@ -383,5 +384,33 @@ async def run(ctx):                                 #run purely based on rng. 5%
             f"The guards tackled you back to your cell. Better luck next time. 🔒"
         )
 
+@bot.command()
+async def launder(ctx, arg: int):
+    info = database.get_user(ctx.author.id)
 
+    if(info["jail"]):
+        await ctx.send("You are in jail! The only laundering you can do here is for your clothes")
+        return
+    if(arg > info["b_money"]):
+        await ctx.send("You aren't that rich pal, you can't launder air")
+        return
+    if(arg <= 0):
+        await ctx.send("The magic laundering machine turned into a blackhole and swallowed your black money!")
+        await ctx.send(f"-{int(0.05*info["b_money"])} coins")
+        database.remove_b_money(ctx.author.id, 0.05*info["b_money"])
+        return
+    if(events.it_raid(ctx)):
+        await ctx.send("You got set up by the IRS! They sent you to jail...")
+        await ctx.send(f"-{(info["wanted"]/100)*info["b_money"]}")
+        database.update_jail(ctx.author.id, 1)
+        database.remove_b_money(ctx.author.id, int((info["wanted"]/100)*info["b_money"]))
+        return
+    
+    fee = info["wanted"]/200
+    await ctx.send(f"You succesfully laundered {arg} coins. You got {int(arg*(1-fee))} legal money")
+    database.remove_b_money(ctx.author.id, arg)
+    database.add_money(ctx.author.id, arg*(1-fee))
 
+@bot.event
+async def on_command_error(ctx, error):
+    await ctx.send(f"Error: {error}")  # temporarily print all errors

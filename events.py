@@ -15,6 +15,12 @@ def police_catch(ctx, heat):
 
     return 1
 
+def it_raid(ctx):
+    info = database.get_user(ctx.author.id)
+    heat = info["wanted"]/100
+    exposure = min(info["b_money"]/5000000, 1)
+    if(random.random() <= (heat+exposure)/2):
+        return True
 
 def summon(ctx, danger, money):
 

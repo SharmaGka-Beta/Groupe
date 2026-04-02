@@ -46,3 +46,10 @@ async def remintegrity(ctx):
 async def change_role(ctx, arg: str = "civilian"):
     database.update_role(ctx.author.id, arg)
     await ctx.send("Done")
+
+@bot.command()
+async def change_blackmoney(ctx, arg: int):
+    if(arg > 0):
+        database.add_b_money(ctx.author.id, arg)
+    else:
+        database.remove_b_money(ctx.author.id, -arg)

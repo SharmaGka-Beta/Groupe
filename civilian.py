@@ -140,7 +140,7 @@ class WeaponButton(discord.ui.Button):
         
         await self.ctx.send(f"You have successfully eliminated {self.target}")
         await self.ctx.send(f"+{self.money} coins")
-        database.add_money(self.ctx.author.id, self.money)
+        database.add_b_money(self.ctx.author.id, self.money)
         database.add_wanted(self.ctx.author.id, int(self.money//1000))
     
 class acceptView(discord.ui.View):
@@ -326,7 +326,7 @@ class robView(discord.ui.View):
         
         await self.ctx.send(f"You have successfully robbed {self.target}!")
         await self.ctx.send(f"+ {self.money} coins!")
-        database.add_money(self.ctx.author.id, self.money)
+        database.add_b_money(self.ctx.author.id, self.money)
         database.add_wanted(self.ctx.author.id, int(self.money//1000))
 
                 
