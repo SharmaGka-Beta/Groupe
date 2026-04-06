@@ -9,6 +9,7 @@ def create_tables():
     cursor.execute("""
         CREATE TABLE IF NOT exists user_info(
             user_id INTEGER PRIMARY KEY,
+            user_name,
             money INTEGER DEFAULT 1000 CHECK(money >= 0),
             wanted INTEGER DEFAULT 0 CHECK(wanted >= 0 AND wanted <= 100), 
             integrity INTEGER DEFAULT 0 CHECK(integrity >= 0 AND integrity <= 100),
@@ -51,8 +52,15 @@ def create_tables():
     conn.commit()
     conn.close()
 
+def get_leaderboard():
+    conn = sqlite3.connect(dbname)
+    cursor = conn.execute(
+        "SELECT * FROM user_info ORDER BY money DESC"
+    )
+    row = cursor.fetchall()
+    return row
 
-def add_user(user_id: int):
+def add_user(user_id: int, user_name):
     conn = sqlite3.connect(dbname)
     cursor = conn.execute(
         "SELECT * FROM user_info WHERE user_id = ?", (user_id,)
@@ -61,19 +69,19 @@ def add_user(user_id: int):
 
     if row is None:
         conn.execute(
-            "INSERT INTO user_info (user_id) VALUES (?)", (user_id,)
+            "INSERT INTO user_info (user_id, user_name) VALUES (?)", (user_id, user_name)
         )
         conn.commit()
     conn.close()
 
-def get_user(user_id: int):
+def get_user(user_id: int, user_name):
     conn = sqlite3.connect(dbname)
     cursor = conn.execute(
         "SELECT * FROM user_info WHERE user_id = ?", (user_id,)
     )
     row = cursor.fetchone()
     if row is None:
-        add_user(user_id)
+        add_user(user_id, user_name)
         conn.close()
         return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian", "jail": 0, "b_money": 0}
         

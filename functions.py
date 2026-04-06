@@ -29,7 +29,7 @@ async def profile(ctx, member:discord.Member = None):
     if member == None:
         member = ctx.author             #you can get profile of other users too. defaults to self
     uid = member.id
-    info = database.get_user(uid)
+    info = database.get_user(uid, ctx.author.name)
     
     embed = discord.Embed(title=f"{ctx.author.name} — {info['user_role'].upper()}", color=messages.role_colors[info["user_role"]])
     
@@ -107,7 +107,7 @@ class invenView(discord.ui.View):
 @bot.command()
 async def inventory(ctx):
 
-    database.add_user(ctx.author.id)
+    database.add_user(ctx.author.id, ctx.author.name)
     inven = database.get_inventory(ctx.author.id)
     embed = discord.Embed(title = "GUNS", color = discord.Color.brand_red())
 
@@ -125,7 +125,7 @@ async def inventory(ctx):
 @bot.command()
 async def sell(ctx, item, qty: int = 1):            #qty defaults to 1
 
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")        #no selling in jail
@@ -224,10 +224,19 @@ class shop_view(discord.ui.View):
 
         await interaction.response.edit_message(embed = embed, view = shop_view())
 
+# class leaderboard_view(discord.ui.view):
+
+#     @discord.ui.button(label="Coins", style = discord.ButtonStyle.primary)
+#     async def coins_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+#         embed = discord.Embed(title="Coins Leaderboard", color=discord.color.brand_red())
+
+#         player_info = database.get_leaderboard()
+#         for player in player_info:
+#             embed.add_field(name=)
 
 @bot.command()
 async def shop(ctx):
-    database.add_user(ctx.author.id)
+    database.add_user(ctx.author.id, ctx.author.name)
     
     embed = discord.Embed(title = "GUN SHOP", color = discord.Color.brand_red())    #start at gun same as inven
     
@@ -242,7 +251,7 @@ async def shop(ctx):
 
 @bot.command()
 async def transfer(ctx, amount:int , member:discord.Member):        #send to another player
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")        #jail check
         return
@@ -261,7 +270,7 @@ async def transfer(ctx, amount:int , member:discord.Member):        #send to ano
 
 @bot.command()
 async def buy(ctx, item, qty:int = 1):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")
@@ -289,7 +298,7 @@ async def buy(ctx, item, qty:int = 1):
 
 @bot.command()
 async def talk(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
     
     if(info["jail"] == 1):
         respect = info["integrity"]                     #try to negotiate with cops
@@ -306,7 +315,7 @@ async def talk(ctx):
 
 @bot.command()
 async def bribe(ctx, arg: int):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if info["jail"] != 1:
         await ctx.send("You're not a convict!")
@@ -340,7 +349,7 @@ async def bribe(ctx, arg: int):
 
 @bot.command()
 async def bail(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if info["jail"] != 1:
         await ctx.send("You're not a convict!")
@@ -360,7 +369,7 @@ async def bail(ctx):
 
 @bot.command()
 async def run(ctx):                                 #run purely based on rng. 5% chance
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if  info["jail"]==0:
         await ctx.send("🤨 You're not even in jail, why are you running?")
@@ -382,7 +391,7 @@ async def run(ctx):                                 #run purely based on rng. 5%
 
 @bot.command()
 async def launder(ctx, arg: int):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if(info["jail"]):
         await ctx.send("You are in jail! The only laundering you can do here is for your clothes")

@@ -9,7 +9,7 @@ import story
 
 @bot.command()
 async def work(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")
@@ -58,7 +58,7 @@ class Charity_View(discord.ui.View):
             item.disabled = True
         await interaction.message.edit(view=self)
         
-        info = database.get_user(self.user_id)
+        info = database.get_user(self.user_id, self.ctx.author.name)
 
         if(self.amount>info["money"]):
             await self.ctx.send("You don't have enough funds")
@@ -90,7 +90,7 @@ class Charity_View(discord.ui.View):
 
 @bot.command()
 async def charity(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     
 
@@ -206,7 +206,7 @@ class hitView(discord.ui.View):
 
 @bot.command()
 async def hit(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")
@@ -270,7 +270,7 @@ class Volunteer_view(discord.ui.View):
 
 @bot.command()
 async def volunteer(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if  info["jail"]==1:
         await ctx.send("🚔 You're in jail! You can't volunteer from behind bars.")
@@ -347,7 +347,7 @@ class robView(discord.ui.View):
 
 @bot.command()
 async def rob(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")
@@ -366,7 +366,7 @@ async def rob(ctx):
 
 @bot.command()
 async def mob(ctx):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id,ctx.author.name)
     inven = database.get_inventory(ctx.author.id)
 
     role = info["user_role"]

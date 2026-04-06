@@ -391,7 +391,7 @@ class battleView(discord.ui.View):
 @bot.command()
 async def battle(ctx):
 
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     if (info["user_role"] == 'civilian'):
         await ctx.send("Civilians don't battle!")

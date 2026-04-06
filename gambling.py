@@ -7,7 +7,7 @@ import messages
 @bot.command()
 async def roulette(ctx, amount: int , bet_type:str):
     user_id=ctx.author.id
-    d=database.get_user(user_id)
+    d=database.get_user(user_id, ctx.author.name)
 
     if d["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")
@@ -194,7 +194,7 @@ blackjack_cards = {}
 @bot.command()
 async def blackjack(ctx, arg: int):
 
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")
         return
@@ -239,7 +239,7 @@ async def blackjack(ctx, arg: int):
 
 @bot.command()
 async def slots(ctx, arg: int):
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
     money = info["money"]
     if(info["jail"]):
         await ctx.send("You are a convict! Get out of jail first!!")
