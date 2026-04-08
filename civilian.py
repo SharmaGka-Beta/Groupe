@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 from functions import bot
 import asyncio
 import database
@@ -7,6 +8,7 @@ import random
 import events
 import story
 
+@commands.cooldown(1, 15*60, commands.BucketType.user) #15 mins cooldown
 @bot.command()
 async def work(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -87,7 +89,7 @@ class Charity_View(discord.ui.View):
 
 
     
-
+@commands.cooldown(1, 3600, commands.BucketType.user)
 @bot.command()
 async def charity(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -99,10 +101,10 @@ async def charity(ctx):
         return
     
     if info["money"] <= 5000:
-        await ctx.send("❌ You're broke. Nothing to donate.")
+        await ctx.send("❌ You're broke. You might qualify for charity.")
         return
     
-    amount = random.randint(5000, 15000)
+    amount = random.randint(info["money"]//20, info["money"]//10) #anywhere from 5 to 10% of wallet, cant donate black money 
     message= random.choice(messages.charity_messages)
 
     embed = discord.Embed(
@@ -203,7 +205,7 @@ class hitView(discord.ui.View):
         
 
 
-
+@commands.cooldown(1, 3600, commands.BucketType.user)
 @bot.command()
 async def hit(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -267,7 +269,7 @@ class Volunteer_view(discord.ui.View):
 
         await self.ctx.send("Ye gendu generation hai!")
 
-
+@commands.cooldown(1, 3*60*60, commands.BucketType.user) # 3hr cd as it doesnt have negative effect
 @bot.command()
 async def volunteer(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -344,7 +346,7 @@ class robView(discord.ui.View):
         return
 
 
-
+@commands.cooldown(1, 1800, commands.BucketType.user)
 @bot.command()
 async def rob(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -363,7 +365,7 @@ async def rob(ctx):
     await ctx.send(embed = embed, view = robView(ctx, target, money))
 
 
-
+@commands.cooldown(1, 3600, commands.BucketType.user)
 @bot.command()
 async def mob(ctx):
     info = database.get_user(ctx.author.id,ctx.author.name)

@@ -53,3 +53,9 @@ async def change_blackmoney(ctx, arg: int):
         database.add_b_money(ctx.author.id, arg)
     else:
         database.remove_b_money(ctx.author.id, -arg)
+
+@bot.command()
+async def removecd(ctx):
+    for command in bot.commands:
+        command.reset_cooldown(ctx)
+    await ctx.send("Done")

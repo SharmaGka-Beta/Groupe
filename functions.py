@@ -20,8 +20,16 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("I don't recognize that command. Type 'sin help' to view all commands")
+    elif isinstance(error, commands.CommandOnCooldown):
+        totaltime = error.retry_after
+        hours = totaltime//3600
+        minutes = (totaltime%3600)//60
+        seconds = totaltime%60
+        await ctx.send(f"Slow down! You just did {ctx.command}, try after {int(hours)}hrs {int(minutes)}mins {int(seconds)}s")
     elif isinstance(error, commands.UserInputError):
         await ctx.send("Your command format is incorrect. Type 'sin help' to view the command formats.")
+    else:
+        await ctx.send(f"error: {error}")
 
 
 @bot.command()
@@ -345,6 +353,7 @@ async def buy(ctx, item, qty:int = 1):
 
     await ctx.send("Enter a valid item name!")
 
+@commands.cooldown(1, 300, commands.BucketType.user)
 @bot.command()
 async def talk(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -361,7 +370,7 @@ async def talk(ctx):
     else:
         await ctx.send("You are not even jail, do you just enjoy talking to cops?")
 
-
+@commands.cooldown(1, 30, commands.BucketType.user)
 @bot.command()
 async def bribe(ctx, arg: int):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -396,6 +405,7 @@ async def bribe(ctx, arg: int):
     
     await ctx.send("Not enough!!")
 
+@commands.cooldown(1, 30, commands.BucketType.user)
 @bot.command()
 async def bail(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -415,7 +425,7 @@ async def bail(ctx):
     database.remove_wanted(ctx.author.id, 10)
 
     
-
+@commands.cooldown(1, 300, commands.BucketType.user)
 @bot.command()
 async def run(ctx):                                 #run purely based on rng. 5% chance
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -438,6 +448,7 @@ async def run(ctx):                                 #run purely based on rng. 5%
             f"The guards tackled you back to your cell. Better luck next time. 🔒"
         )
 
+@commands.cooldown(1, 6*60*60, commands.BucketType.user) #6 hr cooldown
 @bot.command()
 async def launder(ctx, arg: int):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -465,6 +476,28 @@ async def launder(ctx, arg: int):
     database.remove_b_money(ctx.author.id, arg)
     database.add_money(ctx.author.id, arg*(1-fee))
 
-@bot.event
-async def on_command_error(ctx, error):
-    await ctx.send(f"Error: {error}")  # temporarily print all errors
+@bot.command()
+async def cooldowns(ctx):
+    embed = discord.Embed()
+
+    messages = []
+    
+    for command in bot.commands:
+        if command.cooldown is None:
+            continue
+        cooldown = command.get_cooldown_retry_after(ctx)
+        if cooldown > 0:
+            hr = int(cooldown//3600)
+            min = int((cooldown%3600)//60)
+            s = int(cooldown%60)
+
+            embed.add_field(name=f"```{command.name}```", value=f"{hr}hrs {min}mins {s}s", inline=False)
+        else:
+            embed.add_field(name=f"```{command.name}```", value=f"✅ Available", inline=False) 
+
+    if len(embed.fields) == 0:
+        await ctx.send("No active cooldowns!")
+        return
+    
+    embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns", icon_url=ctx.author.avatar.url)
+    await ctx.send(embed = embed)

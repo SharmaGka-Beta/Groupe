@@ -1,5 +1,6 @@
 from functions import bot
 import discord
+from discord.ext import commands
 import messages
 import random
 import database
@@ -40,7 +41,7 @@ class contribute(discord.ui.View):
             await self.ctx.send("You have been summoned by the family for not making enough contributions")
             await self.ctx.send("'If you wanna survive here I'd advise you to step up your game!'")
             
-        database.remove_money_money(self.ctx.author.id, self.money//2)
+        database.remove_money(self.ctx.author.id, self.money//2)
 
     @discord.ui.button(label = "None", style = discord.ButtonStyle.primary,)
     async def none_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
@@ -115,7 +116,7 @@ class extortView(discord.ui.View):
 
         await self.ctx.send("Coward")
         
-
+@commands.cooldown(1, 3600, commands.BucketType.user)
 @bot.command()
 async def extort(ctx):
 
