@@ -222,17 +222,7 @@ class shop_view(discord.ui.View):
         for item in messages.items_items:
             embed.add_field(name = f"{item[4]}__{item[0]}__ | 🪙 {item[1]}" , value=item[2], inline=False)
 
-        await interaction.response.edit_message(embed = embed, view = shop_view())
-
-# class leaderboard_view(discord.ui.view):
-
-#     @discord.ui.button(label="Coins", style = discord.ButtonStyle.primary)
-#     async def coins_callback(self, interaction: discord.Interaction, button: discord.ui.button):
-#         embed = discord.Embed(title="Coins Leaderboard", color=discord.color.brand_red())
-
-#         player_info = database.get_leaderboard()
-#         for player in player_info:
-#             embed.add_field(name=)
+        await interaction.response.edit_message(embed = embed, view = shop_view())   
 
 @bot.command()
 async def shop(ctx):
@@ -247,6 +237,32 @@ async def shop(ctx):
 
     await ctx.send(embed = embed, view = shop_view())
 
+class leaderboard_view(discord.ui.View):
+
+    @discord.ui.button(label="Coins", style = discord.ButtonStyle.primary)
+    async def coins_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+        embed = discord.Embed(title="Coins Leaderboard", color=discord.Color.brand_red())
+
+        player_info = database.get_leaderboard("money")
+        i = 0
+        for player in player_info:
+            i += 1
+            embed.add_field(name=f"{i}. {player[7]}: {player[1]}", value="\u200b")
+        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
+
+@bot.command()
+async def leaderboard(ctx):
+    database.add_user(ctx.author.id, ctx.author.name)
+
+    embed = discord.Embed(title="Coins Leaderboard", color=discord.Color.brand_red())
+
+    player_info = database.get_leaderboard("money")
+    i = 0
+    for player in player_info:
+        i += 1
+        embed.add_field(name=f"{i}. {player[7]}: {player[1]}", value="\u200b")
+
+    await ctx.send(embed = embed, view = leaderboard_view())
 
 
 @bot.command()

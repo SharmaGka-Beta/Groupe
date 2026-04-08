@@ -119,7 +119,7 @@ class extortView(discord.ui.View):
 @bot.command()
 async def extort(ctx):
 
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     role = info["user_role"]
 
