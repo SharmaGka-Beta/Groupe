@@ -250,6 +250,39 @@ class leaderboard_view(discord.ui.View):
             embed.add_field(name=f"{i}. {player[7]}: {player[1]}", value="\u200b")
         await interaction.response.edit_message(embed = embed, view = leaderboard_view())
 
+    @discord.ui.button(label="Wanted", style = discord.ButtonStyle.primary)
+    async def wanted_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+        embed = discord.Embed(title="Wanted Leaderboard", color=discord.Color.brand_red())
+
+        player_info = database.get_leaderboard("wanted")
+        i = 0
+        for player in player_info:
+            i += 1
+            embed.add_field(name=f"{i}. {player[7]}: {player[2]}", value="\u200b")
+        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
+
+    @discord.ui.button(label="Integrity", style = discord.ButtonStyle.primary)
+    async def integrity_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+        embed = discord.Embed(title="Integrity Leaderboard", color=discord.Color.brand_red())
+
+        player_info = database.get_leaderboard("integrity")
+        i = 0
+        for player in player_info:
+            i += 1
+            embed.add_field(name=f"{i}. {player[7]}: {player[3]}", value="\u200b")
+        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
+    
+    @discord.ui.button(label="Black Money", style = discord.ButtonStyle.primary)
+    async def black_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+        embed = discord.Embed(title="Black Money Leaderboard", color=discord.Color.brand_red())
+
+        player_info = database.get_leaderboard("b_money")
+        i = 0
+        for player in player_info:
+            i += 1
+            embed.add_field(name=f"{i}. {player[7]}: {player[6]}", value="\u200b")
+        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
+        
 @bot.command()
 async def leaderboard(ctx):
     database.add_user(ctx.author.id, ctx.author.name)
