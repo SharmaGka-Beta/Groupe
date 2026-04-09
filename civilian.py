@@ -8,7 +8,7 @@ import random
 import events
 import story
 
-@commands.cooldown(1, 15*60, commands.BucketType.user) #15 mins cooldown
+@commands.cooldown(1, 60, commands.BucketType.user) #1 min cooldown
 @bot.command()
 async def work(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -89,7 +89,7 @@ class Charity_View(discord.ui.View):
 
 
     
-@commands.cooldown(1, 3600, commands.BucketType.user)
+@commands.cooldown(1, 2*60, commands.BucketType.user)
 @bot.command()
 async def charity(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -205,7 +205,7 @@ class hitView(discord.ui.View):
         
 
 
-@commands.cooldown(1, 3600, commands.BucketType.user)
+@commands.cooldown(1, 2*60, commands.BucketType.user)
 @bot.command()
 async def hit(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -269,7 +269,7 @@ class Volunteer_view(discord.ui.View):
 
         await self.ctx.send("Ye gendu generation hai!")
 
-@commands.cooldown(1, 3*60*60, commands.BucketType.user) # 3hr cd as it doesnt have negative effect
+@commands.cooldown(1, 2*60, commands.BucketType.user) # 2 min cooldown
 @bot.command()
 async def volunteer(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -346,7 +346,7 @@ class robView(discord.ui.View):
         return
 
 
-@commands.cooldown(1, 1800, commands.BucketType.user)
+@commands.cooldown(1, 2*60, commands.BucketType.user)
 @bot.command()
 async def rob(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -365,7 +365,6 @@ async def rob(ctx):
     await ctx.send(embed = embed, view = robView(ctx, target, money))
 
 
-@commands.cooldown(1, 3600, commands.BucketType.user)
 @bot.command()
 async def mob(ctx):
     info = database.get_user(ctx.author.id,ctx.author.name)

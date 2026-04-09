@@ -353,7 +353,7 @@ async def buy(ctx, item, qty:int = 1):
 
     await ctx.send("Enter a valid item name!")
 
-@commands.cooldown(1, 300, commands.BucketType.user)
+@commands.cooldown(1, 60, commands.BucketType.user)
 @bot.command()
 async def talk(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -425,7 +425,7 @@ async def bail(ctx):
     database.remove_wanted(ctx.author.id, 10)
 
     
-@commands.cooldown(1, 300, commands.BucketType.user)
+@commands.cooldown(1, 60, commands.BucketType.user)
 @bot.command()
 async def run(ctx):                                 #run purely based on rng. 5% chance
     info = database.get_user(ctx.author.id, ctx.author.name)
@@ -448,7 +448,7 @@ async def run(ctx):                                 #run purely based on rng. 5%
             f"The guards tackled you back to your cell. Better luck next time. 🔒"
         )
 
-@commands.cooldown(1, 6*60*60, commands.BucketType.user) #6 hr cooldown
+@commands.cooldown(1, 1*60*60, commands.BucketType.user) #1 hr cooldown
 @bot.command()
 async def launder(ctx, arg: int):
     info = database.get_user(ctx.author.id, ctx.author.name)

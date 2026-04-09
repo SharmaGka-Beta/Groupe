@@ -120,7 +120,7 @@ class extortView(discord.ui.View):
 
         await self.ctx.send("Coward")
         
-@commands.cooldown(1, 3600, commands.BucketType.user)
+@commands.cooldown(1, 2*60, commands.BucketType.user)
 @bot.command()
 async def extort(ctx):
 
@@ -145,7 +145,7 @@ async def extort(ctx):
     await ctx.send(embed = embed, view = extortView(ctx, target, money))
 
 
-    
+@commands.cooldown(1, 2*60, commands.BucketType.user)
 @bot.command()
 async def deal(ctx):
 
