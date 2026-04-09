@@ -168,3 +168,46 @@ class trialView(discord.ui.View):
 
 
 #-----------------------------------------------------------------------------------------------
+
+
+class aPromotionView(discord.ui.View):
+
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("This is not your choice!", ephemeral = True)
+            return False
+        return True
+    
+    @discord.ui.button(label="Ready", style = discord.ButtonStyle.primary,)
+    async def ready_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
+        inven = database.get_inventory(self.ctx.author.id)
+        if (len(inven[0]) == 0):
+            await self.ctx.send("You don't even own a gun!")
+            return
+
+        await self.ctx.send("You head to the rival family's base of operations")
+
+
+    
+    @discord.ui.button(label="Nevermind", style = discord.ButtonStyle.primary,)
+    async def callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        
+        await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
+        await self.ctx.send("You dare waste our time!")
+        await self.ctx.send("The roughed you up!")
+        database.remove_money(self.ctx.author.id, 100000)

@@ -14,7 +14,6 @@ popped = {}
 inven_map = {"pistol": [6, 2], "smg": [5, 7], "shotgun": [2, 10], "ar": [3, 20], "machinegun": [2, 30], "sniper": [1, 50],
         "weed": [0, 0.1], "lsd": [0, 0.2], "cocaine": [0, 0.3], "bluemeth": [0, 0.4], "heroin": [0, 0.5]}
 
-total_health = None
 
 guns = ["pistol", "smg", "shotgun", "ar", "machinegun", "sniper"]
 
@@ -43,9 +42,11 @@ def bot_item(uid):
         one_shot_bot = [gun for gun in battle_state[uid][3][0] if gun[0] >= battle_state[uid][1]]
 
         if (len(one_shot_bot) != 0):
+
             
             d = [drug for drug in drugs if battle_state[uid][1] + drug[0] <= battle_state[uid][6]]
             if(len(d) != 0):
+                print(1)
                 return (d[-1][1], 1, d[-1][0])
         
     item_cat = None
@@ -71,10 +72,12 @@ def bot_item(uid):
         
         a = random.randint(1, 10)
         if (a <= 7):
+            print(2)
             if (len(guns) == 1):
                 return (guns[0][1], 0, guns[0][0])
             return (guns[-2][1], 0, guns[-2][0])
         else:
+            print(3)
             b = random.randint(0, max(0, sz - 2))
             return (guns[b][1], 0, guns[b][0])
     
@@ -83,6 +86,7 @@ def bot_item(uid):
         options = [drug for drug in drugs if drug[0] + battle_state[uid][1] <= battle_state[uid][6]]
         if (len(options) != 0):
             d = random.choice(options)
+            print(4)
             return (d[1], 1, d[0])
         
         if (len(battle_state[uid][2][0]) == 0):
@@ -93,8 +97,10 @@ def bot_item(uid):
         
         a = random.randint(1, 10)
         if (a <= 7):
+            print(5)
             return (guns[-1][1], 0, guns[-1][0])
         else:
+            print(6)
             b = random.randint(0, max(0, sz - 2))
             return (guns[b][1], 0, guns[b][0])
         
@@ -110,6 +116,7 @@ def end_battle(uid):
 
     battle_state.pop(uid)
     popped.pop(uid)
+
 
 async def bot_turn(ctx, uid):
 
@@ -171,8 +178,9 @@ async def player_turn(ctx, uid, item, cat):
     for i in battle_state[uid][3][cat]:
         if i[1] == item:
             i[2] -= 1
-            if i[2] == 0 and cat == 1:
-                popped[uid].add(i[1])
+            if i[2] == 0:
+                if cat == 1:
+                    popped[uid].add(i[1])
                 battle_state[uid][3][cat].remove(i)
             
             break
@@ -384,8 +392,65 @@ class battleView(discord.ui.View):
         await interaction.response.edit_message(embed = embed, view = battleView(self.ctx))
         
 
-        
+def calulate_damage(inven):
 
+    dmg = 0
+
+    for i in inven[0]:
+        temp = inven_map[i[0]]
+        dmg = dmg + temp[0]*temp[1]
+
+    return dmg
+
+def prepare_battle(ctx, inven, bot_inven, health, bot_health):
+
+    battle_inven = [inven[0], inven[1], inven[2]]
+
+    for i in battle_inven:
+        if len(i) == 0:
+            continue
+        for j in range(len(i)):
+            uses = inven_map[i[j][0]][0]
+            amount = inven_map[i[j][0]][1]
+            if (uses == 0):
+                uses = i[j][1]
+                amount = health*inven_map[i[j][0]][1]
+            i[j] = [amount, i[j][0], uses]
+
+    battle_inven_bot = [bot_inven[0], bot_inven[1], bot_inven[2]]
+
+    for i in battle_inven_bot:
+        if len(i) == 0:
+            continue
+        for j in range(len(i)):
+            uses = inven_map[i[j][0]][0]
+            amount = inven_map[i[j][0]][1]
+            if (uses == 0):
+                uses = i[j][1]
+                amount = health*inven_map[i[j][0]][1]
+            i[j] = [amount, i[j][0], uses]
+
+    battle_state[ctx.author.id] = [health, bot_health, battle_inven_bot, battle_inven, 0, 0, health]
+    popped[ctx.author.id] = set()
+
+
+async def sbattle(ctx, bot_inven):
+    inven = database.get_inventory(ctx.author.id)
+
+    if (calulate_damage(inven) > calulate_damage(bot_inven)):
+        bot_inven = inven
+
+    bot_health = calulate_damage(inven)
+    health = calulate_damage(bot_inven)
+
+    prepare_battle(ctx, inven, bot_inven, health, bot_health)
+
+    embed = discord.Embed()
+
+    embed.add_field(name = "\u200b", value = f"Your health = {battle_state[ctx.author.id][0]:.2f}", inline = False)
+    embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[ctx.author.id][1]:.2f}", inline = False)
+
+    await ctx.send(embed = embed, view = battleView(ctx))
 
 
 @bot.command()
@@ -403,43 +468,25 @@ async def battle(ctx):
 
     inven = database.get_inventory(ctx.author.id)
 
-    if (ctx.author.id in battle_state.keys):
+    if (ctx.author.id in battle_state):
         await ctx.send("You have an ongoing battle!")
 
     if (len(inven[0]) == 0):
         await ctx.send("You don't even own a gun!")
         return
     
-    dmg = 0
-
-    for i in inven[0]:
-        temp = inven_map[i[0]]
-        dmg = dmg + temp[0]*temp[1]
+    dmg = calulate_damage(inven[0])
     dmg = dmg/2
 
-    battle_inven = [inven[0], inven[1], inven[2]]
-
-    for i in battle_inven:
-        if len(i) == 0:
-            continue
-        for j in range(len(i)):
-            uses = inven_map[i[j][0]][0]
-            amount = inven_map[i[j][0]][1]
-            if (uses == 0):
-                uses = i[j][1]
-                amount = dmg*inven_map[i[j][0]][1]
-            i[j] = [amount, i[j][0], uses]
-
-    battle_state[ctx.author.id] = [dmg, dmg, copy.deepcopy(battle_inven), battle_inven, 0, 0, dmg]
-    popped[ctx.author.id] = set()
-
-
+    prepare_battle(ctx, inven, inven, dmg, dmg)
+    
     embed = discord.Embed()
 
     embed.add_field(name = "\u200b", value = f"Your health = {battle_state[ctx.author.id][0]:.2f}", inline = False)
     embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[ctx.author.id][1]:.2f}", inline = False)
 
     await ctx.send(embed = embed, view = battleView(ctx))
+
 
 
     

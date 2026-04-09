@@ -22,6 +22,7 @@ async def on_command_error(ctx, error):
         await ctx.send("I don't recognize that command. Type 'sin help' to view all commands")
     elif isinstance(error, commands.UserInputError):
         await ctx.send("Your command format is incorrect. Type 'sin help' to view the command formats.")
+    await ctx.send(f"Error: {error}")  # temporarily print all errors
 
 
 @bot.command()
@@ -407,6 +408,4 @@ async def launder(ctx, arg: int):
     database.remove_b_money(ctx.author.id, arg)
     database.add_money(ctx.author.id, arg*(1-fee))
 
-@bot.event
-async def on_command_error(ctx, error):
-    await ctx.send(f"Error: {error}")  # temporarily print all errors
+
