@@ -1,6 +1,7 @@
 from functions import bot
 import events
 import database
+import battle
 
 @bot.command()
 async def catch(ctx):
@@ -53,3 +54,19 @@ async def change_blackmoney(ctx, arg: int):
         database.add_b_money(ctx.author.id, arg)
     else:
         database.remove_b_money(ctx.author.id, -arg)
+
+@bot.command()
+async def win_battle(ctx):
+    if (ctx.author.id in battle.battle_state):
+        battle.battle_state[ctx.author.id][1] = 0
+        await ctx.send("Done")
+        return
+    await ctx.send("No battle found")
+
+@bot.command()
+async def lose_battle(ctx):
+    if (ctx.author.id in battle.battle_state):
+        battle.battle_state[ctx.author.id][0] = 0
+        await ctx.send("Done")
+        return
+    await ctx.send("No battle found")

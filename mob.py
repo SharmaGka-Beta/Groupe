@@ -146,7 +146,7 @@ async def extort(ctx):
 
     
 @bot.command()
-async def sell(ctx):
+async def deal(ctx):
 
     info = database.get_user(ctx.author.id)
 
@@ -183,7 +183,7 @@ async def promote(ctx):
     wntd_lvl = info["wanted"]
     intg_lvl = info["integrity"]
 
-    if(wntd_lvl < 2*intg_lvl):
+    if(wntd_lvl == 0 or wntd_lvl < 2*intg_lvl):
         await ctx.send("'You haven't contributed shit and want a promotion!!'")
         await ctx.send("They roughed you up!")
         database.remove_money(ctx.author.id, 15000)

@@ -7,7 +7,7 @@ import asyncio
 
 battle_state = {}
 popped = {}
-## {user_id: [user_health, bot_health, bot_inven, user_inven, player_heal, bot_heal, total_health]}
+## {user_id: [user_health, bot_health, bot_inven, user_inven, player_heal, bot_heal, total_healthp, total_healthb, win, lose]}
 ## bot_inven: [guns, drugs, items]
 ##             [(damage%, name, uses)], [(heal%, name, qty)]
 
@@ -19,7 +19,7 @@ guns = ["pistol", "smg", "shotgun", "ar", "machinegun", "sniper"]
 
 def bot_item(uid):
 
-    allowed = battle_state[uid][5] < battle_state[uid][6]/2
+    allowed = battle_state[uid][5] < battle_state[uid][7]/2
 
     if (len(battle_state[uid][2][0]) == 0 and len(battle_state[uid][2][1]) == 0):
         return ()
@@ -44,7 +44,7 @@ def bot_item(uid):
         if (len(one_shot_bot) != 0):
 
             
-            d = [drug for drug in drugs if battle_state[uid][1] + drug[0] <= battle_state[uid][6]]
+            d = [drug for drug in drugs if battle_state[uid][1] + drug[0] <= battle_state[uid][7]]
             if(len(d) != 0):
                 print(1)
                 return (d[-1][1], 1, d[-1][0])
@@ -58,7 +58,7 @@ def bot_item(uid):
         if (allowed):
             a = random.random()
             # item_cat = random.randint(0, 1)
-            if ((battle_state[uid][1]/battle_state[uid][6])**1.5 < a):
+            if ((battle_state[uid][1]/battle_state[uid][7])**1.5 < a):
                 item_cat = 1
             else:
                 item_cat = 0
@@ -83,7 +83,7 @@ def bot_item(uid):
     
     elif (item_cat == 1):
 
-        options = [drug for drug in drugs if drug[0] + battle_state[uid][1] <= battle_state[uid][6]]
+        options = [drug for drug in drugs if drug[0] + battle_state[uid][1] <= battle_state[uid][7]]
         if (len(options) != 0):
             d = random.choice(options)
             print(4)
@@ -105,7 +105,7 @@ def bot_item(uid):
             return (guns[b][1], 0, guns[b][0])
         
 
-def end_battle(uid):
+async def end_battle(uid, cond, ctx):  #0 - lose, 1 - win
 
     l = battle_state[uid][3][1]
     for i in l:
@@ -114,8 +114,20 @@ def end_battle(uid):
     for i in popped[uid]:
         database.update_inventory(uid, i, "drugs", -100000)
 
+    
+
+    win = battle_state[uid][8]
+    lose = battle_state[uid][9]
+
     battle_state.pop(uid)
     popped.pop(uid)
+
+    if (cond == 1):
+        if (win != None):
+            await win()
+    else:
+        if (lose != None):
+            await lose()
 
 
 async def bot_turn(ctx, uid):
@@ -124,7 +136,7 @@ async def bot_turn(ctx, uid):
     print(item)
     if (len(item) == 0):
         await ctx.send("Your opponent has no moves left! They abandoned the battle!")
-        end_battle(uid)
+        await end_battle(uid, 1, ctx)
         return 1
     
     
@@ -135,11 +147,11 @@ async def bot_turn(ctx, uid):
 
 
     elif (item[1] == 1):
-        if (battle_state[uid][5] >= battle_state[uid][6]/2):
+        if (battle_state[uid][5] >= battle_state[uid][7]/2):
             await ctx.send("Your opponent tried to heal but failed!")
             return
         await ctx.send(f"They healed {item[2]} points")
-        battle_state[uid][1] = min(battle_state[uid][1] + item[2], battle_state[uid][6])
+        battle_state[uid][1] = min(battle_state[uid][1] + item[2], battle_state[uid][7])
         battle_state[uid][5] += item[2]
 
 
@@ -198,13 +210,13 @@ async def round(ctx, uid, item, cat):
             return
         if (battle_state[uid][0] <= 0):
             await ctx.send("You lost!")
-            end_battle(uid)
+            await end_battle(uid, 0, ctx)
             return 
         await asyncio.sleep(1)
         await player_turn(ctx, uid, item, cat)
         if (battle_state[uid][1] <= 0):
             await ctx.send("You won!")
-            end_battle(uid)
+            await end_battle(uid, 1, ctx)
             return
         
 
@@ -213,14 +225,14 @@ async def round(ctx, uid, item, cat):
         await player_turn(ctx, uid, item, cat)
         if (battle_state[uid][1] <= 0):
             await ctx.send("You won!")
-            end_battle(uid)
+            await end_battle(uid, 1, ctx)
             return
         
         if (await bot_turn(ctx, uid) == 1):
             return
         if (battle_state[uid][0] <= 0):
             await ctx.send("You lost!")
-            end_battle(uid)
+            await end_battle(uid, 0, ctx)
             return
         
     embed = discord.Embed()
@@ -396,13 +408,13 @@ def calulate_damage(inven):
 
     dmg = 0
 
-    for i in inven[0]:
+    for i in inven:
         temp = inven_map[i[0]]
         dmg = dmg + temp[0]*temp[1]
 
     return dmg
 
-def prepare_battle(ctx, inven, bot_inven, health, bot_health):
+def prepare_battle(ctx, inven, bot_inven, health, bot_health, win, lose):
 
     battle_inven = [inven[0], inven[1], inven[2]]
 
@@ -430,20 +442,20 @@ def prepare_battle(ctx, inven, bot_inven, health, bot_health):
                 amount = health*inven_map[i[j][0]][1]
             i[j] = [amount, i[j][0], uses]
 
-    battle_state[ctx.author.id] = [health, bot_health, battle_inven_bot, battle_inven, 0, 0, health]
+    battle_state[ctx.author.id] = [health, bot_health, battle_inven_bot, battle_inven, 0, 0, health, bot_health, win, lose]
     popped[ctx.author.id] = set()
 
 
-async def sbattle(ctx, bot_inven):
+async def sbattle(ctx, bot_inven, win, lose):
     inven = database.get_inventory(ctx.author.id)
 
-    if (calulate_damage(inven) > calulate_damage(bot_inven)):
+    if (calulate_damage(inven[0]) > calulate_damage(bot_inven[0])):
         bot_inven = inven
 
-    bot_health = calulate_damage(inven)
-    health = calulate_damage(bot_inven)
+    bot_health = calulate_damage(inven[0])/2
+    health = calulate_damage(bot_inven[0])/2
 
-    prepare_battle(ctx, inven, bot_inven, health, bot_health)
+    prepare_battle(ctx, inven, bot_inven, health, bot_health, win, lose)
 
     embed = discord.Embed()
 
@@ -478,7 +490,7 @@ async def battle(ctx):
     dmg = calulate_damage(inven[0])
     dmg = dmg/2
 
-    prepare_battle(ctx, inven, inven, dmg, dmg)
+    prepare_battle(ctx, inven, copy.deepcopy(inven), dmg, dmg, None, None)
     
     embed = discord.Embed()
 
