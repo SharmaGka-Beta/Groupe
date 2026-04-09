@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import database
+import battle
 
 # -----------------------------------------------------------------------------------------------
 
@@ -168,3 +169,74 @@ class trialView(discord.ui.View):
 
 
 #-----------------------------------------------------------------------------------------------
+
+
+class aPromotionView(discord.ui.View):
+
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message("This is not your choice!", ephemeral = True)
+            return False
+        return True
+    
+
+        
+    @discord.ui.button(label="Ready", style = discord.ButtonStyle.primary,)
+    async def ready_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
+        inven = database.get_inventory(self.ctx.author.id)
+        if (len(inven[0]) == 0):
+            await self.ctx.send("You don't even own a gun!")
+            return
+        
+
+        async def win():
+
+            await asyncio.sleep(2)
+            await self.ctx.send("You head back to the family house")
+            await self.ctx.send("'Impressive!! I think you are ready!'")
+
+            await asyncio.sleep(2)
+
+            await self.ctx.send("You were prooted to underboss!")
+            await self.ctx.send("You now report directly to The Godfather")
+
+            database.update_role(self.ctx.author.id, "underboss")
+        
+        async def lose():
+            await asyncio.sleep(2)
+            await self.ctx.send("You head back to the family house, defeated")
+            await self.ctx.send("'You aren't ready yet...'")
+
+        await self.ctx.send("You head to the rival family's base of operations")
+
+        await self.ctx.send("Waiting for you is the underboss of the family!")
+
+        await battle.sbattle(self.ctx, [[('pistol', 3), ('ar', 2), ('machinegun', 2), ('sniper', 1)], [('lsd', 5)], []], win, lose)
+
+
+    
+    @discord.ui.button(label="Nevermind", style = discord.ButtonStyle.primary,)
+    async def callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        
+        await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
+        await self.ctx.send("You dare waste our time!")
+        await self.ctx.send("The roughed you up!")
+        database.remove_money(self.ctx.author.id, 100000)
+
+
+

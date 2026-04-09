@@ -392,7 +392,7 @@ async def mob(ctx):
     wntd_lvl = info["wanted"]
     intg_lvl = info["integrity"]
 
-    if(wntd_lvl < 2*intg_lvl):
+    if(wntd_lvl == 0 or wntd_lvl < 2*intg_lvl):
         await ctx.send("We don't take goody two shoes!!")
         await ctx.send("You seem like a rat!")
         await ctx.send("They stole your money! -5000 coins")

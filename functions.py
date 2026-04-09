@@ -29,7 +29,7 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.UserInputError):
         await ctx.send("Your command format is incorrect. Type 'sin help' to view the command formats.")
     else:
-        await ctx.send(f"error: {error}")
+        await ctx.send(f"error: {error}") # temporarily print all errors
 
 
 @bot.command()
@@ -501,3 +501,4 @@ async def cooldowns(ctx):
     
     embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns", icon_url=ctx.author.avatar.url)
     await ctx.send(embed = embed)
+
