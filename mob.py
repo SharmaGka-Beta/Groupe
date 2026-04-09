@@ -149,7 +149,7 @@ async def extort(ctx):
 @bot.command()
 async def deal(ctx):
 
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.id)
 
     role = info["user_role"]
 
@@ -173,7 +173,7 @@ async def deal(ctx):
 @bot.command()
 async def promote(ctx):
 
-    info = database.get_user(ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     role = info["user_role"]
 
@@ -198,6 +198,10 @@ async def promote(ctx):
         embed.add_field(name = "\u200b", value = "Ready?")
 
         await ctx.send(embed = embed, view = story.aPromotionView(ctx))
+
+    if (role == "underboss"):
+
+        await story.back_again(ctx)
     
 
 

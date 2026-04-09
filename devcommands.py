@@ -61,6 +61,7 @@ async def removecd(ctx):
         command.reset_cooldown(ctx)
     await ctx.send("Done")
 
+@bot.command()
 async def win_battle(ctx):
     if (ctx.author.id in battle.battle_state):
         battle.battle_state[ctx.author.id][1] = 0
