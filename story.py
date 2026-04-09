@@ -55,6 +55,7 @@ class oldladyView(discord.ui.View):
         await self.ctx.send("Welcome to Sin City...")
 
         database.update_role(self.ctx.author.id, "associate")
+        database.remove_wanted(self.ctx.author.id, 60)
 
 
 
@@ -211,6 +212,7 @@ class aPromotionView(discord.ui.View):
             await self.ctx.send("You now report directly to The Godfather")
 
             database.update_role(self.ctx.author.id, "underboss")
+            database.remove_wanted(self.ctx.author.id, 60)
         
         async def lose():
             await asyncio.sleep(2)
