@@ -43,7 +43,6 @@ class contribute(discord.ui.View):
             await self.ctx.send("You have been summoned by the family for not making enough contributions")
             await self.ctx.send("'If you wanna survive here I'd advise you to step up your game!'")
             
-        database.remove_money(self.ctx.author.id, self.money//2)
         database.add_b_money(self.ctx.author.id, self.money//2)
 
     @discord.ui.button(label = "None", style = discord.ButtonStyle.primary,)
