@@ -2,18 +2,20 @@ import random
 import database
 import messages
 
-def police_catch(ctx, heat):
-    info = database.get_user(ctx.author.id, ctx.author.name)
-    catch_roll = max(0, info['wanted'] - 10 + heat)
-    if (random.random() >= (catch_roll/100)**2):
-        return 0
+def police_catch(ctx, heat, random: True):
+    if(random):
+        info = database.get_user(ctx.author.id, ctx.author.name)
+        catch_roll = max(0, info['wanted'] - 10 + heat)
+        if (random.random() >= (catch_roll/100)**2):
+            return 0
+        else:
+            database.update_jail(ctx.author.id, 1)
+            return 1
     
     # await ctx.send("You have been captured by the police!")
     # await ctx.send("You can bribe, run, talk or give bail")
-
-    database.update_jail(ctx.author.id, 1)
-
-    return 1
+    else:
+        database.update_jail(ctx.author.id, 1)
 
 def it_raid(ctx):
     info = database.get_user(ctx.author.id, ctx.author.name)

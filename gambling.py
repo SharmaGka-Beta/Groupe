@@ -277,8 +277,10 @@ async def slots(ctx, arg: int):
     ),
     color=discord.Color.gold()
 )
-
-    embed.set_author(name=f"{ctx.author.name}'s slots", icon_url=ctx.author.avatar.url)
+    if(ctx.author.avatar == None):
+        embed.set_author(name=f"{ctx.author.name}'s slots", icon_url=ctx.author.avatar.url)
+    else:  
+        embed.set_author(name=f"{ctx.author.name}'s slots")
     #embed.add_field(name="\u200b", value=f"\n◖{reel[0]}{reel[1]}{reel[2]}◗\n{response}")
     await ctx.send(embed=embed)
     

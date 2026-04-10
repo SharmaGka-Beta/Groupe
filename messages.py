@@ -40,6 +40,9 @@ rob_targets = ["Chaudhary Baldev Singh", "Gil Thorpe", "Tammy Swanson", "Jack Da
 extort_targets = ["Stuart Bloom - Comic Shop", "Kevin Malone - Bar", "Bogdan Wolynetz - Car Wash", "Ernesto - Street Vendor",
                   "Manuel Varga - Furniture Repair Store", "Tom Haverford - Bistro", "George Weasley - Magic Shop"]
 
+patrol_targets = [("Brother Sam", 1), ("El Sapo", 1), ("Isaak Sirko", 1), ("Oliver Saxon", 2), ("James Doakes", 2), ("Freebo", 2),
+                  ("Lumen Pierce", 3), ("The Skinner", 3), ("The Brain Surgeon", 4), ("IceTruck Killer", 4), ("The Bay Harbor Butcher", 5)]
+
 items = items_gun + items_drugs + items_items
 
 spades = [[m, ':spades:'] for m in range (1, 14)]
@@ -111,5 +114,8 @@ role_colors = {
     "civilian":  0x3498db,  # blue
     "associate": 0xf1c40f,  # yellow
     "underboss": 0xe67e22,  # orange
-    "godfather": 0xed4245   # brand red
+    "godfather": 0xed4245,  # brand red
+    "rookie": 0x008000,
+    "detective": 0x228B22,
+    "chief": 0x2E8B57
 }

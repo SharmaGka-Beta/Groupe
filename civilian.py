@@ -402,4 +402,3 @@ async def mob(ctx):
     embed.add_field(name = "\u200b", value = "Want to join the mob?\nThis isn't going to be easy")
 
     await ctx.send(embed = embed, view = story.trialView(ctx))
-

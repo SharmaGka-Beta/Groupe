@@ -43,9 +43,9 @@ async def profile(ctx, member:discord.Member = None):
     
     embed.set_thumbnail(url=member.display_avatar.url)
 
-    embed.add_field(name="**MONEY**", value=f"🪙 **Coins**: {info["money"]:,}\n💸 **Black Money**: {info["b_money"]:,}", inline=False)
+    embed.add_field(name="**MONEY**", value=f"__🪙 **Coins**:__ {info["money"]:,}\n💸 __**Black Money**:__ {info["b_money"]:,}", inline=False)
 
-    embed.add_field(name="**STATS**", value=f"🔥 **Wanted**: {info["wanted"]}\n📈 **Integrity**: {info["integrity"]}", inline=False)
+    embed.add_field(name="**STATS**", value=f"🔥 __**Wanted**:__ {info["wanted"]}\n📈 __**Integrity**:__ {info["integrity"]}", inline=False)
 
     await ctx.send(embed=embed)
 
