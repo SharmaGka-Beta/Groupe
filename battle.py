@@ -457,10 +457,10 @@ async def sbattle(ctx, bot_inven, win, lose):
 
     prepare_battle(ctx, inven, bot_inven, health, bot_health, win, lose)
 
-    embed = discord.Embed()
+    embed = discord.Embed(title="⚔️ Battle Arena",description="🔥 Fight in progress...",color=discord.Color.red())
 
-    embed.add_field(name = "\u200b", value = f"Your health = {battle_state[ctx.author.id][0]:.2f}", inline = False)
-    embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[ctx.author.id][1]:.2f}", inline = False)
+    embed.add_field(name = "\u200b", value = f"**❤️Your health = {battle_state[ctx.author.id][0]:.2f}**", inline = False)
+    embed.add_field(name = "\u200b", value = f"**👾Opponent health = {battle_state[ctx.author.id][1]:.2f}**", inline = False)
 
     await ctx.send(embed = embed, view = battleView(ctx))
 
