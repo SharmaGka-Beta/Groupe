@@ -10,6 +10,7 @@ intents.message_content = True
 intents.members = True
 
 bot = commands.Bot(command_prefix = "sin ", intents = intents)
+bot.remove_command("help")
 
 @bot.event
 async def on_ready():
@@ -501,4 +502,8 @@ async def cooldowns(ctx):
     
     embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns", icon_url=ctx.author.avatar.url)
     await ctx.send(embed = embed)
+
+@bot.command()
+async def help(ctx):
+
 
