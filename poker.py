@@ -7,6 +7,9 @@ import database
 game = {}
 #uid : {all = [], current = [], small, start, bet, pot}
 
+class over(Exception):
+    pass
+
 class startView(discord.ui.View):
 
     def __init__(self, host, ctx):
@@ -46,66 +49,75 @@ class startView(discord.ui.View):
 
 class inviteView(discord.ui.View):
 
-    def __init__(self, ctx):
+    def __init__(self, ctx, member):
         super().__init__()
         self.ctx = ctx
+        self.member = member
+
+    @discord.ui.button(label="Join", style = discord.ButtonStyle.primary)
+    async def join_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
+        if (game[self.ctx.author.id]["start"]):
+            await self.ctx.send(f"{self.member} will join next round.")
+        else:
+            await self.ctx.send(f"{self.member} has joined {self.ctx.author}'s game")
+
+        if (self.member not in game[self.ctx.author.id]["all"]):
+            game[self.ctx.author.id]["all"].append(self.member)
+
+        num = len(game[self.ctx.author.id]["all"])
+        if (num >= 2):
+            if ("start_message" not in game[self.ctx.author.id]):
+                embed = discord.Embed()
+                embed.add_field(name = f"There are {num} players in the lobby. Start Game?", value = "\u200b")
+                start_msg = await self.ctx.author.send(embed = embed, view = startView(self.ctx.author, self.ctx))
+                game[self.ctx.author.id]["start_message"] = start_msg
+            else:
+                embed = discord.Embed()
+                embed.add_field(name = f"There are {num} players in the lobby. Start Game?", value = "\u200b")
+                await game[self.ctx.author.id]["start_message"].edit(embed=embed)
+
+
+    @discord.ui.button(label="Reject", style = discord.ButtonStyle.primary)
+    async def reject_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
         
+        await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
+        if (self.member in game[self.ctx.author.id]["all"]):
+            game[self.ctx.author.id]["all"].remove(self.member)
+
+        await self.ctx.send(f"{self.member} has rejected {self.ctx.author}'s invite")
 
 @bot.command()
 async def poker(ctx, s: int, *members: discord.Member):
 
-    if (ctx.author in game):
-        await ctx.send("You have an ongoing game!")
+    if (ctx.author.id in game):
+        game.pop(ctx.author.id)
+
+    game[ctx.author.id] = {"all": [ctx.author], "current": [], "small": s, "start": False, "bet": 0, "pot": 0}
 
     for member in members:
 
-        embed = discord.embed()
-
-    if (member == ctx.author):
-        if ctx.author.id not in game:
-            if (s == None):
-                await ctx.send("Please give a small blind amount")
-                return
-            
-            try:
-                await member.send("Test message")
-            except discord.Forbidden:
-                await ctx.send("Turn on your DMs to play poker!")
-                return
-            
-            game[ctx.author.id] = {"all": [], "current": [], "small": s, "start": False, "bet": 0, "pot": 0}
-            #current will store a list of [player name, bet, folded/not folded]
-            game[ctx.author.id]["all"].append(ctx.author)
-            await ctx.send("Game Created!")
-        else:
-            await ctx.send("Your game already exists!")
-        return
-
-    if (member.id not in game):
-        await ctx.send("This game doesn't exist!")
-        return
-    
-    if (ctx.author not in game[member.id]["all"]):
-
         try:
-            await ctx.author.send("Test message")
+            await member.send("Test message")
         except discord.Forbidden:
-            await ctx.send("Turn on your DMs to play poker!")
-            return
-        
-        game[member.id]["all"].append(ctx.author)
-        await ctx.send(f"{ctx.author.mention} joined {member.mention}'s game")
-        if (game[member.id]["start"]):
-            await ctx.author.send("There is an ongoing game. You can join from the next round.")
-        
-        num = len(game[member.id]["all"])
-        if (num >= 2 and (not game[member.id]["start"])):
-            embed = discord.Embed()
-            embed.add_field(name = f"There are {num} players in the lobby. Start Game?", value = "\u200b")
-            await member.send(embed = embed, view = startView(member, ctx))
+            await ctx.send(f"{member} does not have their DMs on!")
+            continue
 
-    else:
-        await ctx.send("You are already in the game!")
+        embed = discord.Embed()
+        embed.add_field(name = f"{ctx.author} is inviting you to a poker game.", value = "\u200b")
+        await member.send(embed = embed, view = inviteView(ctx, member))
+
 
 
 async def runr(ctx, host):
@@ -120,7 +132,10 @@ async def runr(ctx, host):
         game[host.id]["current"].clear()
         return
     
-    await round(ctx, host)
+    try:
+        await round(ctx, host)
+    except over:
+        return
 
 
 async def round(ctx, host):
@@ -162,12 +177,21 @@ async def pre_flop(ctx, host):
     players[1][1] = 2 * game[host.id]["small"]
     database.remove_money(players[1][0].id, 2*game[host.id]["small"])
 
-    t = 2
+    await bet_logic(ctx, host, 2)
+
+async def bet_logic(ctx, host, t):
+
+    players = game[host.id]["current"]
     total = len(players)
     while True:
 
         if (sum(i[2] for i in players) == total - 1):
-            break
+            winner = None
+            for i in players:
+                if (i[2] == False):
+                    winner = i[0]
+            await end_round(ctx, winner, host)
+            raise over()
 
         if (game[host.id]["current"][t%total][2]):
             t = t + 1
@@ -176,11 +200,10 @@ async def pre_flop(ctx, host):
         if (players[t%total][1] == game[host.id]["bet"]):
             break
         player = players[t%total][0]
-        await bet(host, player, ctx, t%total)
+        await bet_send(host, player, ctx, t%total)
         t = t + 1
 
-        
-async def bet(host, player, ctx, index):
+async def bet_send(host, player, ctx, index):
 
     view = betView(player, ctx, host, index)
     embed = discord.Embed()
@@ -294,6 +317,52 @@ class raiseModal(discord.ui.Modal, title = "Raise"):
 
         self.betView.timed_out = False
         self.betView.stop()
+
+
+class anotherViewHost(discord.ui.View):
+
+    def __init__(self, ctx, host):
+        super().__init__()
+        self.ctx = ctx
+        self.host = host
+
+    @discord.ui.button(label="Let's Go", style = discord.ButtonStyle.primary)
+    async def again_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+        
+        await interaction.response.defer()
+
+        members = game[self.host.id]["all"][:]
+
+        for member in members:
+            if (member == self.host):
+                continue
+
+            game[self.host.id]["all"].remove(member)
+            embed = discord.Embed()
+            embed.add_field(name = f"{self.host} is inviting you to a poker game.", value = "\u200b")
+            await member.send(embed = embed, view = inviteView(self.ctx, member))
+
+    @discord.ui.button(label="Maybe Later", style = discord.ButtonStyle.primary)
+    async def later_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
+
+        await interaction.response.defer()
+        game.pop(self.host.id)
+        await self.ctx.send(f"{self.host}'s game has ended.")
+
+async def end_round(ctx, winner, host):
+
+    await ctx.send(f"{winner.mention} wins!")
+    database.add_money(winner.id, game[host.id]["pot"])
+    game[host.id]["current"].clear()
+    game[host.id]["start"] = False
+    game[host.id]["bet"] = 0
+    game[host.id]["pot"] = 0
+    game[host.id].pop("start_message", None)
+
+    embed = discord.Embed()
+    embed.add_field(name = "Another Game?", value = "\u200b")
+    await host.send(embed = embed, view = anotherViewHost(ctx, host))
+
 
 
 
