@@ -1,6 +1,6 @@
 rank = ["royal", "sf", "quads", "full", "flush", "straight", "three", "two", "pair", "high"]
 
-convert = {"royal": "ROYAL FLUSH", "sf": "Straight Flush", "quads": "Quads", "full": "Full House", "straight": "Straight", "three": "Three", "two": "Two", "pair": "Pair", "high": "High Card"}
+convert = {"royal": "ROYAL FLUSH", "sf": "Straight Flush", "quads": "Quads", "full": "Full House", "flush": "Flush", "straight": "Straight", "three": "Three", "two": "Two", "pair": "Pair", "high": "High Card"}
 
 def freq(arr):
 

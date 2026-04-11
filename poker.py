@@ -358,7 +358,7 @@ async def bet_send(host, player, ctx, index):
 class betView(discord.ui.View):
 
     def __init__(self, player, ctx, host, index):
-        super().__init__(timeout = 30)
+        super().__init__(timeout = 60)
         self.player = player
         self.ctx = ctx
         self.host = host
@@ -485,7 +485,7 @@ class anotherViewHost(discord.ui.View):
 
         members = game[self.host.id]["all"][:]
 
-        game[self.host.id]["all"] = [self.host]
+        game[self.host.id]["all"] = [self.host] 
         for member in members:
             if (member == self.host):
                 continue
