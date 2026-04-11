@@ -161,10 +161,25 @@ async def round(ctx, host):
             await game[host.id]["current"][i][0].send("You are the big blind.")
 
     await pre_flop(ctx, host)
+    
     for player in game[host.id]["current"]:
         player[1] = 0
     game[host.id]["bet"] = 0
+    
     await flop(ctx, host)
+    
+    for player in game[host.id]["current"]:
+        player[1] = 0
+    game[host.id]["bet"] = 0
+
+    await turn(ctx, host)
+
+    for player in game[host.id]["current"]:
+        player[1] = 0
+    game[host.id]["bet"] = 0
+
+    await river(ctx, host)
+
 
 
 async def pre_flop(ctx, host):
@@ -196,6 +211,38 @@ async def flop(ctx, host):
 
     embed = discord.Embed()
     embed.add_field(name = "THE FLOP", value = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}  {messages.special_cards[card3[0]]}{card3[1]}")
+    await ctx.send(embed = embed)
+
+    await bet_logic(ctx, host, 0)
+
+async def turn(ctx, host):
+
+    card = game[host.id]["deck"].pop()
+    game[host.id]["cards"].append(card)
+    embed = discord.Embed()
+
+    card1 = game[host.id]["cards"][0]
+    card2 = game[host.id]["cards"][1]
+    card3 = game[host.id]["cards"][2]
+
+
+    embed.add_field(name = "THE TURN", value = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}  {messages.special_cards[card3[0]]}{card3[1]}  {messages.special_cards[card[0]]}{card[1]}")
+    await ctx.send(embed = embed)
+
+    await bet_logic(ctx, host, 0)
+
+async def river(ctx, host):
+
+    card = game[host.id]["deck"].pop()
+    game[host.id]["cards"].append(card)
+    embed = discord.Embed()
+
+    card1 = game[host.id]["cards"][0]
+    card2 = game[host.id]["cards"][1]
+    card3 = game[host.id]["cards"][2]
+    card4 = game[host.id]["cards"][3]
+
+    embed.add_field(name = "THE RIVER", value = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}  {messages.special_cards[card3[0]]}{card3[1]}  {messages.special_cards[card4[0]]}{card4[1]}  {messages.special_cards[card[0]]}{card[1]}")
     await ctx.send(embed = embed)
 
     await bet_logic(ctx, host, 0)
