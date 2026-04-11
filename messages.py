@@ -115,7 +115,44 @@ role_colors = {
 }
 
 help_commands={
-    "civilian":[
+    "General commands":[
+        {
+            "name":"profile",
+            "format":"sin profile <member>(takes default member as sender)",
+            "description":"View your profile or another players stats."
+        },
+        {
+            "name":"inventory",
+            "format":"sin inventory",
+            "description":"View your inventory."
+        },
+        {
+            "name":"shop",
+            "format":"sin shop",
+            "description":"Opens the shop to buy gins,drugs and items."
+        },
+        {
+            "name":"buy",
+            "format":"sin buy <item> <quantity>",
+            "description":"Buy items from the shop(default quantity=1"
+        },
+        {
+            "name": "sell",
+            "format":"sin sell <item> [qty]",
+            "description": "Sell items from your inventory for coins"
+        },
+        {
+            "name": "leaderboard",
+            "format": "sin leaderboard",
+            "description": "View leaderboards (coins, wanted, integrity, black money)"
+        },
+        {
+            "name": "transfer",
+            "format": "sin transfer <amount> <member>",
+            "description": "Send coins to another player"
+        },
+    ],
+    "Civilian":[
         {
             "name":"work",
             "format":"sin work",
@@ -140,7 +177,7 @@ help_commands={
             "name":"rob",
             "format":"sin rob",
             "description":"Attempt to rob a target for money."
-        }
+        },
         {
             "name":"mob",
             "format":"sin mob",

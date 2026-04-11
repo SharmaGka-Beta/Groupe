@@ -503,14 +503,29 @@ async def cooldowns(ctx):
     embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns", icon_url=ctx.author.avatar.url)
     await ctx.send(embed = embed)
 
-@bot.command()
-async def help(ctx):
-    embed=discord.Embed(
-        title="📖 Command Guide",
-        description="All available command grouped by category",
-        color=discord.Color.green()
-    )
+# @bot.command()
+# async def help(ctx):
+#     embed=discord.Embed(
+#         title="📖 Command Guide",
+#         description="All available command grouped by category",
+#         color=discord.Color.green()
+#     )
 
-    
+#     for x,y in messages.help_commands.items():
+#         value=""
+
+#         for cmd in y:
+#             value+=(
+#                 f"{cmd['name'].title()}\n"
+#                 f" Format: {cmd['format']}\n"
+#                 f" {cmd['description']}\n\n"
+#             )
+
+#         embed.add_field(
+#             name=x,
+#             value=value,
+#             inline=False
+#         )
+#     await ctx.send(embed=embed)
 
 
