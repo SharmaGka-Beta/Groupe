@@ -113,3 +113,66 @@ role_colors = {
     "underboss": 0xe67e22,  # orange
     "godfather": 0xed4245   # brand red
 }
+
+help_commands={
+    "civilian":[
+        {
+            "name":"work",
+            "format":"sin work",
+            "description":"Work a job to earn coins(not always)." 
+        },
+        {
+            "name":"charity",
+            "format":"sin charity",
+            "description":"Donate coins to earn integrity and reduce wanted level."
+        },
+        {
+            "name":"hit",
+            "format":"sin hit",
+            "description":"Take a hit to eliminate a target."
+        },
+        {
+            "name":"volunteer",
+            "format":"sin volunteer",
+            "description":"Volunteer to increase integrity and reduce wanted level."
+        },
+        {
+            "name":"rob",
+            "format":"sin rob",
+            "description":"Attempt to rob a target for money."
+        }
+        {
+            "name":"mob",
+            "format":"sin mob",
+            "description":"Attempt to join mob(requires weapon,high wanted level and low integrity)."
+        }
+    ],
+    "Mob":[
+        {
+            "name":"extort",
+            "format":"sin extort",
+            "description":"Extort money from target."
+        },
+        {
+            "name":"deal",
+            "format":"sin deal",
+            "description":"Deal illegal drugs for money."
+        },
+        {
+            "name":"promote",
+            "format":"sin promote",
+            "description":"Attempt to promote at higher rank in the mob."
+        }
+    ],
+    "Gambling":[
+        {
+            "name":"roulette",
+            "format":"sin roulette <amount> <red/balck/number>",
+            "description":"Bet coins on a colour or number(1-36)."
+        },
+        {
+            "name":"blackjack",
+            "format":""
+        }
+    ]
+}

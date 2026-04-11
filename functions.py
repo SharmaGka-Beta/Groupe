@@ -505,5 +505,12 @@ async def cooldowns(ctx):
 
 @bot.command()
 async def help(ctx):
+    embed=discord.Embed(
+        title="📖 Command Guide",
+        description="All available command grouped by category",
+        color=discord.Color.green()
+    )
+
+    
 
 
