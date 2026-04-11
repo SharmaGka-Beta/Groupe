@@ -151,3 +151,110 @@ police_welcome_messages = [
     "You're in. Just remember — in this city, everyone has an angle. Even us.",
     "Congratulations officer. The criminals already know your name.",
 ]
+   
+
+help_commands={
+    "⚙️General commands":[
+        {
+            "name":"profile",
+            "format":"sin profile <member>(takes default member as sender)",
+            "description":"View your profile or another players stats."
+        },
+        {
+            "name":"inventory",
+            "format":"sin inventory",
+            "description":"View your inventory."
+        },
+        {
+            "name":"shop",
+            "format":"sin shop",
+            "description":"Opens the shop to buy gins,drugs and items."
+        },
+        {
+            "name":"buy",
+            "format":"sin buy <item> <quantity>",
+            "description":"Buy items from the shop(default quantity=1"
+        },
+        {
+            "name": "sell",
+            "format":"sin sell <item> <quantity>",
+            "description": "Sell items from your inventory for coins"
+        },
+        {
+            "name": "leaderboard",
+            "format": "sin leaderboard",
+            "description": "View leaderboards (coins, wanted, integrity, black money)"
+        },
+        {
+            "name": "transfer",
+            "format": "sin transfer <amount> <member>",
+            "description": "Send coins to another player"
+        },
+    ],
+    "👤Civilian":[
+        {
+            "name":"work",
+            "format":"sin work",
+            "description":"Work a job to earn coins(not always)." 
+        },
+        {
+            "name":"charity",
+            "format":"sin charity",
+            "description":"Donate coins to earn integrity and reduce wanted level."
+        },
+        {
+            "name":"hit",
+            "format":"sin hit",
+            "description":"Take a hit to eliminate a target."
+        },
+        {
+            "name":"volunteer",
+            "format":"sin volunteer",
+            "description":"Volunteer to increase integrity and reduce wanted level."
+        },
+        {
+            "name":"rob",
+            "format":"sin rob",
+            "description":"Attempt to rob a target for money."
+        },
+        {
+            "name":"mob",
+            "format":"sin mob",
+            "description":"Attempt to join mob(requires weapon,high wanted level and low integrity)."
+        }
+    ],
+    "👾Mob":[
+        {
+            "name":"extort",
+            "format":"sin extort",
+            "description":"Extort money from target."
+        },
+        {
+            "name":"deal",
+            "format":"sin deal",
+            "description":"Deal illegal drugs for money."
+        },
+        {
+            "name":"promote",
+            "format":"sin promote",
+            "description":"Attempt to promote at higher rank in the mob."
+        }
+    ],
+    "🎰Gambling":[
+        {
+            "name":"roulette",
+            "format":"sin roulette <amount> <red/balck/number>",
+            "description":"Bet coins on a colour or number(1-36)."
+        },
+        {
+            "name":"blackjack",
+            "format":"sin blackjack <amount>",
+            "description":"Play blackjack against the dealer using hit/stand."
+        },
+        {
+            "name":"slots",
+            "format":"sin slots <amount>",
+            "description":"Spin the slot machine to get a chance to win big."
+        }
+    ]
+}

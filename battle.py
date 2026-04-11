@@ -235,10 +235,10 @@ async def round(ctx, uid, item, cat):
             await end_battle(uid, 0, ctx)
             return
         
-    embed = discord.Embed()
+    embed = discord.Embed(title="⚔️ Battle Arena",description="🔥 Fight in progress...",color=discord.Color.red())
 
-    embed.add_field(name = "\u200b", value = f"Your health = {battle_state[ctx.author.id][0]:.2f}", inline = False)
-    embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[ctx.author.id][1]:.2f}", inline = False)
+    embed.add_field(name = "\u200b", value = f"**❤️Your health = {battle_state[ctx.author.id][0]:.2f}**", inline = False)
+    embed.add_field(name = "\u200b", value = f"**👾Opponent health = {battle_state[ctx.author.id][1]:.2f}**", inline = False)
 
     await ctx.send(embed = embed, view = battleView(ctx))
         
@@ -271,10 +271,10 @@ class backButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
 
-        embed = discord.Embed()
+        embed = discord.Embed(title="⚔️ Battle Arena",description="🔥 Fight in progress...",color=discord.Color.red())
 
-        embed.add_field(name = "\u200b", value = f"Your health = {battle_state[self.ctx.author.id][0]:.2f}", inline = False)
-        embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[self.ctx.author.id][1]:.2f}", inline = False)
+        embed.add_field(name = "\u200b", value = f"**❤️Your health = {battle_state[self.ctx.author.id][0]:.2f}**", inline = False)
+        embed.add_field(name = "\u200b", value = f"**👾Opponent health = {battle_state[self.ctx.author.id][1]:.2f}**", inline = False)
 
         await interaction.response.edit_message(embed = embed, view = battleView(self.ctx))
 
@@ -348,32 +348,32 @@ class battleView(discord.ui.View):
     @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
     async def guns_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
-        embed = discord.Embed()
-        embed.add_field(name = "Weapon", value = "\u200b")
-        embed.add_field(name = "Damage", value = "\u200b")
-        embed.add_field(name = "Bullets", value = "\u200b")
+        embed = discord.Embed(title="👾 Weapon Panel",description="⚔️ Current Loadout",color=discord.Color.blurple())
+        embed.add_field(name = "🔫**__Weapon__**", value = "\u200b")
+        embed.add_field(name = "💥**__Damage__**", value = "\u200b")
+        embed.add_field(name = "🔋**__Bullets__**", value = "\u200b")
 
         for i in battle_state[self.ctx.author.id][3][0]:
             
-            embed.add_field(name = "\u200b", value = f"{i[1]}")
-            embed.add_field(name = "\u200b", value = f"{i[0]}")
-            embed.add_field(name = "\u200b", value = f"{i[2]}")
+            embed.add_field(name = "\u200b", value = f"**{i[1].capitalize()}**",inline=True)
+            embed.add_field(name = "\u200b", value = f"**{i[0]}**",inline=True)
+            embed.add_field(name = "\u200b", value = f"**{i[2]}**",inline=True)
 
         await interaction.response.edit_message(embed=embed, view = gunView(self.ctx))
 
     @discord.ui.button(label="Drugs", style = discord.ButtonStyle.primary)
     async def drugs_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
-        embed = discord.Embed()
-        embed.add_field(name = "Drug", value = "\u200b")
-        embed.add_field(name = "Heal", value = "\u200b")
-        embed.add_field(name = "Qty", value = "\u200b")
+        embed = discord.Embed(title="🧪 Medical Kit",description="🩸 Heal up before it's too late.",color=discord.Color.blue())
+        embed.add_field(name = "🌿Drug", value = "\u200b")
+        embed.add_field(name = "❤️‍🩹Heal", value = "\u200b")
+        embed.add_field(name = "📦Qty", value = "\u200b")
 
         for i in battle_state[self.ctx.author.id][3][1]:
             
-            embed.add_field(name = "\u200b", value = f"{i[1]}")
-            embed.add_field(name = "\u200b", value = f"{i[0]:.2f}")
-            embed.add_field(name = "\u200b", value = f"{i[2]}")
+            embed.add_field(name = "\u200b", value = f"**{i[1].capitalize()}**")
+            embed.add_field(name = "\u200b", value = f"**{i[0]:.2f}**")
+            embed.add_field(name = "\u200b", value = f"**{i[2]}**")
 
         await interaction.response.edit_message(embed=embed, view = drugView(self.ctx))
 
@@ -396,10 +396,10 @@ class battleView(discord.ui.View):
     @discord.ui.button(label = "Back", style = discord.ButtonStyle.primary)
     async def back_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
-        embed = discord.Embed()
+        embed = discord.Embed(title="⚔️ Battle Arena",description="🔥 Fight in progress...",color=discord.Color.red())
 
-        embed.add_field(name = "\u200b", value = f"Your health = {battle_state[self.ctx.author.id][0]:.2f}", inline = False)
-        embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[self.ctx.author.id][1]:.2f}", inline = False)
+        embed.add_field(name = "\u200b", value = f"**❤️Your health = {battle_state[self.ctx.author.id][0]:.2f}**", inline = False)
+        embed.add_field(name = "\u200b", value = f"**👾Opponent health = {battle_state[self.ctx.author.id][1]:.2f}**", inline = False)
 
         await interaction.response.edit_message(embed = embed, view = battleView(self.ctx))
         
@@ -457,10 +457,10 @@ async def sbattle(ctx, bot_inven, win, lose):
 
     prepare_battle(ctx, inven, bot_inven, health, bot_health, win, lose)
 
-    embed = discord.Embed()
+    embed = discord.Embed(title="⚔️ Battle Arena",description="🔥 Fight in progress...",color=discord.Color.red())
 
-    embed.add_field(name = "\u200b", value = f"Your health = {battle_state[ctx.author.id][0]:.2f}", inline = False)
-    embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[ctx.author.id][1]:.2f}", inline = False)
+    embed.add_field(name = "\u200b", value = f"**❤️Your health = {battle_state[ctx.author.id][0]:.2f}**", inline = False)
+    embed.add_field(name = "\u200b", value = f"**👾Opponent health = {battle_state[ctx.author.id][1]:.2f}**", inline = False)
 
     await ctx.send(embed = embed, view = battleView(ctx))
 
@@ -492,10 +492,10 @@ async def battle(ctx):
 
     prepare_battle(ctx, inven, copy.deepcopy(inven), dmg, dmg, None, None)
     
-    embed = discord.Embed()
+    embed = discord.Embed(title="⚔️ Battle Arena",description="🔥 Fight in progress...",color=discord.Color.red())
 
-    embed.add_field(name = "\u200b", value = f"Your health = {battle_state[ctx.author.id][0]:.2f}", inline = False)
-    embed.add_field(name = "\u200b", value = f"Opponent health = {battle_state[ctx.author.id][1]:.2f}", inline = False)
+    embed.add_field(name = "\u200b", value = f"**❤️Your health = {battle_state[ctx.author.id][0]:.2f}**", inline = False)
+    embed.add_field(name = "\u200b", value = f"**👾Opponent health = {battle_state[ctx.author.id][1]:.2f}**", inline = False)
 
     await ctx.send(embed = embed, view = battleView(ctx))
 
