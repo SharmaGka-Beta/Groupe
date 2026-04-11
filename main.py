@@ -11,7 +11,7 @@ import poker
 
 
 load_dotenv()
-token = os.getenv("TOKEN")
+token = os.getenv("DISCORD_TOKEN")
 
 
 functions.bot.run(token)
