@@ -45,7 +45,7 @@ async def profile(ctx, member:discord.Member = None):
 
     embed.add_field(name="**MONEY**", value=f"__🪙 **Coins**:__ {info["money"]:,}\n💸 __**Black Money**:__ {info["b_money"]:,}", inline=False)
 
-    embed.add_field(name="**STATS**", value=f"🔥 __**Wanted**:__ {info["wanted"]}\n📈 __**Integrity**:__ {info["integrity"]}", inline=False)
+    embed.add_field(name="**STATS**", value=f"📈__**Level**__: {info["lvl"]}\n✨__**XP**__: {info["xp"]}/{int(100*(info["lvl"]**1.5))}\n🔥 __**Wanted**__: {info["wanted"]}\n 🤝__**Integrity**__: {info["integrity"]}", inline=False)
 
     await ctx.send(embed=embed)
 
@@ -501,4 +501,3 @@ async def cooldowns(ctx):
     
     embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns", icon_url=ctx.author.avatar.url)
     await ctx.send(embed = embed)
-

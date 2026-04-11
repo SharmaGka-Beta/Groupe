@@ -119,3 +119,35 @@ role_colors = {
     "detective": 0x228B22,
     "chief": 0x2E8B57
 }
+
+hit_chance = {"pistol": 1, "shotgun": 2, "ar": 3, "machinegun": 4, "sniper": 5}
+
+promotion_req = {"associate": ("underboss", 50),
+                 "underboss": ("godfather", 75),
+                 "rookie": ("detective", 50),
+                 "detective": ("chief", 75)}
+
+mob_welcome_messages = [
+    "You're one of us now. God help you.",
+    "Welcome to the family. Don't make us regret it.",
+    "From this moment, you bleed for us. And we bleed for you.",
+    "You're made. Don't waste it.",
+    "The city just got a little more dangerous. Good.",
+    "You just signed your soul away. Spend it wisely.",
+    "The boss has spoken. You're in. Don't make him speak again.",
+    "Welcome to Sin City, associate. Try to stay alive.",
+    "You're family now. Family doesn't get to quit.",
+]
+
+police_welcome_messages = [
+    "Badge is yours. Don't make me take it back.",
+    "Welcome to the force. Watch your back.",
+    "You're a cop now. The city will never look the same.",
+    "Sworn in. Good luck. You'll need it.",
+    "The precinct has a new face. Let's hope it lasts.",
+    "You're one of the good guys now. Whatever that means in this city.",
+    "Welcome aboard. Try not to end up on the wrong side of your own handcuffs.",
+    "The badge is heavy. You'll feel it more every day.",
+    "You're in. Just remember — in this city, everyone has an angle. Even us.",
+    "Congratulations officer. The criminals already know your name.",
+]

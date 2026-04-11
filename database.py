@@ -1,4 +1,5 @@
 import sqlite3
+import messages
 
 dbname = "SinCity.db"
 
@@ -15,7 +16,10 @@ def create_tables():
             user_role TEXT DEFAULT "civilian",
             jail INTEGER DEFAULT 0,
             b_money INTEGER DEFAULT 0 CHECK(b_money >= 0),
-            user_name TEXT DEFAULT "unknown"
+            user_name TEXT DEFAULT "unknown",
+            lvl INTEGER DEFAULT 1 CHECK(lvl > 0),
+            xp INTEGER DEFAULT 0 CHECK(xp >= 0),
+            complete_cnt INTEGER DEFAULT 0 CHECK(complete_cnt >= 0)
         )  
     """)
 
@@ -58,6 +62,7 @@ def get_leaderboard(arg):
         f"SELECT * FROM user_info ORDER BY {arg} DESC LIMIT 10"
     )
     row = cursor.fetchall()
+    conn.close()
     return row
 
 def add_user(user_id: int, user_name):
@@ -74,7 +79,7 @@ def add_user(user_id: int, user_name):
         conn.commit()
     conn.close()
 
-def get_user(user_id: int, user_name):
+def get_user(user_id: int, user_name="unknown"):
     conn = sqlite3.connect(dbname)
     cursor = conn.execute(
         "SELECT * FROM user_info WHERE user_id = ?", (user_id,)
@@ -83,11 +88,11 @@ def get_user(user_id: int, user_name):
     if row is None:
         add_user(user_id, user_name)
         conn.close()
-        return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian", "jail": 0, "b_money": 0}
+        return {"user_id": user_id, "money": 1000, "wanted": 0, "integrity": 0, "user_role": "civilian", "jail": 0, "b_money": 0, "user_name": user_name, "lvl": 1, "xp": 0, "complete_cnt": 0}
         
     
     conn.close()
-    return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4], "jail": row[5], "b_money": row[6], "user_name": row[7]}
+    return {"user_id": row[0], "money": row[1], "wanted": row[2], "integrity": row[3], "user_role": row[4], "jail": row[5], "b_money": row[6], "user_name": row[7], "lvl": row[8], "xp": row[9], "complete_cnt": row[10]}
 
 def get_inventory(uid):
 
@@ -283,4 +288,60 @@ def update_role(uid, role):
     conn.commit()
     conn.close()
 
+def remove_xp(uid, amount:int):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE user_info SET xp = xp - ? WHERE user_id = ?", (amount, uid))
+    conn.commit()
+    conn.close()
+
+def add_lvl(uid, amount: int):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE user_info SET lvl = lvl + ? WHERE user_id = ?", (amount, uid))
+    conn.commit()
+    conn.close()
+
+def add_xp(uid, amount: int):
+    conn = sqlite3.connect(dbname)
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE user_info SET xp = xp + ? WHERE user_id = ?", (amount, uid))
+    conn.commit()
+    conn.close()
+    lvl_cnt = 0
+    info = get_user(uid)
+    money = 0
+    while(info["xp"] > int(100*(info["lvl"]**1.5))):
+
+        add_money(uid, int(100*info["lvl"]**1.5))
+        add_integrity(uid, 5)
+        remove_wanted(uid, 5)
+        remove_xp(uid, int(100*(info["lvl"]**1.5)))
+        add_lvl(uid, 1)
+
+        info = get_user(uid)
+
+        money += 100*info["lvl"]**1.5
+        lvl_cnt += 1
+
+    newrole = promotion_check(uid, info["user_role"], info["lvl"])
+    if(newrole):
+        update_role(uid, newrole)
+
+    return (lvl_cnt, int(money), newrole)
+
+
+def promotion_check(uid, role, lvl):
+    newrole = None
+    if role in messages.promotion_req and lvl >= messages.promotion_req[role][1]:
+        newrole = messages.promotion_req[role][0]
+    return newrole
+
+
+
+def money_multiplier(level):
+    return 1 + (level * 0.1)
 

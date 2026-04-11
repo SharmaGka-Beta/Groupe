@@ -5,76 +5,17 @@ import messages
 import random
 import database
 import events
-import story
 import asyncio
 
-class contribute(discord.ui.View):
-
-    def __init__(self, ctx, money):
-        super().__init__()
-        self.ctx = ctx
-        self.money = money
-
-    async def interaction_check(self, interaction: discord.Interaction):
-        if interaction.user.id != self.ctx.author.id:
-            await interaction.response.send_message("Not for you!", ephemeral = True)
-            return False
-        return True
+class ExtortAndDrugView(discord.ui.View):
     
-    @discord.ui.button(label="All", style = discord.ButtonStyle.primary,)
-    async def all_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
-
-        await interaction.response.defer()
-        for child in self.children:
-            child.disabled = True
-        await interaction.message.edit(view=self)
-
-        await self.ctx.send("'You will go far if you keep making contributions like this!!'")
-
-    @discord.ui.button(label = "Half", style = discord.ButtonStyle.primary,)
-    async def half_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
-
-        await interaction.response.defer()
-        for child in self.children:
-            child.disabled = True
-        await interaction.message.edit(view=self)
-
-        if (events.summon(self.ctx, 5, self.money)):
-            await self.ctx.send("You have been summoned by the family for not making enough contributions")
-            await self.ctx.send("'If you wanna survive here I'd advise you to step up your game!'")
-            
-        database.add_b_money(self.ctx.author.id, self.money//2)
-
-    @discord.ui.button(label = "None", style = discord.ButtonStyle.primary,)
-    async def none_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
-
-        database.add_b_money(self.ctx.author.id, self.money)
-
-        await interaction.response.defer()
-        for child in self.children:
-            child.disabled = True
-        await interaction.message.edit(view=self)
-
-        a = events.summon(self.ctx, 7, self.money)
-
-        if (a == 1):
-            await self.ctx.send("You have been summoned by the family for not making enough contributions!")
-            await self.ctx.send("'If this behaviour continues we are gonna have a problem'")
-            # database.add_money(self.ctx.author.id, self.money)
-
-        elif (a == 2):
-            await self.ctx.send("You have been summoned by the family for not making enough contributions!")
-            await self.ctx.send("They roughed you up!")
-            await self.ctx.send(f"-{(self.money)} coins")
-            database.remove_money(self.ctx.author.id, self.money)
-
-class extortView(discord.ui.View):
-    
-    def __init__(self, ctx, target, money):
+    def __init__(self, ctx, target, money, type):
         super().__init__()
         self.ctx = ctx
         self.target = target
         self.money = money
+        self.type = type
+
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user.id != self.ctx.author.id:
@@ -91,8 +32,9 @@ class extortView(discord.ui.View):
             child.disabled = True
         await interaction.message.edit(view=self)
 
-        info = database.get_inventory(self.ctx.author.id)
-        if len(info[0]) == 0:
+        inv = database.get_inventory(self.ctx.author.id)
+        info = database.get_user(self.ctx.author.id)
+        if (len(inv[0]) == 0 and self.type == "extort"):
             await self.ctx.send("You don't have a weapon!")
             return
         
@@ -100,15 +42,19 @@ class extortView(discord.ui.View):
             await self.ctx.send(f"You were caught by the cops!")
             return
 
-        database.remove_integrity(self.ctx.author.id, int(self.money//1000))
-        database.add_wanted(self.ctx.author.id, self.money//1000)
-        await self.ctx.send(f"+{self.money} coins")
+        xp = random.randint(10, 25)*info["lvl"]
+        rng = random.randint(1, 5)
 
-        embed = discord.Embed()
-        embed.add_field(name = "\u200b", value = "Contribute to the family?")
-
-        await self.ctx.send(embed = embed, view = contribute(self.ctx, self.money))
-
+        (lvlcnt, bonus, newrole) = database.add_xp(self.ctx.author.id, xp)
+        if(lvlcnt):
+            await self.ctx.send(f"{self.ctx.author.name} leveled up! +{bonus} coins -{5*lvlcnt} Wanted +{5*lvlcnt} Integrity")
+        if(newrole != None):
+            await self.ctx.send(f"Congratulations **{self.ctx.author.name}**! You have been promoted to {newrole}!")
+        
+        database.remove_integrity(self.ctx.author.id, rng)
+        database.add_wanted(self.ctx.author.id, rng)
+        database.add_b_money(self.ctx.author.id, self.money)
+        await self.ctx.send(f"+{self.money} black money +{rng} Wanted -{rng} Integrity")
     
     @discord.ui.button(label="Deny", style = discord.ButtonStyle.primary,)
     async def deny_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
@@ -137,19 +83,19 @@ async def extort(ctx):
         return
 
     target = random.choice(messages.extort_targets)
-    money = random.randint(10000, 20000)
+    money = int(random.randint(50, 100)*database.money_multiplier(info["lvl"]))
     embed = discord.Embed()
 
     embed.add_field(name = "\u200b", value = f"{target} - {money} coins")
 
-    await ctx.send(embed = embed, view = extortView(ctx, target, money))
+    await ctx.send(embed = embed, view = ExtortAndDrugView(ctx, target, money, "extort"))
 
 
 @commands.cooldown(1, 2*60, commands.BucketType.user)
 @bot.command()
 async def deal(ctx):
 
-    info = database.get_user(ctx.author.id, ctx.author.id)
+    info = database.get_user(ctx.author.id, ctx.author.name)
 
     role = info["user_role"]
 
@@ -162,46 +108,13 @@ async def deal(ctx):
         return
     
     drug = random.choice(messages.items_drugs)[0]
-    money = random.randint(10000, 20000)
+    money = int(random.randint(50, 100)*database.money_multiplier(info["lvl"]))
 
     embed = discord.Embed()
 
-    embed.add_field(name = "\u200b", value = f"{drug} - {money} coins")
+    embed.add_field(name = "\u200b", value = f"{drug} - {money:,} coins")
 
-    await ctx.send(embed = embed, view = extortView(ctx, drug, money))
-
-@bot.command()
-async def promote(ctx):
-
-    info = database.get_user(ctx.author.id, ctx.author.name)
-
-    role = info["user_role"]
-
-    if (role != "associate" and role != "underboss"):
-        await ctx.send("You're not eligible for a promotion!")
-        return
-    
-    wntd_lvl = info["wanted"]
-    intg_lvl = info["integrity"]
-
-    if(wntd_lvl < 70 or wntd_lvl < 2*intg_lvl):
-        await ctx.send("'You haven't contributed shit and want a promotion!!'")
-        await ctx.send("They roughed you up!")
-        database.remove_money(ctx.author.id, 15000)
-        return
-    
-    if (role == "associate"):
-        
-        await ctx.send("'Alright then. A rival family has overstepped its bounds and needs to learn their lesson.'")
-        await asyncio.sleep(2)
-        embed = discord.Embed()
-        embed.add_field(name = "\u200b", value = "Ready?")
-
-        await ctx.send(embed = embed, view = story.aPromotionView(ctx))
-
-    if (role == "underboss"):
-
-        await story.back_again(ctx)
+    await ctx.send(embed = embed, view = ExtortAndDrugView(ctx, drug, money, "drug"))
     
 
 

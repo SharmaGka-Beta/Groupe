@@ -219,6 +219,7 @@ async def blackjack(ctx, arg: int):
     a = round_deck.pop()
     b, c = round_deck.pop(), round_deck.pop()
     blackjack_cards[ctx.author.id] = {"player": [b, c], "dealer": [a]}
+    database.remove_money(ctx.author.id, arg)
 
     embed.add_field(name = "Dealer Cards", value = f'{messages.special_cards[a[0]]}{a[1]}  ??')
     embed.add_field(name="Your Cards", value=f'{messages.special_cards[b[0]]}{b[1]}  {messages.special_cards[c[0]]}{c[1]}')
@@ -278,10 +279,9 @@ async def slots(ctx, arg: int):
     color=discord.Color.gold()
 )
     if(ctx.author.avatar == None):
-        embed.set_author(name=f"{ctx.author.name}'s slots", icon_url=ctx.author.avatar.url)
-    else:  
         embed.set_author(name=f"{ctx.author.name}'s slots")
-    #embed.add_field(name="\u200b", value=f"\n◖{reel[0]}{reel[1]}{reel[2]}◗\n{response}")
+    else:  
+        embed.set_author(name=f"{ctx.author.name}'s slots", icon_url=ctx.author.avatar.url)
     await ctx.send(embed=embed)
     
     
