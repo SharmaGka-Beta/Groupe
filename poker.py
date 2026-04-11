@@ -74,9 +74,9 @@ class inviteView(discord.ui.View):
         await interaction.message.edit(view=self)
 
         if (game[self.ctx.author.id]["start"]):
-            await self.ctx.send(f"{self.member} will join next round.")
+            await self.ctx.send(f"{self.member.mention} will join next round.")
         else:
-            await self.ctx.send(f"{self.member} has joined {self.ctx.author}'s game")
+            await self.ctx.send(f"{self.member.mention} has joined {self.ctx.author.mention}'s game")
 
         if (self.member not in game[self.ctx.author.id]["all"]):
             game[self.ctx.author.id]["all"].append(self.member)
@@ -106,7 +106,7 @@ class inviteView(discord.ui.View):
         if (self.member in game[self.ctx.author.id]["all"]):
             game[self.ctx.author.id]["all"].remove(self.member)
 
-        await self.ctx.send(f"{self.member} has rejected {self.ctx.author}'s invite")
+        await self.ctx.send(f"{self.member.mention} has rejected {self.ctx.author.mention}'s invite")
 
 @bot.command()
 async def poker(ctx, s: int, *members: discord.Member):
@@ -173,19 +173,19 @@ async def round(ctx, host):
     await pre_flop(ctx, host)
     
     for player in game[host.id]["current"]:
-        player[1] = 0
+        player[1] = None
     game[host.id]["bet"] = 0
     
     await flop(ctx, host)
     
     for player in game[host.id]["current"]:
-        player[1] = 0
+        player[1] = None
     game[host.id]["bet"] = 0
 
     await turn(ctx, host)
 
     for player in game[host.id]["current"]:
-        player[1] = 0
+        player[1] = None
     game[host.id]["bet"] = 0
 
     await river(ctx, host)
@@ -227,9 +227,9 @@ async def find_hand(ctx, host, players):
     
 
     embed = discord.Embed()
-    embed.add_field(name = "\u200b", value = "\u200b")
-    embed.add_field(name = "\u200b", value = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}  {messages.special_cards[card3[0]]}{card3[1]}  {messages.special_cards[card4[0]]}{card4[1]}  {messages.special_cards[card5[0]]}{card5[1]}")
-    embed.add_field(name = "\u200b", value = "\u200b")
+    # embed.add_field(name = "\u200b", value = "\u200b")
+    # embed.add_field(name = "\u200b", value = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}  {messages.special_cards[card3[0]]}{card3[1]}  {messages.special_cards[card4[0]]}{card4[1]}  {messages.special_cards[card5[0]]}{card5[1]}")
+    # embed.add_field(name = "\u200b", value = "\u200b")
     
     embed.add_field(name = "Name", value = "\u200b")
     embed.add_field(name = "Cards", value = "\u200b")
@@ -240,7 +240,7 @@ async def find_hand(ctx, host, players):
         card2 = i[3][1]
         embed.add_field(name = i[0].name, value = "\u200b")
         embed.add_field(name = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}", value = "\u200b")
-        embed.add_field(name = convert(hand[i[0]][0]), value = "\u200b")
+        embed.add_field(name = convert[hand[i[0]][0]], value = "\u200b")
 
     await ctx.send(embed = embed)
     await end_round(ctx, winner, host)
@@ -326,7 +326,7 @@ async def bet_logic(ctx, host, t):
             for i in players:
                 if (i[2] == False):
                     winner = i[0]
-            await end_round(ctx, [winner], host)
+            await end_round(ctx, [[winner]], host)
             raise over()
 
         if (game[host.id]["current"][t%total][2]):
@@ -374,7 +374,7 @@ class betView(discord.ui.View):
             child.disabled = True
         await interaction.message.edit(view=self)
 
-        bet = game[self.host.id]["bet"] - game[self.host.id]["current"][self.index][1]
+        bet = game[self.host.id]["bet"] - (game[self.host.id]["current"][self.index][1] or 0)
         self.timed_out = False
 
         if (balance_low(self.player, bet)):
@@ -448,7 +448,7 @@ class raiseModal(discord.ui.Modal, title = "Raise"):
         
         await interaction.response.defer()
         
-        bet = amt - game[self.host.id]["current"][self.index][1]
+        bet = amt - (game[self.host.id]["current"][self.index][1] or 0)
 
         game[self.host.id]["bet"] = amt
         game[self.host.id]["current"][self.index][1] = amt
@@ -479,6 +479,10 @@ class anotherViewHost(discord.ui.View):
         
         await interaction.response.defer()
 
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
         members = game[self.host.id]["all"][:]
 
         game[self.host.id]["all"] = [self.host]
@@ -494,8 +498,13 @@ class anotherViewHost(discord.ui.View):
     async def later_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
         await interaction.response.defer()
+
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+
         game.pop(self.host.id)
-        await self.ctx.send(f"{self.host}'s game has ended.")
+        await self.ctx.send(f"{self.host.mention}'s game has ended.")
 
 async def end_round(ctx, winner, host):
 
