@@ -5,7 +5,7 @@ import discord
 import database
 
 game = {}
-#uid : {all = [], current = [], small, start, bet, pot}
+#uid : {all = [], current = [], small, start, bet, pot, start_message, deck}
 
 class over(Exception):
     pass
@@ -104,7 +104,7 @@ async def poker(ctx, s: int, *members: discord.Member):
     if (ctx.author.id in game):
         game.pop(ctx.author.id)
 
-    game[ctx.author.id] = {"all": [ctx.author], "current": [], "small": s, "start": False, "bet": 0, "pot": 0}
+    game[ctx.author.id] = {"all": [ctx.author], "current": [], "small": s, "start": False, "bet": 0, "pot": 0, "cards": []}
 
     for member in members:
 
@@ -142,6 +142,7 @@ async def round(ctx, host):
 
     round_deck = messages.deck[:]
     random.shuffle(round_deck)
+    game[host.id]["deck"] = round_deck
 
     for i in range(len(game[host.id]["current"])):
         card1 = round_deck.pop()
@@ -160,6 +161,10 @@ async def round(ctx, host):
             await game[host.id]["current"][i][0].send("You are the big blind.")
 
     await pre_flop(ctx, host)
+    for player in game[host.id]["current"]:
+        player[1] = 0
+    game[host.id]["bet"] = 0
+    await flop(ctx, host)
 
 
 async def pre_flop(ctx, host):
@@ -178,6 +183,24 @@ async def pre_flop(ctx, host):
     database.remove_money(players[1][0].id, 2*game[host.id]["small"])
 
     await bet_logic(ctx, host, 2)
+
+async def flop(ctx, host):
+
+    card1 = game[host.id]["deck"].pop()
+    card2 = game[host.id]["deck"].pop()
+    card3 = game[host.id]["deck"].pop()
+
+    game[host.id]["cards"].append(card1)
+    game[host.id]["cards"].append(card2)
+    game[host.id]["cards"].append(card3)
+
+    embed = discord.Embed()
+    embed.add_field(name = "THE FLOP", value = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}  {messages.special_cards[card3[0]]}{card3[1]}")
+    await ctx.send(embed = embed)
+
+    await bet_logic(ctx, host, 0)
+
+
 
 async def bet_logic(ctx, host, t):
 
@@ -333,11 +356,11 @@ class anotherViewHost(discord.ui.View):
 
         members = game[self.host.id]["all"][:]
 
+        game[self.host.id]["all"] = [self.host]
         for member in members:
             if (member == self.host):
                 continue
 
-            game[self.host.id]["all"].remove(member)
             embed = discord.Embed()
             embed.add_field(name = f"{self.host} is inviting you to a poker game.", value = "\u200b")
             await member.send(embed = embed, view = inviteView(self.ctx, member))
@@ -357,7 +380,11 @@ async def end_round(ctx, winner, host):
     game[host.id]["start"] = False
     game[host.id]["bet"] = 0
     game[host.id]["pot"] = 0
+    game[host.id]["cards"].clear()
+    game[host.id].pop("deck", None)
     game[host.id].pop("start_message", None)
+    sb = game[host.id]["all"].pop(0)
+    game[host.id]["all"].append(sb)
 
     embed = discord.Embed()
     embed.add_field(name = "Another Game?", value = "\u200b")
