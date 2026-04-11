@@ -482,6 +482,7 @@ async def battle(ctx):
 
     if (ctx.author.id in battle_state):
         await ctx.send("You have an ongoing battle!")
+        return
 
     if (len(inven[0]) == 0):
         await ctx.send("You don't even own a gun!")

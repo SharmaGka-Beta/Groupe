@@ -208,7 +208,7 @@ class aPromotionView(discord.ui.View):
 
             await asyncio.sleep(2)
 
-            await self.ctx.send("You were prooted to underboss!")
+            await self.ctx.send("You were promoted to underboss!")
             await self.ctx.send("You now report directly to The Godfather")
 
             database.update_role(self.ctx.author.id, "underboss")
@@ -365,7 +365,7 @@ async def back_again(ctx):
         await ctx.send("You or her...")
         await asyncio.sleep(2)
 
-        await ctx.send("AND THIS IS WHAT YOU DID!!")
+        await ctx.send("'AND THIS IS WHAT YOU DID!!'")
         await asyncio.sleep(2)
         await ctx.send("You or her...")
         await asyncio.sleep(2)
@@ -374,7 +374,7 @@ async def back_again(ctx):
         await ctx.send("You or her...")
         await asyncio.sleep(2)
 
-        await ctx.send("HOW COULD YOU!! WHEN HE GAVE YOU SO MU-")
+        await ctx.send("'HOW COULD YOU!! WHEN HE GAVE YOU SO MU-'")
         await ctx.send("Silence")
         await asyncio.sleep(5)
 
