@@ -252,45 +252,38 @@ class leaderboard_view(discord.ui.View):
     async def coins_callback(self, interaction: discord.Interaction, button: discord.ui.button):
         embed = discord.Embed(title="Coins Leaderboard", color=discord.Color.brand_red())
 
+        await interaction.response.defer()
         player_info = database.get_leaderboard("money")
         i = 0
         for player in player_info:
             i += 1
-            embed.add_field(name=f"{i}. {player[7]}: {player[1]}", value="\u200b")
-        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
+            embed.add_field(name=f"{i}. {player[7]}: {player[1]} coins", value="\u200b")
+        await interaction.message.edit(embed = embed, view = leaderboard_view())
 
-    @discord.ui.button(label="Wanted", style = discord.ButtonStyle.primary)
-    async def wanted_callback(self, interaction: discord.Interaction, button: discord.ui.button):
-        embed = discord.Embed(title="Wanted Leaderboard", color=discord.Color.brand_red())
+    @discord.ui.button(label="Level", style=discord.ButtonStyle.primary)
+    async def lev_callback(self, interaction: discord.Interaction, button: discord.ui.button):
+        embed = discord.Embed(title="Level Leaderboard", color=discord.Color.brand_green())
 
-        player_info = database.get_leaderboard("wanted")
+        await interaction.response.defer()
+        player_info = database.get_leaderboard("lvl")
         i = 0
         for player in player_info:
             i += 1
-            embed.add_field(name=f"{i}. {player[7]}: {player[2]}", value="\u200b")
-        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
-
-    @discord.ui.button(label="Integrity", style = discord.ButtonStyle.primary)
-    async def integrity_callback(self, interaction: discord.Interaction, button: discord.ui.button):
-        embed = discord.Embed(title="Integrity Leaderboard", color=discord.Color.brand_red())
-
-        player_info = database.get_leaderboard("integrity")
-        i = 0
-        for player in player_info:
-            i += 1
-            embed.add_field(name=f"{i}. {player[7]}: {player[3]}", value="\u200b")
-        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
+            embed.add_field(name=f"{i}. {player[7]}: Level {player[8]}", value="\u200b")
+        await interaction.message.edit(embed = embed, view = leaderboard_view())
+        
     
     @discord.ui.button(label="Black Money", style = discord.ButtonStyle.primary)
     async def black_callback(self, interaction: discord.Interaction, button: discord.ui.button):
-        embed = discord.Embed(title="Black Money Leaderboard", color=discord.Color.brand_red())
+        embed = discord.Embed(title="Black Money Leaderboard", color=discord.Color.dark_blue())
 
+        await interaction.response.defer()
         player_info = database.get_leaderboard("b_money")
         i = 0
         for player in player_info:
             i += 1
-            embed.add_field(name=f"{i}. {player[7]}: {player[6]}", value="\u200b")
-        await interaction.response.edit_message(embed = embed, view = leaderboard_view())
+            embed.add_field(name=f"{i}. {player[7]}: {player[6]} black money", value="\u200b")
+        await interaction.message.edit(embed = embed, view = leaderboard_view())
         
 @bot.command()
 async def leaderboard(ctx):
