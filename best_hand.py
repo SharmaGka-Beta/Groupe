@@ -1,3 +1,7 @@
+rank = ["royal", "sf", "quads", "full", "flush", "straight", "three", "two", "pair", "high"]
+
+convert = {"royal": "ROYAL FLUSH", "sf": "Straight Flush", "quads": "Quads", "full": "Full House", "straight": "Straight", "three": "Three", "two": "Two", "pair": "Pair", "high": "High Card"}
+
 def freq(arr):
 
     count = {}
@@ -11,6 +15,8 @@ def freq(arr):
     return count
 
 def high(nums):
+    if 1 in nums:
+        return 14
     return max(nums)
 
 def pair(nums):
@@ -64,8 +70,11 @@ def flush(suits, cards):
     
     max = 0
     for i in cards:
-        if i[1] == f[0] and i[0] > max:
-            max = i[0]
+        val = i[0]
+        if i[0] == 1:
+            val = 14
+        if i[1] == f[0] and val > max:
+            max = val
 
     return [f[0], max]            #returns a list of suits of all flushes
 
@@ -77,9 +86,9 @@ def full_house(nums):
     for i in threes:
         for j in pairs:
             if i != j:
-                fulls.append((j, i))
+                fulls.append((i, j))
 
-    return fulls        #returns a list of (pair, three) for all full houses
+    return fulls        #returns a list of (three, pair) for all full houses
 
 def four(nums):
     count = freq(nums)
@@ -100,7 +109,7 @@ def straight_flush(cards, suits):
     
     n = [m[0] for m in temp]
     st = straight(n)
-    return [st, fl[0]]      #only one sf possible. gives staring element and suite
+    return [st]      #only one sf possible. gives staring element and suite
 
 def royal_flush(cards, suits):
 
@@ -115,7 +124,7 @@ def royal_flush(cards, suits):
     
 
         
-def best_hand(cards):
+def calculate_hand(cards):
 
     nums = [m[0] for m in cards]
     suits = [m[1] for m in cards]
@@ -130,11 +139,11 @@ def best_hand(cards):
         a = max(temp)
         temp.remove(a)
         b = max(temp)
-        best = ['two pair', (a, b)]
+        best = ['two', (a, b)]
 
     temp = three(nums)
     if len(temp) > 0:
-        best = ['three of a kind', max(temp)]
+        best = ['three', max(temp)]
 
     temp = straight(nums)
     if len(temp) > 0:
@@ -146,9 +155,7 @@ def best_hand(cards):
 
     temp = full_house(nums)
     if len(temp) > 0:
-        p = [m[0] for m in temp]
-        t = [m[1] for m in temp]
-        best = ['full house', (max(p), max(t))]
+        best = ['full', max(temp)]
     
     temp = four(nums)
     if len(temp) > 0:
@@ -157,11 +164,11 @@ def best_hand(cards):
     temp = straight_flush(cards, suits)
     if len(temp) > 0 and len(temp[0]) > 0:
 
-        best = ['straight flush', (max(temp[0]), temp[1])]
+        best = ['sf', max(temp[0])]
 
     temp = royal_flush(cards, suits)
     if temp:
-        best = ['ROYAL FLUSH']
+        best = ['royal', 0]
 
     return best
 

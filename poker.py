@@ -3,12 +3,22 @@ import messages
 import random
 import discord
 import database
+from best_hand import calculate_hand, rank, convert
 
 game = {}
-#uid : {all = [], current = [], small, start, bet, pot, start_message, deck}
+#uid : {all = [], current = [], small, start, bet, pot, start_message, deck, cards}
 
 class over(Exception):
     pass
+
+
+def balance_low(player, bet):
+    
+    info = database.get_user(player.id, player.name)
+    if (info["money"] < bet):
+        return 1
+    return 0
+
 
 class startView(discord.ui.View):
 
@@ -180,6 +190,62 @@ async def round(ctx, host):
 
     await river(ctx, host)
 
+    players = game[host.id]["current"]
+    temp = []
+    for i in players:
+        if i[2] == True:
+            continue
+        temp.append(i)
+
+    await find_hand(ctx, host, temp)
+
+async def find_hand(ctx, host, players):
+
+    hand = {}
+
+    for i in players:
+        hole_cards = i[3]
+        community_cards = game[host.id]["cards"]
+        seven = hole_cards + community_cards
+        hand[i[0]] = calculate_hand(seven)
+    
+    winner = []
+    for i in rank:
+        if any(a[0] == i for a in hand.values()):
+            winner = [(key, value) for key, value in hand.items() if value[0] == i]
+            break
+    
+    if len(winner) > 1:
+        best_val = max(winner, key = lambda x: x[1][1])
+        winner = [i for i in winner if i[1][1] == best_val[1][1]]
+
+    card1 = game[host.id]["cards"][0]
+    card2 = game[host.id]["cards"][1]
+    card3 = game[host.id]["cards"][2]
+    card4 = game[host.id]["cards"][3]
+    card5 = game[host.id]["cards"][4]
+    
+
+    embed = discord.Embed()
+    embed.add_field(name = "\u200b", value = "\u200b")
+    embed.add_field(name = "\u200b", value = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}  {messages.special_cards[card3[0]]}{card3[1]}  {messages.special_cards[card4[0]]}{card4[1]}  {messages.special_cards[card5[0]]}{card5[1]}")
+    embed.add_field(name = "\u200b", value = "\u200b")
+    
+    embed.add_field(name = "Name", value = "\u200b")
+    embed.add_field(name = "Cards", value = "\u200b")
+    embed.add_field(name = "Best Hand", value = "\u200b")
+
+    for i in players:
+        card1 = i[3][0]
+        card2 = i[3][1]
+        embed.add_field(name = i[0].name, value = "\u200b")
+        embed.add_field(name = f"{messages.special_cards[card1[0]]}{card1[1]}  {messages.special_cards[card2[0]]}{card2[1]}", value = "\u200b")
+        embed.add_field(name = convert(hand[i[0]][0]), value = "\u200b")
+
+    await ctx.send(embed = embed)
+    await end_round(ctx, winner, host)
+    raise over()
+            
 
 
 async def pre_flop(ctx, host):
@@ -260,7 +326,7 @@ async def bet_logic(ctx, host, t):
             for i in players:
                 if (i[2] == False):
                     winner = i[0]
-            await end_round(ctx, winner, host)
+            await end_round(ctx, [winner], host)
             raise over()
 
         if (game[host.id]["current"][t%total][2]):
@@ -309,8 +375,16 @@ class betView(discord.ui.View):
         await interaction.message.edit(view=self)
 
         bet = game[self.host.id]["bet"] - game[self.host.id]["current"][self.index][1]
-
         self.timed_out = False
+
+        if (balance_low(self.player, bet)):
+            await self.player.send("Balance Low. Auto Folding")
+            await self.ctx.send(f"{self.player.mention} folded!")
+            game[self.host.id]["current"][self.index][2] = True
+            self.stop()
+            return
+
+
         if (bet == 0):
             await self.ctx.send(f"{self.player.mention} has checked!")
         else:
@@ -368,6 +442,10 @@ class raiseModal(discord.ui.Modal, title = "Raise"):
             await interaction.response.send_message("Bet must be greater than current bet!")
             return
         
+        if (balance_low(self.player, amt)):
+            await interaction.response.send_message("Balance Low!")
+            return
+        
         await interaction.response.defer()
         
         bet = amt - game[self.host.id]["current"][self.index][1]
@@ -421,8 +499,10 @@ class anotherViewHost(discord.ui.View):
 
 async def end_round(ctx, winner, host):
 
-    await ctx.send(f"{winner.mention} wins!")
-    database.add_money(winner.id, game[host.id]["pot"])
+    for i in winner:
+        await ctx.send(f"{i[0].mention} wins!")
+        database.add_money(i[0].id, int(game[host.id]["pot"]/len(winner)))
+
     game[host.id]["current"].clear()
     game[host.id]["start"] = False
     game[host.id]["bet"] = 0
