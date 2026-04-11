@@ -115,7 +115,7 @@ role_colors = {
 }
 
 help_commands={
-    "General commands":[
+    "⚙️General commands":[
         {
             "name":"profile",
             "format":"sin profile <member>(takes default member as sender)",
@@ -138,7 +138,7 @@ help_commands={
         },
         {
             "name": "sell",
-            "format":"sin sell <item> [qty]",
+            "format":"sin sell <item> <quantity>",
             "description": "Sell items from your inventory for coins"
         },
         {
@@ -152,7 +152,7 @@ help_commands={
             "description": "Send coins to another player"
         },
     ],
-    "Civilian":[
+    "👤Civilian":[
         {
             "name":"work",
             "format":"sin work",
@@ -184,7 +184,7 @@ help_commands={
             "description":"Attempt to join mob(requires weapon,high wanted level and low integrity)."
         }
     ],
-    "Mob":[
+    "👾Mob":[
         {
             "name":"extort",
             "format":"sin extort",
@@ -201,7 +201,7 @@ help_commands={
             "description":"Attempt to promote at higher rank in the mob."
         }
     ],
-    "Gambling":[
+    "🎰Gambling":[
         {
             "name":"roulette",
             "format":"sin roulette <amount> <red/balck/number>",

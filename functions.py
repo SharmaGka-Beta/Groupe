@@ -503,29 +503,68 @@ async def cooldowns(ctx):
     embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns", icon_url=ctx.author.avatar.url)
     await ctx.send(embed = embed)
 
-# @bot.command()
-# async def help(ctx):
-#     embed=discord.Embed(
-#         title="📖 Command Guide",
-#         description="All available command grouped by category",
-#         color=discord.Color.green()
-#     )
+class HelpView(discord.ui.View):
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
 
-#     for x,y in messages.help_commands.items():
-#         value=""
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message(
+                "Not your help menu!", ephemeral=True
+            )
+            return False
+        return True
 
-#         for cmd in y:
-#             value+=(
-#                 f"{cmd['name'].title()}\n"
-#                 f" Format: {cmd['format']}\n"
-#                 f" {cmd['description']}\n\n"
-#             )
+    def get_help_embed(self, category):
+        embed = discord.Embed(
+            title=f" {category} ",
+            color=discord.Color.green()
+        )
 
-#         embed.add_field(
-#             name=x,
-#             value=value,
-#             inline=False
-#         )
-#     await ctx.send(embed=embed)
+        commands = messages.help_commands[category]
+        value = ""
+
+        for cmd in commands:
+            value += (
+                f"**__{cmd['name'].title()}__**\n"
+                f"**Format:** {cmd['format']}\n"
+                f"{cmd['description']}\n\n"
+            )
+
+        embed.add_field(name="\u200b", value=value, inline=False)
+        return embed
+
+    @discord.ui.button(label="⚙️General commands", style=discord.ButtonStyle.primary)
+    async def general(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        embed = self.get_help_embed("⚙️General commands")
+        await interaction.edit_original_response(embed=embed, view=self)
+
+    @discord.ui.button(label="👤Civilian", style=discord.ButtonStyle.primary)
+    async def civilian(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        embed = self.get_help_embed("👤Civilian")
+        await interaction.edit_original_response(embed=embed, view=self)
+
+    @discord.ui.button(label="👾Mob", style=discord.ButtonStyle.primary)
+    async def mob(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        embed = self.get_help_embed("👾Mob")
+        await interaction.edit_original_response(embed=embed, view=self)
+
+    @discord.ui.button(label="🎰Gambling", style=discord.ButtonStyle.primary)
+    async def gambling(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        embed = self.get_help_embed("🎰Gambling")
+        await interaction.edit_original_response(embed=embed, view=self)
+
+@bot.command()
+async def help(ctx):
+    view=HelpView(ctx)
+    embed = view.get_help_embed("⚙️General commands")  # default category
+
+    await ctx.send(embed=embed, view=view)
+    
 
 
