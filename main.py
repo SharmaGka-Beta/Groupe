@@ -7,7 +7,7 @@ import devcommands
 import battle
 import mob
 import police
-
+import poker
 
 
 load_dotenv()
