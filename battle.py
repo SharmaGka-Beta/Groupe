@@ -348,32 +348,32 @@ class battleView(discord.ui.View):
     @discord.ui.button(label="Guns", style = discord.ButtonStyle.primary)
     async def guns_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
-        embed = discord.Embed()
-        embed.add_field(name = "Weapon", value = "\u200b")
-        embed.add_field(name = "Damage", value = "\u200b")
-        embed.add_field(name = "Bullets", value = "\u200b")
+        embed = discord.Embed(title="👾 Weapon Panel",description="⚔️ Current Loadout",color=discord.Color.blurple())
+        embed.add_field(name = "🔫**__Weapon__**", value = "\u200b")
+        embed.add_field(name = "💥**__Damage__**", value = "\u200b")
+        embed.add_field(name = "🔋**__Bullets__**", value = "\u200b")
 
         for i in battle_state[self.ctx.author.id][3][0]:
             
-            embed.add_field(name = "\u200b", value = f"{i[1]}")
-            embed.add_field(name = "\u200b", value = f"{i[0]}")
-            embed.add_field(name = "\u200b", value = f"{i[2]}")
+            embed.add_field(name = "\u200b", value = f"**{i[1].capitalize()}**",inline=True)
+            embed.add_field(name = "\u200b", value = f"**{i[0]}**",inline=True)
+            embed.add_field(name = "\u200b", value = f"**{i[2]}**",inline=True)
 
         await interaction.response.edit_message(embed=embed, view = gunView(self.ctx))
 
     @discord.ui.button(label="Drugs", style = discord.ButtonStyle.primary)
     async def drugs_callback(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
-        embed = discord.Embed()
-        embed.add_field(name = "Drug", value = "\u200b")
-        embed.add_field(name = "Heal", value = "\u200b")
-        embed.add_field(name = "Qty", value = "\u200b")
+        embed = discord.Embed(title="🧪 Medical Kit",description="🩸 Heal up before it's too late.",color=discord.Color.blue())
+        embed.add_field(name = "🌿Drug", value = "\u200b")
+        embed.add_field(name = "❤️‍🩹Heal", value = "\u200b")
+        embed.add_field(name = "📦Qty", value = "\u200b")
 
         for i in battle_state[self.ctx.author.id][3][1]:
             
-            embed.add_field(name = "\u200b", value = f"{i[1]}")
-            embed.add_field(name = "\u200b", value = f"{i[0]:.2f}")
-            embed.add_field(name = "\u200b", value = f"{i[2]}")
+            embed.add_field(name = "\u200b", value = f"**{i[1].capitalize()}**")
+            embed.add_field(name = "\u200b", value = f"**{i[0]:.2f}**")
+            embed.add_field(name = "\u200b", value = f"**{i[2]}**")
 
         await interaction.response.edit_message(embed=embed, view = drugView(self.ctx))
 
