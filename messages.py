@@ -172,7 +172,13 @@ help_commands={
         },
         {
             "name":"blackjack",
-            "format":""
+            "format":"sin blackjack <amount>",
+            "description":"Play blackjack against the dealer using hit/stand."
+        },
+        {
+            "name":"slots",
+            "format":"sin slots <amount>",
+            "description":"Spin the slot machine to get a chance to win big."
         }
     ]
 }
