@@ -341,7 +341,7 @@ async def buy(ctx, item, qty:int = 1):
             database.update_inventory(ctx.author.id, it[0].lower(), it[3], qty)
             database.remove_money(ctx.author.id, qty*int(it[1]))
             
-            await ctx.send(f"{qty} {item}(s) bought successfully!")     #bough
+            await ctx.send(f"{qty} {item}(s) bought successfully!")     
             
                 
             return
@@ -409,7 +409,7 @@ async def bail(ctx):
         await ctx.send("You're not a convict!")
         return
     
-    if (info["money"] < 10000):                                     #bail set at 100k
+    if (info["money"] < 10000):                                     #bail set at 10k
         await ctx.send("Insufficient Balance")
         return
 
@@ -563,6 +563,29 @@ async def help(ctx):
     embed = view.get_help_embed("⚙️General commands")  # default category
 
     await ctx.send(embed=embed, view=view)
+
+@bot.command()
+async def leave(ctx):
+
+    info = database.get_user(ctx.author.id, ctx.author.name)
+
+    if info["role"] == "associate" or info["role"] == "underboss" or info["role"] == "godfather":
+        a = random.randint(1, 2)
+        if (a == 1):
+            await ctx.send("One does not simply leave the mob")
+            await ctx.send("They roughed you up!")
+            database.remove_money(ctx.author.id, 50000)
+            return
+
+        await ctx.send("You have left the mob and are now a civilian")
+
+    elif info["role"] == "rookie" or info["role"] == "detective" or info["role"] == "chief":
+        await ctx.send("You have left the police force and are now a civilian")
+
+    else:
+        await ctx.send("Leave What? You're not in the mob or the force!")
+        return
+    database.update_role("civilian")
     
 
 

@@ -275,12 +275,22 @@ help_commands={
             "format":"sin deal",
             "description":"Deal illegal drugs for money."
         },
+        {
+            "name": "leave",
+            "format": "sin leave",
+            "description": "Leave the mob"
+        }
     ],
     "👮Police":[
         {
             "name": "patrol",
             "format": "sin patrol",
             "description": "Patrol the city looking for criminals"
+        },
+        {
+            "name": "leave",
+            "format": "sin leave",
+            "description": "Leave the police force"
         }
     ],
     "🎰Gambling":[
