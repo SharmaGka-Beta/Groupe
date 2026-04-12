@@ -43,6 +43,7 @@ A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,fac
    - ### Locally on your system
       - Create new appliction in discord developer portal
       - Give bot required permission(Administrator recommended)
+      - Turn on Server Member Intent and Message Content Intent
       - Copy your bot token
       - Go to OAuth2 and give bot scope and bot permission
       - Copy the generated URL and add bot to your server
@@ -64,6 +65,7 @@ A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,fac
 
    - ### From server
       - Go to the link provided below and add bot to your server
+      [Invite Link](https://discord.com/oauth2/authorize?client_id=1482734885230870701&permissions=8&integration_type=0&scope=bot)
 
 ## 📌 Future Improvements
    - Multiplayer battles
