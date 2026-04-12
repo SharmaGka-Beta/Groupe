@@ -1,6 +1,8 @@
-# 👾 Groupe - Discord RPG Bot
+# 👾 Groupe - A Sin City themed Discord RPG bot
 
-A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,factions and interactive UI using buttons.
+- A feature-rich Discord RPG bot developed by Groupe set in the criminal underworld of Sin City.
+- Featuring economy, battles, factions and interactive UI.
+- Players start as civilians and work their way up through the mob or police force, committing crimes, laundering money, gambling, and battling enemies along the way.
 
 ## 🚀 Features
 
@@ -8,17 +10,28 @@ A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,fac
    Turn-based combat with weapons, damage, and healing
 
 - ### 💰 Economy System
-   Work, rob, extort, and gamble to earn coins
+   - Economy system with regular and black money
+   - Earn coins through various role-specific and general commands (and gambling too!)
 
-- ### 👤 Faction System
+- ### 👤 Faction/Role Progression System
    - Civilian
-   - Mob
-   - Police
+   - Mob (Associate -> Underboss -> Godfather)
+   - Police (Rookie -> Detective -> Chief)
+   - Role progression based on Levels/XP
+
+   ### 📈 Level/XP System
+   - Climb the role ladder by gaining XP and increasing levels
+   - Users earn XP on role specific and general commands
+
+   ### 📊 Leaderboard
+   - See the best players globally
+   - Sort based on coins/levels/black money
 
 - ### 🎰 Gambling Games
    - Roulette
    - Blackjack
    - Poker
+   - Slots
 
 - ### 🧪 Inventory System
    - Guns
@@ -26,11 +39,13 @@ A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,fac
    - Items
 
 - ### 🎮 Interactive UI
-   - Buttons (Hit, Stand, Accept, etc.)
+   - Buttons
+   - Modals
    - Dynamic embeds
 
 - ### 🚔 Crime & Law System
    - Jail mechanics
+   - Income tax raids
    - Wanted system
    - Integrity level
 
@@ -38,6 +53,22 @@ A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,fac
    - Python
    - discord.py
    - SQLite
+
+## 🏛 Project Structure
+   - ```main.py``` — entry point
+   - ```functions.py``` — core commands and bot setup
+   - ```database.py``` — SQLite database layer
+   - **Roles**/
+      - ```civilian.py``` — civilian role commands
+      - ```mob.py``` — mob role commands
+      - ```police.py``` — police role commands
+   - **Gambling**/
+      - ```gambling.py``` — gambling commands
+      - ```poker.py``` - poker system
+      - ```best_hand.py ``` - poker.py helper file
+   - ```battle.py``` — battle system
+   - ```events.py``` — random event logic
+   - ```messages.py``` — static data and flavor text
 
 ## 🔑 Setup
    - ### Locally on your system

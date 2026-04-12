@@ -25,22 +25,5 @@ def it_raid(ctx):
     if(random.random() <= (heat+exposure)/2):
         return True
     return False
-
-def summon(ctx, danger, money):
-
-    if (random.random() >= danger/10):
-        return 0
-    
-    if (danger > 5):
-        if (random.random() > 0.95):
-            database.remove_wanted(ctx.author.id, money//1000)
-            return 2
-        database.remove_wanted(ctx.author.id, money//1000)
-        
-    else:
-        database.remove_wanted(ctx.author.id, money//2000)
-        
-
-    return 1
     
 
