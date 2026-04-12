@@ -252,12 +252,12 @@ async def pre_flop(ctx, host):
 
     players = game[host.id]["current"]
 
-    await ctx.send(f"{players[0][0].mention} has bet {game[host.id]["small"]} coins.")
+    await ctx.send(f"{players[0][0].mention} has bet {game[host.id]['small']} coins.")
     game[host.id]["pot"] += game[host.id]["small"]
     players[0][1] = game[host.id]["small"]
     database.remove_money(players[0][0].id, game[host.id]["small"])
 
-    await ctx.send(f"{players[1][0].mention} has bet {2*game[host.id]["small"]} coins.")
+    await ctx.send(f"{players[1][0].mention} has bet {2*game[host.id]['small']} coins.")
     game[host.id]["pot"] += 2*game[host.id]["small"]
     game[host.id]["bet"] = game[host.id]["small"]*2
     players[1][1] = 2 * game[host.id]["small"]
@@ -343,8 +343,8 @@ async def bet_send(host, player, ctx, index):
 
     view = betView(player, ctx, host, index)
     embed = discord.Embed()
-    embed.add_field(name = f"Pot - {game[host.id]["pot"]}", value = "\u200b", inline = False)
-    embed.add_field(name = f"Bet - {game[host.id]["bet"]}", value = "\u200b", inline = False)
+    embed.add_field(name = f"Pot - {game[host.id]['pot']}", value = "\u200b", inline = False)
+    embed.add_field(name = f"Bet - {game[host.id]['bet']}", value = "\u200b", inline = False)
 
     view.message = await player.send(embed = embed, view = view)
 
