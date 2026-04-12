@@ -305,11 +305,6 @@ def add_lvl(uid, amount: int):
     conn.commit()
     conn.close()
 
-    info = get_user(uid)
-    newrole = promotion_check(uid, info["user_role"], info["lvl"])
-    if(newrole):
-        update_role(uid, newrole)
-
 def add_xp(uid, amount: int):
     conn = sqlite3.connect(dbname)
     cursor = conn.cursor()
