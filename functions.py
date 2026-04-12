@@ -409,12 +409,12 @@ async def bail(ctx):
         await ctx.send("You're not a convict!")
         return
     
-    if (info["money"] < 100000):                                     #bail set at 100k
+    if (info["money"] < 10000):                                     #bail set at 100k
         await ctx.send("Insufficient Balance")
         return
 
     
-    database.remove_money(ctx.author.id, 100000)
+    database.remove_money(ctx.author.id, 10000)
     await ctx.send("Released")
     database.update_jail(ctx.author.id, 0)
     database.remove_wanted(ctx.author.id, 10)

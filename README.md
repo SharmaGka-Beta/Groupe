@@ -72,6 +72,7 @@ A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,fac
    - Multiplayer battles
    - Add items
    - Image based gambling
+   - Improvements to jail system
 
 ## Contributors
    - Naman Sharma
