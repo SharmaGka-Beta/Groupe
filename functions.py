@@ -569,7 +569,7 @@ async def leave(ctx):
 
     info = database.get_user(ctx.author.id, ctx.author.name)
 
-    if info["ruser_ole"] == "associate" or info["role"] == "underboss" or info["role"] == "godfather":
+    if info["user_role"] == "associate" or info["user_role"] == "underboss" or info["user_role"] == "godfather":
         a = random.randint(1, 2)
         if (a == 1):
             await ctx.send("One does not simply leave the mob")
@@ -579,7 +579,7 @@ async def leave(ctx):
 
         await ctx.send("You have left the mob and are now a civilian")
 
-    elif info["user_role"] == "rookie" or info["role"] == "detective" or info["role"] == "chief":
+    elif info["user_role"] == "rookie" or info["user_role"] == "detective" or info["user_role"] == "chief":
         await ctx.send("You have left the police force and are now a civilian")
 
     else:
