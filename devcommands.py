@@ -80,7 +80,7 @@ async def lose_battle(ctx):
 @bot.command()
 async def add_xp(ctx, amount: int):
     database.add_xp(ctx.author.id, amount)
-    await ctx.send(f"Added {amount} XP")
+    await ctx.send(f"Added {amount} xp")
 
 @bot.command()
 async def add_lvl(ctx, amount: int):
