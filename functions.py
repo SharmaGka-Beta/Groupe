@@ -585,7 +585,7 @@ async def leave(ctx):
     else:
         await ctx.send("Leave What? You're not in the mob or the force!")
         return
-    database.update_role("civilian")
+    database.update_role(ctx.author.id, "civilian")
     
 
 
