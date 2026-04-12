@@ -9,12 +9,12 @@ async def catch(ctx):
     await ctx.send("Done")
 
 @bot.command()
-async def wanted(ctx, arg):
+async def wanted(ctx, arg: int):
     database.add_wanted(ctx.author.id, arg)
     await ctx.send("Done")
 
 @bot.command()
-async def integrity(ctx, arg):
+async def integrity(ctx, arg: int):
     database.add_integrity(ctx.author.id, arg)
     await ctx.send("Done")
 
