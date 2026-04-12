@@ -29,8 +29,8 @@ async def on_command_error(ctx, error):
         await ctx.send(f"Slow down! You just did {ctx.command}, try after {int(hours)}hrs {int(minutes)}mins {int(seconds)}s")
     elif isinstance(error, commands.UserInputError):
         await ctx.send("Your command format is incorrect. Type 'sin help' to view the command formats.")
-    else:
-        await ctx.send(f"error: {error}") # temporarily print all errors
+    # else:
+    #     await ctx.send(f"error: {error}") # temporarily print all errors
 
 
 @bot.command()
