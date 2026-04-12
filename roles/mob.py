@@ -48,7 +48,7 @@ class ExtortAndDrugView(discord.ui.View):
         (lvlcnt, bonus, newrole) = database.add_xp(self.ctx.author.id, xp)
         if(lvlcnt):
             await self.ctx.send(f"{self.ctx.author.name} leveled up! +{bonus} coins -{5*lvlcnt} Wanted +{5*lvlcnt} Integrity +{xp} XP")
-        if(newrole != None):
+        if newrole is not None:
             await self.ctx.send(f"Congratulations **{self.ctx.author.name}**! You have been promoted to {newrole}!")
         
         database.remove_integrity(self.ctx.author.id, rng)
