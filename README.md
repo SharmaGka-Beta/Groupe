@@ -7,7 +7,7 @@
 ## 🚀 Features
 
 - ### ⚔️ Battle System
-   Turn-based combat with weapons, damage, and healing
+   - Turn-based combat with weapons, damage, and healing
 
 - ### 💰 Economy System
    - Economy system with regular and black money
