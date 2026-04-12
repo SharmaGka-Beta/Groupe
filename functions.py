@@ -303,6 +303,7 @@ async def leaderboard(ctx):
 @bot.command()
 async def transfer(ctx, amount:int , member:discord.Member):        #send to another player
     info = database.get_user(ctx.author.id, ctx.author.name)
+    info2 = database.get_user(member.id, member.name)
     if info["jail"] == 1:
         await ctx.send("You are a convict! Get out of jail first!!")        #jail check
         return
