@@ -336,7 +336,6 @@ def add_xp(uid, amount: int):
     newrole = promotion_check(uid, info["user_role"], info["lvl"])
     if(newrole):
         update_role(uid, newrole)
-
     return (lvl_cnt, int(money), newrole)
 
 
