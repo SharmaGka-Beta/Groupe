@@ -218,9 +218,9 @@ help_commands={
             "description":"Attempt to rob a target for money."
         },
         {
-            "name":"mob",
-            "format":"sin mob",
-            "description":"Attempt to join mob(requires weapon,high wanted level and low integrity)."
+            "name":"join",
+            "format":"sin join <mob/police>",
+            "description":"Attempt to join mob or police based on your stats and level."
         }
     ],
     "👾Mob":[
