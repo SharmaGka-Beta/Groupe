@@ -190,8 +190,29 @@ help_commands={
             "format": "sin transfer <amount> <member>",
             "description": "Send coins to another player"
         },
+        {
+            "name": "launder",
+            "format": "sin launder <amount>",
+            "description": "Launder your black money"
+        },
+        {
+            "name": "cooldowns",
+            "format": "sin cooldowns",
+            "description": "View cooldown time for commands"
+        },
+        {
+            "name": "battle",
+            "format": "sin battle",
+            "description": "Battle with a bot"
+        },
+        {
+            "name": "help",
+            "format": "sin help",
+            "description": "Shows this message :)"
+        }
+
     ],
-    "👤Civilian":[
+    "👤Civilian(Can also be used by others)":[
         {
             "name":"work",
             "format":"sin work",
@@ -218,10 +239,30 @@ help_commands={
             "description":"Attempt to rob a target for money."
         },
         {
-            "name":"mob",
-            "format":"sin mob",
-            "description":"Attempt to join mob(requires weapon,high wanted level and low integrity)."
-        }
+            "name":"join",
+            "format":"sin join <mob/police>",
+            "description":"Attempt to join mob/police force."
+        },
+        {
+            "name": "talk",
+            "format": "sin talk",
+            "description": "Try to escape jail by talking it out"
+        },
+        {
+            "name": "bribe",
+            "format": "sin bribe <amount>",
+            "description": "Try to bribe a cop to get out of jail"
+        },
+        {
+            "name": "bail",
+            "format": "sin bail",
+            "description": "Pay the required bail"
+        },
+        {
+            "name": "run",
+            "format": "sin run",
+            "description": "Try to run away from jail"
+        },
     ],
     "👾Mob":[
         {
@@ -234,10 +275,12 @@ help_commands={
             "format":"sin deal",
             "description":"Deal illegal drugs for money."
         },
+    ],
+    "👮Police":[
         {
-            "name":"promote",
-            "format":"sin promote",
-            "description":"Attempt to promote at higher rank in the mob."
+            "name": "patrol",
+            "format": "sin patrol",
+            "description": "Patrol the city looking for criminals"
         }
     ],
     "🎰Gambling":[
@@ -255,6 +298,11 @@ help_commands={
             "name":"slots",
             "format":"sin slots <amount>",
             "description":"Spin the slot machine to get a chance to win big."
+        },
+        {
+            "name": "poker",
+            "format": "sin poker <small blind amount> @player1@player2...",
+            "description": "Start a poker game with all tagged players"
         }
     ]
 }

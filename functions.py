@@ -503,9 +503,7 @@ class HelpView(discord.ui.View):
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user.id != self.ctx.author.id:
-            await interaction.response.send_message(
-                "Not your help menu!", ephemeral=True
-            )
+            await interaction.response.send_message("Not your help menu!", ephemeral=True)
             return False
         return True
 
@@ -537,13 +535,19 @@ class HelpView(discord.ui.View):
     @discord.ui.button(label="👤Civilian", style=discord.ButtonStyle.primary)
     async def civilian(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
-        embed = self.get_help_embed("👤Civilian")
+        embed = self.get_help_embed("👤Civilian(Can also be used by others)")
         await interaction.edit_original_response(embed=embed, view=self)
 
     @discord.ui.button(label="👾Mob", style=discord.ButtonStyle.primary)
     async def mob(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         embed = self.get_help_embed("👾Mob")
+        await interaction.edit_original_response(embed=embed, view=self)
+
+    @discord.ui.button(label="👮Police", style=discord.ButtonStyle.primary)
+    async def police(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        embed = self.get_help_embed("👮Police")
         await interaction.edit_original_response(embed=embed, view=self)
 
     @discord.ui.button(label="🎰Gambling", style=discord.ButtonStyle.primary)
