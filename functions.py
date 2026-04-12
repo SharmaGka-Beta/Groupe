@@ -494,7 +494,7 @@ async def cooldowns(ctx):
         await ctx.send("No active cooldowns!")
         return
     
-    embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns", icon_url=ctx.author.avatar.url)
+    embed.set_author(name=f"{ctx.author.name}'s ~ cooldowns")
     await ctx.send(embed = embed)
 
 class HelpView(discord.ui.View):
