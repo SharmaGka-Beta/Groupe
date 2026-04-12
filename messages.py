@@ -168,7 +168,7 @@ help_commands={
         {
             "name":"shop",
             "format":"sin shop",
-            "description":"Opens the shop to buy gins,drugs and items."
+            "description":"Opens the shop to buy guns,drugs and items."
         },
         {
             "name":"buy",

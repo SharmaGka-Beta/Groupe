@@ -38,9 +38,9 @@ async def profile(ctx, member:discord.Member = None):
     if member == None:
         member = ctx.author             #you can get profile of other users too. defaults to self
     uid = member.id
-    info = database.get_user(uid, ctx.author.name)
+    info = database.get_user(uid, member.name)
     
-    embed = discord.Embed(title=f"{ctx.author.name} — {info['user_role'].upper()}", color=messages.role_colors[info['user_role']])
+    embed = discord.Embed(title=f"{member.name} — {info['user_role'].upper()}", color=messages.role_colors[info['user_role']])
     
     embed.set_thumbnail(url=member.display_avatar.url)
 
