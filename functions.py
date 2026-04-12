@@ -40,13 +40,13 @@ async def profile(ctx, member:discord.Member = None):
     uid = member.id
     info = database.get_user(uid, ctx.author.name)
     
-    embed = discord.Embed(title=f"{ctx.author.name} — {info['user_role'].upper()}", color=messages.role_colors[info["user_role"]])
+    embed = discord.Embed(title=f"{ctx.author.name} — {info['user_role'].upper()}", color=messages.role_colors[info['user_role']])
     
     embed.set_thumbnail(url=member.display_avatar.url)
 
-    embed.add_field(name="**MONEY**", value=f"__🪙 **Coins**:__ {info["money"]:,}\n💸 __**Black Money**:__ {info["b_money"]:,}", inline=False)
+    embed.add_field(name="**MONEY**", value=f"__🪙 **Coins**:__ {info['money']:,}\n💸 __**Black Money**:__ {info['b_money']:,}", inline=False)
 
-    embed.add_field(name="**STATS**", value=f"📈__**Level**__: {info["lvl"]}\n✨__**XP**__: {info["xp"]}/{int(100*(info["lvl"]**1.5))}\n🔥 __**Wanted**__: {info["wanted"]}\n 🤝__**Integrity**__: {info["integrity"]}", inline=False)
+    embed.add_field(name="**STATS**", value=f"📈__**Level**__: {info['lvl']}\n✨__**XP**__: {info['xp']}/{int(100*(info['lvl']**1.5))}\n🔥 __**Wanted**__: {info['wanted']}\n 🤝__**Integrity**__: {info['integrity']}", inline=False)
 
     await ctx.send(embed=embed)
 

@@ -510,7 +510,7 @@ async def join(ctx, arg):
             await ctx.send("You are already in the police!")
             return
         elif(role != "civilian"):
-            await ctx.send(f"You got arrested by the police!\nWhat did you think was going to happen if a {info["user_role"]} walks into a police station")
+            await ctx.send(f"You got arrested by the police!\nWhat did you think was going to happen if a {info['user_role']} walks into a police station")
             database.update_jail(ctx.author.id, 1)
         else:
 
