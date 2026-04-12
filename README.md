@@ -64,8 +64,9 @@ A feature-rich Discord RPG bot developed by Groupe featuring economy,battles,fac
       - Run main.py from inside main directory
 
    - ### From server
-      - Go to the link provided below and add bot to your server
+      - Go to following link and add bot to your server
       [Invite Link](https://discord.com/oauth2/authorize?client_id=1482734885230870701&permissions=8&integration_type=0&scope=bot)
+      - Keep in mind the bot may not be online for this to work. In that case you will have to add the bot locally on your system 
 
 ## 📌 Future Improvements
    - Multiplayer battles
