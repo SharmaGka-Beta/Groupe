@@ -257,7 +257,7 @@ class leaderboard_view(discord.ui.View):
         i = 0
         for player in player_info:
             i += 1
-            embed.add_field(name=f"{i}. {player[7]}: {player[1]} coins", value="\u200b")
+            embed.add_field(name=f"{i}. {player[7]}: {player[1]} coins", value="\u200b", inline = False)
         await interaction.message.edit(embed = embed, view = leaderboard_view())
 
     @discord.ui.button(label="Level", style=discord.ButtonStyle.primary)
@@ -269,7 +269,7 @@ class leaderboard_view(discord.ui.View):
         i = 0
         for player in player_info:
             i += 1
-            embed.add_field(name=f"{i}. {player[7]}: Level {player[8]}", value="\u200b")
+            embed.add_field(name=f"{i}. {player[7]}: Level {player[8]}", value="\u200b", inline = False)
         await interaction.message.edit(embed = embed, view = leaderboard_view())
         
     
@@ -282,7 +282,7 @@ class leaderboard_view(discord.ui.View):
         i = 0
         for player in player_info:
             i += 1
-            embed.add_field(name=f"{i}. {player[7]}: {player[6]} black money", value="\u200b")
+            embed.add_field(name=f"{i}. {player[7]}: {player[6]} black money", value="\u200b", inline = False)
         await interaction.message.edit(embed = embed, view = leaderboard_view())
         
 @bot.command()
@@ -295,7 +295,7 @@ async def leaderboard(ctx):
     i = 0
     for player in player_info:
         i += 1
-        embed.add_field(name=f"{i}. {player[7]}: {player[1]}", value="\u200b")
+        embed.add_field(name=f"{i}. {player[7]}: {player[1]}", value="\u200b", inline = False)
 
     await ctx.send(embed = embed, view = leaderboard_view())
 
