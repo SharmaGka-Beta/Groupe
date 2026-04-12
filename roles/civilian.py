@@ -381,7 +381,7 @@ class robView(discord.ui.View):
         if(newrole != None):
            await self.ctx.send(f"Congratulations **{self.ctx.author.name}**! You have been promoted to {newrole}!")
         
-        await self.ctx.send(f"You have successfully robbed {self.target}!\n+{self.money} black money +{rng} Wanted -{rng} Integrity")
+        await self.ctx.send(f"You have successfully robbed {self.target}!\n+{self.money} black money +{rng} Wanted -{rng} Integrity +{xp}XP")
         database.add_b_money(self.ctx.author.id, self.money)
         database.add_wanted(self.ctx.author.id, rng)
         database.remove_integrity(self.ctx.author.id, rng)
