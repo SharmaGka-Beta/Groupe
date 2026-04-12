@@ -76,3 +76,14 @@ async def lose_battle(ctx):
         await ctx.send("Done")
         return
     await ctx.send("No battle found")
+
+@bot.command()
+async def add_xp(ctx, amount: int):
+    database.add_xp(ctx.author.id, amount)
+    await ctx.send(f"Added {amount} XP")
+
+@bot.command()
+async def add_lvl(ctx, amount: int):
+    database.add_lvl(ctx.author.id, amount)
+    await ctx.send(f"Added {amount} levels")
+    
