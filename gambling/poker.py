@@ -3,7 +3,7 @@ import messages
 import random
 import discord
 import database
-from best_hand import calculate_hand, rank, convert
+from gambling.best_hand import calculate_hand, rank, convert
 
 game = {}
 #uid : {all = [], current = [], small, start, bet, pot, start_message, deck, cards}

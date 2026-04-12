@@ -1,13 +1,13 @@
 import os
 from dotenv import load_dotenv
 import functions
-import gambling
-import civilian
+import gambling.gambling as gambling
+import roles.civilian as civilian
 import devcommands
 import battle
-import mob
-import police
-import poker
+import roles.mob as mob
+import roles.police as police
+import gambling.poker as poker
 
 
 load_dotenv()
