@@ -158,7 +158,7 @@ help_commands={
         {
             "name":"profile",
             "format":"sin profile <member>(takes default member as sender)",
-            "description":"View your profile or another players stats."
+            "description":"View your profile or another player's stats."
         },
         {
             "name":"inventory",
@@ -168,12 +168,12 @@ help_commands={
         {
             "name":"shop",
             "format":"sin shop",
-            "description":"Opens the shop to buy guns,drugs and items."
+            "description":"Opens the shop to buy guns, drugs and items."
         },
         {
             "name":"buy",
             "format":"sin buy <item> <quantity>",
-            "description":"Buy items from the shop(default quantity=1"
+            "description":"Buy items from the shop(default quantity=1)"
         },
         {
             "name": "sell",
@@ -183,7 +183,7 @@ help_commands={
         {
             "name": "leaderboard",
             "format": "sin leaderboard",
-            "description": "View leaderboards (coins, wanted, integrity, black money)"
+            "description": "View leaderboards (coins, black money, level)"
         },
         {
             "name": "transfer",
@@ -296,7 +296,7 @@ help_commands={
     "🎰Gambling":[
         {
             "name":"roulette",
-            "format":"sin roulette <amount> <red/balck/number>",
+            "format":"sin roulette <amount> <color(red/black)/number(1-36)>",
             "description":"Bet coins on a colour or number(1-36)."
         },
         {
