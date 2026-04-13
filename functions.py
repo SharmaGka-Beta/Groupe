@@ -469,7 +469,7 @@ async def launder(ctx, arg: int):
     fee = info["wanted"]/200
     await ctx.send(f"You succesfully laundered {arg} coins. You got {int(arg*(1-fee))} legal money")
     database.remove_b_money(ctx.author.id, arg)
-    database.add_money(ctx.author.id, arg*(1-fee))
+    database.add_money(ctx.author.id, int(arg*(1-fee)))
 
 @bot.command()
 async def cooldowns(ctx):
