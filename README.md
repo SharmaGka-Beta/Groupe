@@ -3,6 +3,7 @@
 - A feature-rich Discord RPG bot developed by Groupe set in the criminal underworld of Sin City.
 - Featuring economy, battles, factions and interactive UI.
 - Players start as civilians and work their way up through the mob or police force, committing crimes, laundering money, gambling, and battling enemies along the way.
+- https://youtu.be/AnqOsN6KLx8 (Click this link to see the youtube demo of our bot)
 
 ## 🚀 Features
 
